@@ -1,0 +1,10 @@
+input CreateTenantInput {
+    name: String!
+    code: String!
+}
+
+type TenantPayload {
+    id: ID!
+    name: String!
+    code: String!
+}

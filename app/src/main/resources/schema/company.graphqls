@@ -1,0 +1,9 @@
+input CreateCompanyInput {
+    name: String!
+}
+
+type CompanyPayload {
+    tenantId: ID!
+    id: ID!
+    name: String!
+}
