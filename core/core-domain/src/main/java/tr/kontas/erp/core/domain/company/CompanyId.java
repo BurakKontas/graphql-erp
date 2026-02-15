@@ -18,6 +18,10 @@ public class CompanyId extends Identifier {
         return new CompanyId(value);
     }
 
+    public static CompanyId of(String value) {
+        return new CompanyId(UUID.fromString(value));
+    }
+
     public UUID asUUID() {
         return (UUID) getValue();
     }

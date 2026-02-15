@@ -1,10 +1,12 @@
 package tr.kontas.erp.core.platform.multitenancy;
 
+import lombok.SneakyThrows;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.springframework.stereotype.Component;
+import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 @Component
-public class CurrentTenantIdentifierResolverImpl implements CurrentTenantIdentifierResolver<String> {
+public class TenantContext implements CurrentTenantIdentifierResolver<String> {
 
     private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
 
@@ -14,6 +16,15 @@ public class CurrentTenantIdentifierResolverImpl implements CurrentTenantIdentif
 
     public static void clear() {
         CURRENT_TENANT.remove();
+    }
+
+    @SneakyThrows
+    public static TenantId get() {
+        if (CURRENT_TENANT.get() == null) {
+            throw new Exception("TenantId is null");
+        }
+
+        return TenantId.of(CURRENT_TENANT.get());
     }
 
     @Override

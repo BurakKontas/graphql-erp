@@ -1,0 +1,10 @@
+input CreateEmployeeInput {
+    name: String!
+    departmentId: String!
+}
+
+type EmployeePayload {
+    id: ID!
+    name: String!
+    department: DepartmentPayload
+}

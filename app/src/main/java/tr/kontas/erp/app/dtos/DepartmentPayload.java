@@ -5,7 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CompanyPayload {
+public class DepartmentPayload {
     private String id;
     private String name;
+    private String parentId;
+    private String companyId;
 }

@@ -1,0 +1,13 @@
+input CreateDepartmentInput {
+    name: String!
+    companyId: String!
+    parentId: String
+}
+
+type DepartmentPayload {
+    id: ID!
+    name: String!
+    company: CompanyPayload
+    parent: DepartmentPayload
+    employees: [EmployeePayload]
+}

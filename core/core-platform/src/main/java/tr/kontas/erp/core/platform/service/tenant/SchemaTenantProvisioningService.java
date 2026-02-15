@@ -1,12 +1,11 @@
 package tr.kontas.erp.core.platform.service.tenant;
 
 import lombok.RequiredArgsConstructor;
+import org.flywaydb.core.Flyway;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.domain.service.TenantProvisioningService;
 import tr.kontas.erp.core.domain.tenant.Tenant;
-
-import org.flywaydb.core.Flyway;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 
@@ -19,17 +18,21 @@ public class SchemaTenantProvisioningService implements TenantProvisioningServic
 
     @Override
     public void provision(Tenant tenant) {
-
         String schema = schemaName(tenant);
 
         jdbcTemplate.execute("CREATE SCHEMA IF NOT EXISTS " + schema);
+
+        boolean schemaNew = Boolean.TRUE.equals(
+                jdbcTemplate.queryForObject(
+                        "SELECT count(*) = 0 FROM information_schema.tables WHERE table_schema = ?",
+                        Boolean.class, schema));
 
         Flyway flyway = Flyway.configure()
                 .dataSource(dataSource)
                 .schemas(schema)
                 .defaultSchema(schema)
                 .locations("classpath:migration/tenant")
-                .baselineOnMigrate(true)
+                .baselineOnMigrate(schemaNew)
                 .load();
 
         flyway.migrate();

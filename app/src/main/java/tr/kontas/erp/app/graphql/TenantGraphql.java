@@ -1,6 +1,8 @@
 package tr.kontas.erp.app.graphql;
 
-import com.netflix.graphql.dgs.*;
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsMutation;
+import com.netflix.graphql.dgs.InputArgument;
 import lombok.RequiredArgsConstructor;
 import tr.kontas.erp.app.dtos.CreateTenantInput;
 import tr.kontas.erp.app.dtos.TenantPayload;
@@ -10,7 +12,7 @@ import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 @DgsComponent
 @RequiredArgsConstructor
-public class TenantMutation {
+public class TenantGraphql {
 
     private final CreateTenantUseCase createTenantUseCase;
 

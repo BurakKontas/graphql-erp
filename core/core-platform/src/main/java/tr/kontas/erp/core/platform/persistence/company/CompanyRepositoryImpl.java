@@ -2,11 +2,14 @@ package tr.kontas.erp.core.platform.persistence.company;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import tr.kontas.erp.core.domain.company.*;
+import tr.kontas.erp.core.domain.company.Company;
+import tr.kontas.erp.core.domain.company.CompanyId;
+import tr.kontas.erp.core.domain.company.CompanyRepository;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Repository
@@ -40,5 +43,15 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 .stream()
                 .map(CompanyMapper::toDomain)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Company> findByCompanyIds(List<CompanyId> ids) {
+        List<UUID> uuids = ids.stream().map(CompanyId::asUUID).toList();
+
+        return jpaRepository.findByIdIn(uuids)
+                .stream()
+                .map(CompanyMapper::toDomain)
+                .toList();
     }
 }

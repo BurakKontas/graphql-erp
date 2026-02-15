@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 import tr.kontas.erp.core.domain.tenant.TenantCode;
 import tr.kontas.erp.core.domain.tenant.TenantRepository;
-import tr.kontas.erp.core.platform.multitenancy.CurrentTenantIdentifierResolverImpl;
+import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
 import java.util.Map;
 
@@ -29,14 +29,14 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
         String tenantCode = headers != null ? headers.getFirst("X-TENANT") : null;
 
         if (tenantCode == null || tenantCode.isBlank()) {
-            return Mono.error(new IllegalArgumentException("X-TENANT header is required"));
+            return Mono.just(new Context(userId, role, null));
         }
 
         return Mono.fromCallable(() ->
                 tenantRepository.findIdByCode(new TenantCode(tenantCode))
                         .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
         ).map(tenantId -> {
-            CurrentTenantIdentifierResolverImpl.setTenantIdentifier(tenantId.asUUID().toString());
+            TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
 
             return new Context(userId, role, tenantId.asUUID());
         });

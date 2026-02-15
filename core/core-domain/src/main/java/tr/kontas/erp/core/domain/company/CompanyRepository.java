@@ -11,4 +11,6 @@ public interface CompanyRepository extends Repository<Company, CompanyId> {
     List<Company> findAll();
     void save(Company company);
     List<Company> findByTenant(TenantId tenantId);
+
+    List<Company> findByCompanyIds(List<CompanyId> ids);
 }

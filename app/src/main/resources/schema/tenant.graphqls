@@ -7,4 +7,5 @@ type TenantPayload {
     id: ID!
     name: String!
     code: String!
+    companies: [CompanyPayload]
 }

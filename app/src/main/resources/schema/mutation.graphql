@@ -1,4 +1,0 @@
-type Mutation {
-    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(roles: ["ADMIN"])
-    createTenant(input: CreateTenantInput!): TenantPayload! @auth(roles: ["ADMIN"])
-}
