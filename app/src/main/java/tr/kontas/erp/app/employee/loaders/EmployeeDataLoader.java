@@ -1,11 +1,11 @@
-package tr.kontas.erp.app.loaders;
+package tr.kontas.erp.app.employee.loaders;
 
 import com.netflix.graphql.dgs.DgsDataLoader;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.BatchLoader;
-import tr.kontas.erp.app.dtos.EmployeePayload;
-import tr.kontas.erp.app.graphql.EmployeeGraphql;
+import tr.kontas.erp.app.employee.dtos.EmployeePayload;
+import tr.kontas.erp.app.employee.graphql.EmployeeGraphql;
 import tr.kontas.erp.core.application.employee.GetEmployeesByDepartmentIdsUseCase;
 import tr.kontas.erp.core.domain.department.DepartmentId;
 import tr.kontas.erp.core.domain.employee.Employee;

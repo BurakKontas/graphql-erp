@@ -1,4 +1,4 @@
-package tr.kontas.erp.app.dtos;
+package tr.kontas.erp.app.department.dtos;
 
 import lombok.Data;
 

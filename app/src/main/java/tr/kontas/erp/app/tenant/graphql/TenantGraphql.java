@@ -1,11 +1,11 @@
-package tr.kontas.erp.app.graphql;
+package tr.kontas.erp.app.tenant.graphql;
 
 import com.netflix.graphql.dgs.DgsComponent;
 import com.netflix.graphql.dgs.DgsMutation;
 import com.netflix.graphql.dgs.InputArgument;
 import lombok.RequiredArgsConstructor;
-import tr.kontas.erp.app.dtos.CreateTenantInput;
-import tr.kontas.erp.app.dtos.TenantPayload;
+import tr.kontas.erp.app.tenant.dtos.CreateTenantInput;
+import tr.kontas.erp.app.tenant.dtos.TenantPayload;
 import tr.kontas.erp.core.application.tenant.CreateTenantCommand;
 import tr.kontas.erp.core.application.tenant.CreateTenantUseCase;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;

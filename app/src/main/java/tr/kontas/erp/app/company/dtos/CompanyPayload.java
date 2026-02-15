@@ -1,12 +1,11 @@
-package tr.kontas.erp.app.dtos;
+package tr.kontas.erp.app.company.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class TenantPayload {
+public class CompanyPayload {
     private String id;
     private String name;
-    private String code;
 }

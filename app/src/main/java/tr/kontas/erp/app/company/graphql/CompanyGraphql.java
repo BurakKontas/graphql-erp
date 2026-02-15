@@ -1,11 +1,11 @@
-package tr.kontas.erp.app.graphql;
+package tr.kontas.erp.app.company.graphql;
 
 import com.netflix.graphql.dgs.*;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
-import tr.kontas.erp.app.dtos.CompanyPayload;
-import tr.kontas.erp.app.dtos.CreateCompanyInput;
-import tr.kontas.erp.app.dtos.DepartmentPayload;
+import tr.kontas.erp.app.company.dtos.CompanyPayload;
+import tr.kontas.erp.app.company.dtos.CreateCompanyInput;
+import tr.kontas.erp.app.department.dtos.DepartmentPayload;
 import tr.kontas.erp.core.application.company.CreateCompanyCommand;
 import tr.kontas.erp.core.application.company.CreateCompanyUseCase;
 import tr.kontas.erp.core.application.company.GetCompaniesUseCase;
