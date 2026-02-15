@@ -8,15 +8,15 @@ type Mutation {
 }
 
 type Query {
-    #    tenant(id: ID!): TenantPayload!
-    #    tenants: [TenantPayload!]!
+    tenant(id: ID!): TenantPayload
+    tenants: [TenantPayload]
 
-    company(id: ID!): CompanyPayload!
-    companies: [CompanyPayload!]!
+    company(id: ID!): CompanyPayload
+    companies(tenantId: ID!): [CompanyPayload]
 
-    #    department(id: ID!): DepartmentPayload!
-    #    departments(companyId: ID): [DepartmentPayload!]!
-    #
-    #    employee(id: ID!): EmployeePayload!
-    #    employees(departmentId: ID): [EmployeePayload!]!
+    department(id: ID!): DepartmentPayload
+    departments(companyId: ID): [DepartmentPayload]
+
+    employee(id: ID!): EmployeePayload
+    employees(departmentId: ID): [EmployeePayload]
 }

@@ -9,6 +9,7 @@ import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public class CompanyRepositoryImpl implements CompanyRepository {
         return jpaRepository.findByTenantId(tenantId.asUUID())
                 .stream()
                 .map(CompanyMapper::toDomain)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -53,5 +54,15 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 .stream()
                 .map(CompanyMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public Set<Company> findByTenantIds(List<TenantId> ids) {
+        List<UUID> uuids = ids.stream().map(TenantId::asUUID).toList();
+
+        return jpaRepository.findByTenantIdIn(uuids)
+                .stream()
+                .map(CompanyMapper::toDomain)
+                .collect(Collectors.toSet());
     }
 }

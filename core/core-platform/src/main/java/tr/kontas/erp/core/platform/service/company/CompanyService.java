@@ -11,7 +11,7 @@ import tr.kontas.erp.core.domain.company.CompanyRepository;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,8 @@ public class CompanyService implements
         CreateCompanyUseCase,
         GetCompanyByIdUseCase,
         GetCompaniesUseCase,
-        GetCompaniesByIdsUseCase {
+        GetCompaniesByIdsUseCase,
+        GetCompaniesByTenantIdsUseCase {
     private final CompanyRepository companyRepository;
 
     @Override
@@ -54,5 +55,19 @@ public class CompanyService implements
     @Override
     public List<Company> execute(List<CompanyId> ids) {
         return companyRepository.findByCompanyIds(ids);
+    }
+
+    @Override
+    public Map<TenantId, List<Company>> executeByTenantIds(List<TenantId> ids) {
+        Map<TenantId, List<Company>> resultMap = new HashMap<>();
+
+        Set<Company> companies = companyRepository.findByTenantIds(ids);
+
+        companies.forEach(company -> {
+            resultMap.computeIfAbsent(company.getTenantId(), _ -> new ArrayList<>())
+                    .add(company);
+        });
+
+        return resultMap;
     }
 }

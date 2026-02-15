@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.application.employee.CreateEmployeeCommand;
 import tr.kontas.erp.core.application.employee.CreateEmployeeUseCase;
+import tr.kontas.erp.core.application.employee.GetEmployeeByIdUseCase;
 import tr.kontas.erp.core.application.employee.GetEmployeesByDepartmentIdsUseCase;
 import tr.kontas.erp.core.domain.department.DepartmentId;
 import tr.kontas.erp.core.domain.department.DepartmentRepository;
@@ -20,9 +21,10 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class CreateEmployeeService implements
+public class EmployeeService implements
         CreateEmployeeUseCase,
-        GetEmployeesByDepartmentIdsUseCase {
+        GetEmployeesByDepartmentIdsUseCase,
+        GetEmployeeByIdUseCase {
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
@@ -60,5 +62,11 @@ public class CreateEmployeeService implements
         });
 
         return resultMap;
+    }
+
+    @Override
+    public Employee execute(EmployeeId id) {
+        return employeeRepository.findById(id)
+                .orElseThrow();
     }
 }

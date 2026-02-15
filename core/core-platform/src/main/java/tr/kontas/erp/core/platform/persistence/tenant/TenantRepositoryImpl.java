@@ -4,12 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import tr.kontas.erp.core.domain.tenant.Tenant;
 import tr.kontas.erp.core.domain.tenant.TenantCode;
-import tr.kontas.erp.core.domain.tenant.TenantName;
 import tr.kontas.erp.core.domain.tenant.TenantRepository;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,6 +25,14 @@ public class TenantRepositoryImpl implements TenantRepository {
     public Optional<TenantId> findIdByCode(TenantCode code) {
         return jpaRepository.findIdByCode(code.getValue())
                 .map(TenantId::of);
+    }
+
+    @Override
+    public List<Tenant> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(TenantMapper::toDomain)
+                .toList();
     }
 
     @Override

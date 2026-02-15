@@ -9,11 +9,14 @@ import tr.kontas.erp.app.department.dtos.DepartmentPayload;
 import tr.kontas.erp.app.employee.dtos.EmployeePayload;
 import tr.kontas.erp.core.application.department.CreateDepartmentCommand;
 import tr.kontas.erp.core.application.department.CreateDepartmentUseCase;
+import tr.kontas.erp.core.application.department.GetDepartmentByIdUseCase;
+import tr.kontas.erp.core.application.department.GetDepartmentsByCompanyIdsUseCase;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.department.Department;
 import tr.kontas.erp.core.domain.department.DepartmentId;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @DgsComponent
@@ -21,6 +24,8 @@ import java.util.concurrent.CompletableFuture;
 public class DepartmentGraphql {
 
     private final CreateDepartmentUseCase createDepartmentUseCase;
+    private final GetDepartmentByIdUseCase getDepartmentByIdUseCase;
+    private final GetDepartmentsByCompanyIdsUseCase getDepartmentsByCompanyIdsUseCase;
 
     public static DepartmentPayload toPayload(Department department) {
         return new DepartmentPayload(
@@ -44,6 +49,33 @@ public class DepartmentGraphql {
         return new DepartmentPayload(id.asUUID().toString(), input.getName(), input.getParentId(), input.getCompanyId());
     }
 
+    @DgsQuery
+    public List<DepartmentPayload> departments(@InputArgument("companyId") String id) {
+        CompanyId companyId = CompanyId.of(id);
+
+        var departments = getDepartmentsByCompanyIdsUseCase.executeByCompanyIds(List.of(companyId))
+                .get(companyId);
+
+        if (departments == null) return List.of();
+
+        return departments
+                .stream()
+                .map(DepartmentGraphql::toPayload)
+                .toList();
+    }
+
+    @DgsQuery
+    public DepartmentPayload department(@InputArgument("id") String id) {
+        DepartmentId departmentId = DepartmentId.of(id);
+        return toPayload(getDepartmentByIdUseCase.execute(departmentId));
+    }
+
+    @DgsEntityFetcher(name = "DepartmentPayload")
+    public DepartmentPayload department(Map<String, Object> values) {
+        String id = values.get("id").toString();
+        return department(id);
+    }
+
     @DgsData(parentType = "DepartmentPayload")
     public CompletableFuture<List<EmployeePayload>> employees(DgsDataFetchingEnvironment dfe) {
         DepartmentPayload department = dfe.getSource();
@@ -61,14 +93,13 @@ public class DepartmentGraphql {
     public CompletableFuture<DepartmentPayload> parent(DgsDataFetchingEnvironment dfe) {
         DepartmentPayload department = dfe.getSource();
 
-        DataLoader<String, List<DepartmentPayload>> dataLoader = dfe.getDataLoader("departmentsLoader");
+        DataLoader<String, DepartmentPayload> dataLoader = dfe.getDataLoader("departmentLoader");
 
         if (dataLoader == null || department == null || department.getParentId() == null || department.getParentId().isBlank()) {
             return CompletableFuture.completedFuture(null);
         }
 
-        return dataLoader.load(department.getParentId())
-                .thenApply(list -> list.isEmpty() ? null : list.getFirst());
+        return dataLoader.load(department.getParentId());
     }
 
     @DgsData(parentType = "DepartmentPayload")

@@ -22,14 +22,13 @@ public class CompanyDataLoader implements BatchLoader<String, CompanyPayload> {
     @NonNull
     @Override
     public CompletionStage<List<CompanyPayload>> load(@NonNull List<String> companyIds) {
-
         List<CompanyId> companyIdList = companyIds.stream()
                 .map(CompanyId::of)
                 .toList();
 
         List<CompanyPayload> result = getCompaniesByIdsUseCase.execute(companyIdList)
                 .stream()
-                .map(CompanyGraphql::fromDomain)
+                .map(CompanyGraphql::toPayload)
                 .toList();
 
         return CompletableFuture.completedFuture(result);

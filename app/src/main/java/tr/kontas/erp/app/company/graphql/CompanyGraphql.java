@@ -8,10 +8,11 @@ import tr.kontas.erp.app.company.dtos.CreateCompanyInput;
 import tr.kontas.erp.app.department.dtos.DepartmentPayload;
 import tr.kontas.erp.core.application.company.CreateCompanyCommand;
 import tr.kontas.erp.core.application.company.CreateCompanyUseCase;
-import tr.kontas.erp.core.application.company.GetCompaniesUseCase;
+import tr.kontas.erp.core.application.company.GetCompaniesByTenantIdsUseCase;
 import tr.kontas.erp.core.application.company.GetCompanyByIdUseCase;
 import tr.kontas.erp.core.domain.company.Company;
 import tr.kontas.erp.core.domain.company.CompanyId;
+import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,10 +22,10 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class CompanyGraphql {
     private final GetCompanyByIdUseCase getCompanyByIdUseCase;
-    private final GetCompaniesUseCase getCompaniesUseCase;
     private final CreateCompanyUseCase createCompanyUseCase;
+    private final GetCompaniesByTenantIdsUseCase getCompaniesByTenantIdsUseCase;
 
-    public static CompanyPayload fromDomain(Company company) {
+    public static CompanyPayload toPayload(Company company) {
         return new CompanyPayload(
                 company.getId().asUUID().toString(),
                 company.getName().getValue()
@@ -44,17 +45,24 @@ public class CompanyGraphql {
     }
 
     @DgsQuery
-    public List<CompanyPayload> companies() {
-        return getCompaniesUseCase.execute()
+    public List<CompanyPayload> companies(@InputArgument("tenantId") UUID id) {
+        TenantId tenantId = TenantId.of(id);
+
+        List<Company> companies = getCompaniesByTenantIdsUseCase.executeByTenantIds(List.of(tenantId))
+                .get(tenantId);
+
+        if (companies == null) return List.of();
+
+        return companies
                 .stream()
-                .map(CompanyGraphql::fromDomain)
+                .map(CompanyGraphql::toPayload)
                 .toList();
     }
 
     @DgsQuery
     public CompanyPayload company(@InputArgument("id") UUID id) {
         CompanyId companyId = CompanyId.of(id);
-        return fromDomain(getCompanyByIdUseCase.execute(companyId));
+        return toPayload(getCompanyByIdUseCase.execute(companyId));
     }
 
     @DgsData(parentType = "CompanyPayload")

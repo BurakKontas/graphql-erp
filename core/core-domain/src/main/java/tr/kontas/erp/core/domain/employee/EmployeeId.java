@@ -18,6 +18,10 @@ public class EmployeeId extends Identifier {
         return new EmployeeId(value);
     }
 
+    public static EmployeeId of(String value) {
+        return new EmployeeId(UUID.fromString(value));
+    }
+
     public UUID asUUID() {
         return (UUID) getValue();
     }
