@@ -8,37 +8,74 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
+import tr.kontas.erp.core.application.identity.JwtPrincipal;
+import tr.kontas.erp.core.application.identity.JwtService;
+import tr.kontas.erp.core.domain.identity.repositories.UserRepository;
+import tr.kontas.erp.core.domain.identity.valueobjects.UserId;
 import tr.kontas.erp.core.domain.tenant.TenantCode;
 import tr.kontas.erp.core.domain.tenant.TenantRepository;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
 public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWithRequest<Context> {
 
     private final TenantRepository tenantRepository;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     @Override
     public @NonNull Mono<Context> build(@Nullable Map<String, ?> extensions,
                                         @Nullable HttpHeaders headers,
                                         @Nullable ServerRequest serverRequest) {
-        String userId = headers != null ? headers.getFirst("x-user-id") : "anonymous";
-        String role = headers != null ? headers.getFirst("x-user-role") : "peasant";
-        String tenantCode = headers != null ? headers.getFirst("X-TENANT") : null;
 
-        if (tenantCode == null || tenantCode.isBlank()) {
-            return Mono.just(new Context(userId, role, null));
+        String tenantCode = extractHeader(headers, "X-TENANT");
+
+        if (tenantCode == null) {
+            return Mono.just(new Context("anonymous", null, Set.of()));
         }
 
         return Mono.fromCallable(() ->
                 tenantRepository.findIdByCode(new TenantCode(tenantCode))
                         .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
-        ).map(tenantId -> {
+        ).flatMap(tenantId -> {
             TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
 
-            return new Context(userId, role, tenantId.asUUID());
+            String bearer = extractHeader(headers, "Authorization");
+
+            if (bearer != null && bearer.startsWith("Bearer ")) {
+                return handleJwtAuth(bearer.substring(7), tenantId.asUUID());
+            }
+
+            return Mono.just(new Context("anonymous", tenantId.asUUID(), Set.of()));
         });
+    }
+
+    private Mono<Context> handleJwtAuth(String token, java.util.UUID tenantId) {
+        return Mono.fromCallable(() -> {
+            JwtPrincipal principal = jwtService.parse(token);
+
+            // Auth version check
+            long currentVersion = userRepository
+                    .findAuthVersionById(UserId.of(principal.userId()))
+                    .orElseThrow(() -> new SecurityException("User not found"));
+
+            if (currentVersion != principal.authVersion()) {
+                throw new SecurityException("Token has been invalidated");
+            }
+
+            return new Context(
+                    principal.userId().toString(),
+                    tenantId,
+                    principal.permissions()
+            );
+        });
+    }
+
+    private String extractHeader(HttpHeaders headers, String name) {
+        return headers != null ? headers.getFirst(name) : null;
     }
 }

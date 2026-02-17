@@ -4,12 +4,11 @@ import com.netflix.graphql.dgs.*;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
 import tr.kontas.erp.app.company.dtos.CompanyPayload;
-import tr.kontas.erp.app.tenant.dtos.CreateTenantInput;
-import tr.kontas.erp.app.tenant.dtos.TenantPayload;
-import tr.kontas.erp.core.application.tenant.CreateTenantCommand;
-import tr.kontas.erp.core.application.tenant.CreateTenantUseCase;
-import tr.kontas.erp.core.application.tenant.GetTenantByIdUseCase;
-import tr.kontas.erp.core.application.tenant.GetTenantsUseCase;
+import tr.kontas.erp.app.tenant.dtos.*;
+import tr.kontas.erp.core.application.tenant.*;
+import tr.kontas.erp.core.domain.identity.enums.AuthProviderType;
+import tr.kontas.erp.core.domain.tenant.LdapSettings;
+import tr.kontas.erp.core.domain.tenant.OidcSettings;
 import tr.kontas.erp.core.domain.tenant.Tenant;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
@@ -24,6 +23,18 @@ public class TenantGraphql {
     private final CreateTenantUseCase createTenantUseCase;
     private final GetTenantsUseCase getTenantsUseCase;
     private final GetTenantByIdUseCase getTenantByIdUseCase;
+    private final UpdateTenantAuthModeUseCase updateTenantAuthModeUseCase;
+    private final UpdateTenantOidcSettingsUseCase updateTenantOidcSettingsUseCase;
+    private final UpdateTenantLdapSettingsUseCase updateTenantLdapSettingsUseCase;
+
+    public static TenantPayload toPayload(Tenant domain) {
+        return new TenantPayload(
+                domain.getId().asUUID().toString(),
+                domain.getName().getValue(),
+                domain.getCode().getValue(),
+                domain.getAuthMode().name()
+        );
+    }
 
     @DgsMutation
     public TenantPayload createTenant(@InputArgument("input") CreateTenantInput input) {
@@ -35,16 +46,75 @@ public class TenantGraphql {
         return new TenantPayload(
                 tenantId.asUUID().toString(),
                 input.getName(),
-                input.getCode()
+                input.getCode(),
+                AuthProviderType.LOCAL.name()
         );
     }
 
-    public static TenantPayload toPayload(Tenant domain) {
-        return new TenantPayload(
-                domain.getId().asUUID().toString(),
-                domain.getName().getValue(),
-                domain.getCode().getValue()
+    @DgsMutation
+    public TenantPayload updateTenantAuthMode(@InputArgument("input") UpdateTenantAuthModeInput input) {
+        AuthProviderType authMode;
+        try {
+            authMode = AuthProviderType.valueOf(input.getAuthMode().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid auth mode: " + input.getAuthMode() +
+                    ". Valid values: LOCAL, LDAP, OIDC");
+        }
+
+        UpdateTenantAuthModeCommand command = new UpdateTenantAuthModeCommand(
+                input.getTenantId(),
+                authMode
         );
+
+        updateTenantAuthModeUseCase.execute(command);
+
+        return toPayload(getTenantByIdUseCase.execute(TenantId.of(input.getTenantId())).orElseThrow());
+    }
+
+    @DgsMutation
+    public TenantPayload updateTenantOidcSettings(@InputArgument("input") UpdateTenantOidcSettingsInput input) {
+        OidcSettings oidcSettings = OidcSettings.builder()
+                .issuer(input.getIssuer())
+                .audience(input.getAudience())
+                .jwkSetUri(input.getJwkSetUri())
+                .clockSkewSeconds(input.getClockSkewSeconds() != null ? input.getClockSkewSeconds() : 60L)
+                .build();
+
+        UpdateTenantOidcSettingsCommand command = new UpdateTenantOidcSettingsCommand(
+                input.getTenantId(),
+                oidcSettings
+        );
+
+        updateTenantOidcSettingsUseCase.execute(command);
+
+        return toPayload(getTenantByIdUseCase.execute(TenantId.of(input.getTenantId())).orElseThrow());
+    }
+
+    @DgsMutation
+    public TenantPayload updateTenantLdapSettings(@InputArgument("input") UpdateTenantLdapSettingsInput input) {
+        LdapSettings ldapSettings = LdapSettings.builder()
+                .urls(input.getUrls())
+                .baseDn(input.getBaseDn())
+                .userSearchFilter(input.getUserSearchFilter())
+                .bindDn(input.getBindDn())
+                .bindPassword(input.getBindPassword())
+                .connectTimeoutMs(input.getConnectTimeoutMs() != null ? input.getConnectTimeoutMs() : 5000)
+                .readTimeoutMs(input.getReadTimeoutMs() != null ? input.getReadTimeoutMs() : 5000)
+                .startTls(input.getStartTls() != null && input.getStartTls())
+                .maxRetry(input.getMaxRetry() != null ? input.getMaxRetry() : 2)
+                .circuitBreakerTimeoutMs(input.getCircuitBreakerTimeoutMs() != null ? input.getCircuitBreakerTimeoutMs() : 30000L)
+                .resolveGroups(input.getResolveGroups() != null && input.getResolveGroups())
+                .groupSearchFilter(input.getGroupSearchFilter() != null ? input.getGroupSearchFilter() : "(member={0})")
+                .build();
+
+        UpdateTenantLdapSettingsCommand command = new UpdateTenantLdapSettingsCommand(
+                input.getTenantId(),
+                ldapSettings
+        );
+
+        updateTenantLdapSettingsUseCase.execute(command);
+
+        return toPayload(getTenantByIdUseCase.execute(TenantId.of(input.getTenantId())).orElseThrow());
     }
 
     @DgsQuery

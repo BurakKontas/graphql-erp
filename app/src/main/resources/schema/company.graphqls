@@ -7,3 +7,12 @@ type CompanyPayload {
     name: String!
     departments: [DepartmentPayload]
 }
+
+extend type Mutation {
+    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(permissions: ["ADMIN"])
+}
+
+extend type Query {
+    company(id: ID!): CompanyPayload
+    companies(tenantId: ID!): [CompanyPayload]
+}

@@ -19,9 +19,6 @@ CREATE TABLE departments
     CONSTRAINT fk_parent_department FOREIGN KEY (parent_id) REFERENCES departments (id)
 );
 
-ALTER TABLE departments
-    ADD CONSTRAINT fk_parent_department FOREIGN KEY (parent_id) REFERENCES departments (id);
-
 -- Indexes for performance
 CREATE INDEX idx_department_tenant_id ON departments (tenant_id);
 CREATE INDEX idx_department_company_id ON departments (company_id);

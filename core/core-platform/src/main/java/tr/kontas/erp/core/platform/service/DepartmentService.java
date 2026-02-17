@@ -1,4 +1,4 @@
-package tr.kontas.erp.core.platform.service.department;
+package tr.kontas.erp.core.platform.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

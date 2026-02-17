@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import tr.kontas.erp.core.platform.context.Context;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class AuthDirective implements SchemaDirectiveWiring {
@@ -20,7 +21,13 @@ public class AuthDirective implements SchemaDirectiveWiring {
     @Override
     public GraphQLFieldDefinition onField(SchemaDirectiveWiringEnvironment<GraphQLFieldDefinition> env) {
 
-        List<String> requiredRoles = extractRoles(env);
+        List<String> requiredPermissions = extractPermissions(
+                env.getAppliedDirective().getArgument("permissions")
+        );
+
+        String mode = extractMode(
+                env.getAppliedDirective().getArgument("mode")
+        );
 
         DataFetcher<?> originalFetcher = env.getFieldDataFetcher();
 
@@ -29,16 +36,21 @@ public class AuthDirective implements SchemaDirectiveWiring {
 
             if (context == null) {
                 throw GraphqlErrorException.newErrorException()
-                        .message("Unauthorized")
+                        .message("Unauthorized: No context")
                         .build();
             }
 
-            String userRole = context.getRole();
-            if (!requiredRoles.contains(userRole)) {
+            if ("anonymous".equals(context.userId())) {
                 throw GraphqlErrorException.newErrorException()
-                        .message("Forbidden - Required roles: " + requiredRoles)
+                        .message("Unauthorized: Authentication required")
                         .build();
             }
+
+            if (requiredPermissions.isEmpty()) {
+                return originalFetcher.get(dataEnv);
+            }
+
+            checkPermissions(context.permissions(), requiredPermissions, mode);
 
             return originalFetcher.get(dataEnv);
         };
@@ -47,12 +59,33 @@ public class AuthDirective implements SchemaDirectiveWiring {
         return env.getElement();
     }
 
-    private List<String> extractRoles(SchemaDirectiveWiringEnvironment<?> env) {
+    private void checkPermissions(Set<String> userPermissions,
+                                  List<String> requiredPermissions,
+                                  String mode) {
 
-        GraphQLAppliedDirectiveArgument arg =
-                env.getAppliedDirective().getArgument("roles");
+        if (userPermissions == null || userPermissions.isEmpty()) {
+            throw GraphqlErrorException.newErrorException()
+                    .message("Access denied: No permissions")
+                    .build();
+        }
 
-        if (arg == null) return List.of();
+        boolean hasAccess = switch (mode.toUpperCase()) {
+            case "ALL" -> userPermissions.containsAll(requiredPermissions);
+            case "ANY" -> requiredPermissions.stream().anyMatch(userPermissions::contains);
+            default -> throw new IllegalArgumentException("Invalid mode: " + mode);
+        };
+
+        if (!hasAccess) {
+            throw GraphqlErrorException.newErrorException()
+                    .message("Access denied: Insufficient permissions")
+                    .build();
+        }
+    }
+
+    private List<String> extractPermissions(GraphQLAppliedDirectiveArgument arg) {
+        if (arg == null) {
+            return List.of();
+        }
 
         Object value = arg.getArgumentValue().getValue();
 
@@ -67,5 +100,14 @@ public class AuthDirective implements SchemaDirectiveWiring {
         }
 
         return List.of();
+    }
+
+    private String extractMode(GraphQLAppliedDirectiveArgument arg) {
+        if (arg == null) {
+            return "ANY";
+        }
+
+        Object value = arg.getArgumentValue().getValue();
+        return value != null ? value.toString().toUpperCase() : "ANY";
     }
 }

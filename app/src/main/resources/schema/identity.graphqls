@@ -1,0 +1,34 @@
+type AuthPayload {
+    accessToken: String!
+    refreshToken: String!
+    expiresAt: Int!
+}
+
+type RegisterPayload {
+    userId: ID!
+    username: String!
+}
+
+input LoginInput {
+    username: String
+    password: String
+    idToken: String
+}
+
+input RegisterInput {
+    username: String!
+    password: String!
+}
+
+enum AuthProviderType {
+    LOCAL
+    LDAP
+    OIDC
+}
+
+extend type Mutation {
+    register(input: RegisterInput!): RegisterPayload!
+    login(input: LoginInput!): AuthPayload!
+    refreshToken(refreshToken: String!): AuthPayload!
+    logout: Boolean! @auth
+}

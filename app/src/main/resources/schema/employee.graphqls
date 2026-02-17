@@ -8,3 +8,12 @@ type EmployeePayload {
     name: String!
     department: DepartmentPayload
 }
+
+extend type Mutation {
+    createEmployee(input: CreateEmployeeInput!): EmployeePayload! @auth(permissions: ["ADMIN"])
+}
+
+extend type Query {
+    employee(id: ID!): EmployeePayload
+    employees(departmentId: ID): [EmployeePayload]
+}

@@ -1,22 +1,9 @@
-directive @auth(roles: [String]) on FIELD_DEFINITION
+directive @auth(permissions:[String], mode: [String]) on FIELD_DEFINITION
 
 type Mutation {
-    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(roles: ["ADMIN"])
-    createTenant(input: CreateTenantInput!): TenantPayload! @auth(roles: ["ADMIN"])
-    createDepartment(input: CreateDepartmentInput!): DepartmentPayload! @auth(roles: ["ADMIN"])
-    createEmployee(input: CreateEmployeeInput!): EmployeePayload! @auth(roles: ["ADMIN"])
+
 }
 
 type Query {
-    tenant(id: ID!): TenantPayload
-    tenants: [TenantPayload]
 
-    company(id: ID!): CompanyPayload
-    companies(tenantId: ID!): [CompanyPayload]
-
-    department(id: ID!): DepartmentPayload
-    departments(companyId: ID): [DepartmentPayload]
-
-    employee(id: ID!): EmployeePayload
-    employees(departmentId: ID): [EmployeePayload]
 }

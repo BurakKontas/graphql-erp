@@ -3,9 +3,51 @@ input CreateTenantInput {
     code: String!
 }
 
+input UpdateTenantAuthModeInput {
+    tenantId: ID!
+    authMode: String!
+}
+
+input UpdateTenantOidcSettingsInput {
+    tenantId: ID!
+    issuer: String!
+    audience: String
+    jwkSetUri: String!
+    clockSkewSeconds: Int
+}
+
+input UpdateTenantLdapSettingsInput {
+    tenantId: ID!
+    urls: [String!]!
+    baseDn: String!
+    userSearchFilter: String!
+    bindDn: String!
+    bindPassword: String!
+    connectTimeoutMs: Int
+    readTimeoutMs: Int
+    startTls: Boolean
+    maxRetry: Int
+    circuitBreakerTimeoutMs: Int
+    resolveGroups: Boolean
+    groupSearchFilter: String
+}
+
 type TenantPayload {
     id: ID!
     name: String!
     code: String!
+    authMode: String!
     companies: [CompanyPayload]
+}
+
+extend type Mutation {
+    createTenant(input: CreateTenantInput!): TenantPayload! @auth
+    updateTenantAuthMode(input: UpdateTenantAuthModeInput!): TenantPayload! @auth
+    updateTenantOidcSettings(input: UpdateTenantOidcSettingsInput!): TenantPayload! @auth
+    updateTenantLdapSettings(input: UpdateTenantLdapSettingsInput!): TenantPayload! @auth
+}
+
+extend type Query {
+    tenant(id: ID!): TenantPayload
+    tenants: [TenantPayload]
 }
