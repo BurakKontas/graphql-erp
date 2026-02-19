@@ -22,6 +22,14 @@ public class Employee extends AggregateRoot<EmployeeId> {
         registerEvent(new EmployeeCreatedEvent(id));
     }
 
+    public Employee(EmployeeId id, TenantId tenantId, EmployeeName name, DepartmentId departmentId, boolean active) {
+        super(id);
+        this.tenantId = tenantId;
+        this.name = name;
+        this.departmentId = departmentId;
+        this.active = active;
+    }
+
     public void changeDepartment(DepartmentId newDepartmentId) {
         this.departmentId = newDepartmentId;
     }

@@ -24,7 +24,7 @@ public class Company extends AggregateRoot<CompanyId> {
         registerEvent(new CompanyCreatedEvent(id));
     }
 
-    protected Company(CompanyId id, TenantId tenantId, CompanyName name, boolean active) {
+    public Company(CompanyId id, TenantId tenantId, CompanyName name, boolean active) {
         super(id);
         this.tenantId = tenantId;
         this.name = name;

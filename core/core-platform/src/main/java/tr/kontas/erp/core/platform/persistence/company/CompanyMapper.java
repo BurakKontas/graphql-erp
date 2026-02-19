@@ -1,6 +1,8 @@
 package tr.kontas.erp.core.platform.persistence.company;
 
-import tr.kontas.erp.core.domain.company.*;
+import tr.kontas.erp.core.domain.company.Company;
+import tr.kontas.erp.core.domain.company.CompanyId;
+import tr.kontas.erp.core.domain.company.CompanyName;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 public final class CompanyMapper {
@@ -20,7 +22,8 @@ public final class CompanyMapper {
         return new Company(
                 CompanyId.of(entity.getId()),
                 TenantId.of(entity.getTenantId()),
-                new CompanyName(entity.getName())
+                new CompanyName(entity.getName()),
+                entity.isActive()
         );
     }
 }

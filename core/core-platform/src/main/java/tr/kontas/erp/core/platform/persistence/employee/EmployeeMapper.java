@@ -13,7 +13,8 @@ public class EmployeeMapper {
                 EmployeeId.of(entity.getId()),
                 TenantId.of(entity.getTenantId()),
                 new EmployeeName(entity.getName()),
-                DepartmentId.of(entity.getDepartmentId())
+                DepartmentId.of(entity.getDepartmentId()),
+                entity.isActive()
         );
     }
 

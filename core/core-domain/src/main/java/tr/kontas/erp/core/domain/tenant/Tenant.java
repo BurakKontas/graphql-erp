@@ -35,6 +35,17 @@ public class Tenant extends AggregateRoot<TenantId> {
         registerEvent(new TenantCreatedEvent(id));
     }
 
+    public Tenant(TenantId id, TenantName name, TenantCode code, AuthProviderType authMode,
+                  OidcSettings oidcSettings, LdapSettings ldapSettings, boolean active) {
+        super(id);
+        this.name = name;
+        this.code = code;
+        this.authMode = authMode != null ? authMode : AuthProviderType.LOCAL;
+        this.oidcSettings = oidcSettings;
+        this.ldapSettings = ldapSettings;
+        this.active = active;
+    }
+
     public void changeAuthMode(AuthProviderType authMode) {
         this.authMode = authMode != null ? authMode : AuthProviderType.LOCAL;
     }

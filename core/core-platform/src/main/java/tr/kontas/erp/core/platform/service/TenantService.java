@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CreateTenantService implements
+public class TenantService implements
         CreateTenantUseCase,
         GetTenantsUseCase,
         GetTenantByIdUseCase,

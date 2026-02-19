@@ -29,6 +29,15 @@ public class Department extends AggregateRoot<DepartmentId> {
         registerEvent(new DepartmentCreatedEvent(id));
     }
 
+    public Department(DepartmentId id, TenantId tenantId, DepartmentName name, CompanyId companyId, DepartmentId parentId, boolean active) {
+        super(id);
+        this.tenantId = tenantId;
+        this.name = name;
+        this.parentId = parentId;
+        this.companyId = companyId;
+        this.active = active;
+    }
+
     public void addSubDepartmentId(DepartmentId subId) {
         subDepartments.add(subId);
     }

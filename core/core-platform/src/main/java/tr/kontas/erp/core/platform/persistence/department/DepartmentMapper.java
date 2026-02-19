@@ -19,7 +19,8 @@ public class DepartmentMapper {
                 TenantId.of(entity.getTenantId()),
                 new DepartmentName(entity.getName()),
                 CompanyId.of(entity.getCompanyId()),
-                parentId
+                parentId,
+                entity.isActive()
         );
 
         if (entity.getSubDepartments() != null) {
