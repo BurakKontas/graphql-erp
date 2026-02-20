@@ -17,10 +17,10 @@ type BusinessPartnerPayload {
 }
 
 extend type Mutation {
-    createBusinessPartner(input: CreateBusinessPartnerInput!): BusinessPartnerPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    createBusinessPartner(input: CreateBusinessPartnerInput!): BusinessPartnerPayload! @auth(permissions: ["BUSINESS_PARTNER:CREATE"])
 }
 
 extend type Query {
-    businessPartner(id: ID!): BusinessPartnerPayload
-    businessPartners(companyId: ID): [BusinessPartnerPayload]
+    businessPartner(id: ID!): BusinessPartnerPayload @auth(permissions: ["BUSINESS_PARTNER:READ"])
+    businessPartners(companyId: ID): [BusinessPartnerPayload] @auth(permissions: ["BUSINESS_PARTNER:READ"])
 }

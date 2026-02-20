@@ -41,13 +41,13 @@ type TenantPayload {
 }
 
 extend type Mutation {
-    createTenant(input: CreateTenantInput!): TenantPayload! @auth
-    updateTenantAuthMode(input: UpdateTenantAuthModeInput!): TenantPayload! @auth
-    updateTenantOidcSettings(input: UpdateTenantOidcSettingsInput!): TenantPayload! @auth
-    updateTenantLdapSettings(input: UpdateTenantLdapSettingsInput!): TenantPayload! @auth
+    createTenant(input: CreateTenantInput!): TenantPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    updateTenantAuthMode(input: UpdateTenantAuthModeInput!): TenantPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    updateTenantOidcSettings(input: UpdateTenantOidcSettingsInput!): TenantPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    updateTenantLdapSettings(input: UpdateTenantLdapSettingsInput!): TenantPayload! @auth(permissions: ["GENERAL:ADMIN"])
 }
 
 extend type Query {
-    tenant(id: ID!): TenantPayload
-    tenants: [TenantPayload]
+    tenant(id: ID!): TenantPayload @auth(permissions: ["GENERAL:ADMIN"])
+    tenants: [TenantPayload] @auth(permissions: ["GENERAL:ADMIN"])
 }

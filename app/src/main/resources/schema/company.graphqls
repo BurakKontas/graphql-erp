@@ -12,10 +12,10 @@ type CompanyPayload {
 }
 
 extend type Mutation {
-    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(permissions: ["COMPANY:CREATE"])
 }
 
 extend type Query {
-    company(id: ID!): CompanyPayload
-    companies(tenantId: ID!): [CompanyPayload]
+    company(id: ID!): CompanyPayload @auth(permissions: ["COMPANY:READ"])
+    companies(tenantId: ID!): [CompanyPayload] @auth(permissions: ["COMPANY:READ"])
 }

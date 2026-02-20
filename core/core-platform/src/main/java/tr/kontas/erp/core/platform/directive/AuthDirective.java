@@ -69,6 +69,11 @@ public class AuthDirective implements SchemaDirectiveWiring {
                     .build();
         }
 
+        // GENERAL:ADMIN has full access to everything
+        if (userPermissions.contains("GENERAL:ADMIN")) {
+            return;
+        }
+
         boolean hasAccess = switch (mode.toUpperCase()) {
             case "ALL" -> userPermissions.containsAll(requiredPermissions);
             case "ANY" -> requiredPermissions.stream().anyMatch(userPermissions::contains);

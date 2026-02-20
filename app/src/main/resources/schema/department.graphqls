@@ -13,10 +13,10 @@ type DepartmentPayload {
 }
 
 extend type Mutation {
-    createDepartment(input: CreateDepartmentInput!): DepartmentPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    createDepartment(input: CreateDepartmentInput!): DepartmentPayload! @auth(permissions: ["DEPARTMENT:CREATE"])
 }
 
 extend type Query {
-    department(id: ID!): DepartmentPayload
-    departments(companyId: ID): [DepartmentPayload]
+    department(id: ID!): DepartmentPayload @auth(permissions: ["DEPARTMENT:READ"])
+    departments(companyId: ID): [DepartmentPayload] @auth(permissions: ["DEPARTMENT:READ"])
 }

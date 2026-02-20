@@ -71,22 +71,22 @@ type UnitPayload {
 # ─── Mutations ───
 
 extend type Mutation {
-    createCurrency(input: CreateCurrencyInput!): CurrencyPayload! @auth(permissions: ["GENERAL:ADMIN"])
-    createPaymentTerm(input: CreatePaymentTermInput!): PaymentTermPayload! @auth(permissions: ["GENERAL:ADMIN"])
-    createTax(input: CreateTaxInput!): TaxPayload! @auth(permissions: ["GENERAL:ADMIN"])
-    createUnit(input: CreateUnitInput!): UnitPayload! @auth(permissions: ["GENERAL:ADMIN"])
+    createCurrency(input: CreateCurrencyInput!): CurrencyPayload! @auth(permissions: ["CURRENCY:CREATE"])
+    createPaymentTerm(input: CreatePaymentTermInput!): PaymentTermPayload! @auth(permissions: ["PAYMENT_TERM:CREATE"])
+    createTax(input: CreateTaxInput!): TaxPayload! @auth(permissions: ["TAX:CREATE"])
+    createUnit(input: CreateUnitInput!): UnitPayload! @auth(permissions: ["UNIT:CREATE"])
 }
 
 # ─── Queries ───
 
 extend type Query {
-    currency(code: ID!): CurrencyPayload
-    currencies: [CurrencyPayload]
+    currency(code: ID!): CurrencyPayload @auth(permissions: ["CURRENCY:READ"])
+    currencies: [CurrencyPayload] @auth(permissions: ["CURRENCY:READ"])
 
-    paymentTerms(companyId: ID!): [PaymentTermPayload]
+    paymentTerms(companyId: ID!): [PaymentTermPayload] @auth(permissions: ["PAYMENT_TERM:READ"])
 
-    taxes(companyId: ID!): [TaxPayload]
+    taxes(companyId: ID!): [TaxPayload] @auth(permissions: ["TAX:READ"])
 
-    unit(code: ID!): UnitPayload
-    units: [UnitPayload]
+    unit(code: ID!): UnitPayload @auth(permissions: ["UNIT:READ"])
+    units: [UnitPayload] @auth(permissions: ["UNIT:READ"])
 }
