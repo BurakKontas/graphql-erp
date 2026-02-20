@@ -10,7 +10,7 @@ type EmployeePayload {
 }
 
 extend type Mutation {
-    createEmployee(input: CreateEmployeeInput!): EmployeePayload! @auth(permissions: ["ADMIN"])
+    createEmployee(input: CreateEmployeeInput!): EmployeePayload! @auth(permissions: ["GENERAL:ADMIN"])
 }
 
 extend type Query {
