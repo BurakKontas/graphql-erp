@@ -7,6 +7,8 @@ import tr.kontas.erp.app.businesspartner.dtos.BusinessPartnerPayload;
 import tr.kontas.erp.app.company.dtos.CompanyPayload;
 import tr.kontas.erp.app.company.dtos.CreateCompanyInput;
 import tr.kontas.erp.app.department.dtos.DepartmentPayload;
+import tr.kontas.erp.app.reference.dtos.PaymentTermPayload;
+import tr.kontas.erp.app.reference.dtos.TaxPayload;
 import tr.kontas.erp.core.application.company.CreateCompanyCommand;
 import tr.kontas.erp.core.application.company.CreateCompanyUseCase;
 import tr.kontas.erp.core.application.company.GetCompaniesByTenantIdsUseCase;
@@ -84,6 +86,32 @@ public class CompanyGraphql {
         CompanyPayload company = dfe.getSource();
 
         DataLoader<String, List<BusinessPartnerPayload>> dataLoader = dfe.getDataLoader("businessPartnersLoader");
+
+        if (dataLoader == null || company == null) {
+            return CompletableFuture.supplyAsync(List::of);
+        }
+
+        return dataLoader.load(company.getId());
+    }
+
+    @DgsData(parentType = "CompanyPayload")
+    public CompletableFuture<List<PaymentTermPayload>> paymentTerms(DgsDataFetchingEnvironment dfe) {
+        CompanyPayload company = dfe.getSource();
+
+        DataLoader<String, List<PaymentTermPayload>> dataLoader = dfe.getDataLoader("paymentTermsLoader");
+
+        if (dataLoader == null || company == null) {
+            return CompletableFuture.supplyAsync(List::of);
+        }
+
+        return dataLoader.load(company.getId());
+    }
+
+    @DgsData(parentType = "CompanyPayload")
+    public CompletableFuture<List<TaxPayload>> taxes(DgsDataFetchingEnvironment dfe) {
+        CompanyPayload company = dfe.getSource();
+
+        DataLoader<String, List<TaxPayload>> dataLoader = dfe.getDataLoader("taxesLoader");
 
         if (dataLoader == null || company == null) {
             return CompletableFuture.supplyAsync(List::of);
