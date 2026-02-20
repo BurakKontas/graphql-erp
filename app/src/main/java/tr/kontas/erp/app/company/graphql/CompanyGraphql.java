@@ -3,6 +3,7 @@ package tr.kontas.erp.app.company.graphql;
 import com.netflix.graphql.dgs.*;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
+import tr.kontas.erp.app.businesspartner.dtos.BusinessPartnerPayload;
 import tr.kontas.erp.app.company.dtos.CompanyPayload;
 import tr.kontas.erp.app.company.dtos.CreateCompanyInput;
 import tr.kontas.erp.app.department.dtos.DepartmentPayload;
@@ -70,6 +71,19 @@ public class CompanyGraphql {
         CompanyPayload company = dfe.getSource();
 
         DataLoader<String, List<DepartmentPayload>> dataLoader = dfe.getDataLoader("departmentsLoader");
+
+        if (dataLoader == null || company == null) {
+            return CompletableFuture.supplyAsync(List::of);
+        }
+
+        return dataLoader.load(company.getId());
+    }
+
+    @DgsData(parentType = "CompanyPayload")
+    public CompletableFuture<List<BusinessPartnerPayload>> businessPartners(DgsDataFetchingEnvironment dfe) {
+        CompanyPayload company = dfe.getSource();
+
+        DataLoader<String, List<BusinessPartnerPayload>> dataLoader = dfe.getDataLoader("businessPartnersLoader");
 
         if (dataLoader == null || company == null) {
             return CompletableFuture.supplyAsync(List::of);

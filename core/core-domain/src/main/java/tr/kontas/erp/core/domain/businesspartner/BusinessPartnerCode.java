@@ -13,5 +13,4 @@ public class BusinessPartnerCode extends ValueObject {
         }
         this.value = value;
     }
-
 }

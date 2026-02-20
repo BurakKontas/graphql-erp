@@ -20,6 +20,8 @@ public interface BusinessPartnerRepository extends Repository<BusinessPartner, B
 
     List<BusinessPartner> findByRole(TenantId tenantId, CompanyId companyId, BusinessPartnerRole role);
 
+    List<BusinessPartner> findByIds(List<BusinessPartnerId> ids);
+
     boolean existsByCode(TenantId tenantId, CompanyId companyId, BusinessPartnerCode code);
 
     void save(BusinessPartner businessPartner);

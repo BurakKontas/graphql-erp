@@ -6,10 +6,11 @@ type CompanyPayload {
     id: ID!
     name: String!
     departments: [DepartmentPayload]
+    businessPartners: [BusinessPartnerPayload]
 }
 
 extend type Mutation {
-    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(permissions: ["ADMIN"])
+    createCompany(input: CreateCompanyInput!): CompanyPayload! @auth(permissions: ["GENERAL:ADMIN"])
 }
 
 extend type Query {

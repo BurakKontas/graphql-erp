@@ -1,5 +1,6 @@
 package tr.kontas.erp.core.platform.service.identity;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.application.identity.*;
@@ -18,6 +19,7 @@ public class AuthenticationApplicationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    @Transactional
     public List<AuthToken> authenticate(AuthenticationCommand command) {
 
         AuthenticationProvider provider = providerRegistry.getProvider(command.provider());

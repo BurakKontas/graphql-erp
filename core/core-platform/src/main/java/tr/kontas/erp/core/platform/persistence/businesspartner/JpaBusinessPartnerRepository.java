@@ -19,6 +19,8 @@ public interface JpaBusinessPartnerRepository extends JpaRepository<BusinessPart
 
     List<BusinessPartnerJpaEntity> findByTenantIdAndCompanyIdIn(UUID tenantId, List<UUID> companyIds);
 
+    List<BusinessPartnerJpaEntity> findByIdIn(List<UUID> ids);
+
     boolean existsByTenantIdAndCompanyIdAndCode(UUID tenantId, UUID companyId, String code);
 
     @Query("""

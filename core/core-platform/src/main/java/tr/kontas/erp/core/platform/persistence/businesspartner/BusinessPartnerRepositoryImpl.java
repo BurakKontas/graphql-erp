@@ -58,6 +58,18 @@ public class BusinessPartnerRepositoryImpl implements BusinessPartnerRepository 
     }
 
     @Override
+    public List<BusinessPartner> findByIds(List<BusinessPartnerId> ids) {
+        List<UUID> uuids = ids.stream()
+                .map(BusinessPartnerId::asUUID)
+                .collect(Collectors.toList());
+
+        return jpaRepository.findByIdIn(uuids)
+                .stream()
+                .map(BusinessPartnerMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<BusinessPartner> findByRole(TenantId tenantId, CompanyId companyId, BusinessPartnerRole role) {
         return jpaRepository.findByRole(tenantId.asUUID(), companyId.asUUID(), role)
                 .stream()

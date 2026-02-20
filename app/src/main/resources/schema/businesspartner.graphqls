@@ -1,0 +1,26 @@
+input CreateBusinessPartnerInput {
+    companyId: String!
+    code: String!
+    name: String!
+    roles: [String!]!
+    taxNumber: String
+}
+
+type BusinessPartnerPayload {
+    id: ID!
+    code: String!
+    name: String!
+    roles: [String!]!
+    taxNumber: String
+    active: Boolean!
+    company: CompanyPayload
+}
+
+extend type Mutation {
+    createBusinessPartner(input: CreateBusinessPartnerInput!): BusinessPartnerPayload! @auth(permissions: ["GENERAL:ADMIN"])
+}
+
+extend type Query {
+    businessPartner(id: ID!): BusinessPartnerPayload
+    businessPartners(companyId: ID): [BusinessPartnerPayload]
+}

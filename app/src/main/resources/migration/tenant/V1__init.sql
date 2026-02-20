@@ -47,3 +47,39 @@ CREATE TABLE employees
 -- Indexes for performance
 CREATE INDEX idx_employee_tenant_id ON employees (tenant_id);
 CREATE INDEX idx_employee_department_id ON employees (department_id);
+
+-- Business Partners table
+CREATE TABLE business_partner
+(
+    id         UUID PRIMARY KEY,
+    tenant_id  UUID         NOT NULL,
+    company_id UUID         NOT NULL,
+    code       VARCHAR(255) NOT NULL,
+    name       VARCHAR(255) NOT NULL,
+    tax_number VARCHAR(255) NOT NULL,
+    active     BOOLEAN      NOT NULL DEFAULT TRUE,
+
+    CONSTRAINT fk_business_partner_company
+        FOREIGN KEY (company_id) REFERENCES companies (id)
+);
+
+-- Indexes for performance
+CREATE INDEX idx_bp_tenant_id ON business_partner (tenant_id);
+CREATE INDEX idx_bp_company_id ON business_partner (company_id);
+CREATE INDEX idx_bp_code ON business_partner (code);
+
+
+CREATE TABLE business_partner_roles
+(
+    business_partner_id UUID         NOT NULL,
+    role                VARCHAR(100) NOT NULL,
+
+    PRIMARY KEY (business_partner_id, role),
+
+    CONSTRAINT fk_bp_roles_partner
+        FOREIGN KEY (business_partner_id)
+            REFERENCES business_partner (id)
+            ON DELETE CASCADE
+);
+
+CREATE INDEX idx_bp_roles_partner_id ON business_partner_roles (business_partner_id);
