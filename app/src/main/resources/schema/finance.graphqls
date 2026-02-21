@@ -1,0 +1,311 @@
+type AccountPayload {
+    id: ID!
+    companyId: ID!
+    code: String!
+    name: String!
+    type: String!
+    nature: String!
+    parentAccountId: ID
+    systemAccount: Boolean!
+    active: Boolean!
+    company: CompanyPayload
+    parentAccount: AccountPayload
+}
+
+input CreateAccountInput {
+    companyId: ID!
+    code: String!
+    name: String!
+    type: String!
+    nature: String!
+    parentAccountId: ID
+    systemAccount: Boolean
+}
+
+type AccountingPeriodPayload {
+    id: ID!
+    companyId: ID!
+    periodType: String!
+    startDate: String!
+    endDate: String!
+    status: String!
+    company: CompanyPayload
+}
+
+input CreateAccountingPeriodInput {
+    companyId: ID!
+    periodType: String!
+    startDate: String!
+    endDate: String!
+}
+
+type JournalEntryPayload {
+    id: ID!
+    companyId: ID!
+    entryNumber: String!
+    type: String!
+    periodId: ID
+    entryDate: String!
+    description: String
+    referenceType: String
+    referenceId: String
+    currencyCode: String
+    exchangeRate: BigDecimal
+    status: String!
+    totalDebit: BigDecimal!
+    totalCredit: BigDecimal!
+    lines: [JournalEntryLinePayload!]!
+    company: CompanyPayload
+}
+
+type JournalEntryLinePayload {
+    id: ID!
+    accountId: String!
+    accountCode: String
+    accountName: String
+    debitAmount: BigDecimal!
+    creditAmount: BigDecimal!
+    description: String
+}
+
+input CreateJournalEntryInput {
+    companyId: ID!
+    type: String!
+    periodId: ID
+    entryDate: String!
+    description: String
+    referenceType: String
+    referenceId: String
+    currencyCode: String
+    exchangeRate: BigDecimal
+    lines: [JournalEntryLineInput!]!
+}
+
+input JournalEntryLineInput {
+    accountId: String!
+    accountCode: String
+    accountName: String
+    debitAmount: BigDecimal
+    creditAmount: BigDecimal
+    description: String
+}
+
+type SalesInvoicePayload {
+    id: ID!
+    companyId: ID!
+    invoiceNumber: String!
+    invoiceType: String!
+    salesOrderId: String
+    salesOrderNumber: String
+    customerId: String
+    customerName: String
+    invoiceDate: String!
+    dueDate: String
+    currencyCode: String
+    exchangeRate: BigDecimal
+    status: String!
+    subtotal: BigDecimal!
+    taxTotal: BigDecimal!
+    total: BigDecimal!
+    paidAmount: BigDecimal!
+    remainingAmount: BigDecimal!
+    lines: [SalesInvoiceLinePayload!]!
+    company: CompanyPayload
+    customer: BusinessPartnerPayload
+}
+
+type SalesInvoiceLinePayload {
+    id: ID!
+    salesOrderLineId: String
+    itemId: String
+    itemDescription: String!
+    unitCode: String
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    lineTotal: BigDecimal!
+    taxAmount: BigDecimal!
+    lineTotalWithTax: BigDecimal!
+    revenueAccountId: String
+}
+
+input CreateSalesInvoiceInput {
+    companyId: ID!
+    invoiceType: String
+    salesOrderId: String
+    salesOrderNumber: String
+    customerId: String
+    customerName: String
+    invoiceDate: String!
+    dueDate: String
+    currencyCode: String
+    exchangeRate: BigDecimal
+    lines: [SalesInvoiceLineInput!]!
+}
+
+input SalesInvoiceLineInput {
+    salesOrderLineId: String
+    itemId: String
+    itemDescription: String!
+    unitCode: String
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    revenueAccountId: String
+}
+
+type PaymentPayload {
+    id: ID!
+    companyId: ID!
+    paymentNumber: String!
+    paymentType: String!
+    invoiceId: String
+    customerId: String
+    paymentDate: String!
+    amount: BigDecimal!
+    currencyCode: String
+    exchangeRate: BigDecimal
+    paymentMethod: String!
+    status: String!
+    bankAccountRef: String
+    referenceNumber: String
+    company: CompanyPayload
+    customer: BusinessPartnerPayload
+}
+
+input CreatePaymentInput {
+    companyId: ID!
+    paymentType: String!
+    invoiceId: String
+    customerId: String
+    paymentDate: String!
+    amount: BigDecimal!
+    currencyCode: String
+    exchangeRate: BigDecimal
+    paymentMethod: String!
+    bankAccountRef: String
+    referenceNumber: String
+}
+
+type CreditNotePayload {
+    id: ID!
+    companyId: ID!
+    creditNoteNumber: String!
+    invoiceId: String
+    customerId: String
+    creditNoteDate: String!
+    currencyCode: String
+    status: String!
+    total: BigDecimal!
+    appliedAmount: BigDecimal!
+    reason: String
+    lines: [CreditNoteLinePayload!]!
+    company: CompanyPayload
+}
+
+type CreditNoteLinePayload {
+    id: ID!
+    itemId: String
+    itemDescription: String
+    unitCode: String
+    quantity: BigDecimal
+    unitPrice: BigDecimal
+    taxCode: String
+    taxRate: BigDecimal
+    lineTotal: BigDecimal
+    taxAmount: BigDecimal
+    lineTotalWithTax: BigDecimal
+}
+
+input CreateCreditNoteInput {
+    companyId: ID!
+    invoiceId: String
+    customerId: String
+    creditNoteDate: String!
+    currencyCode: String
+    reason: String
+    lines: [CreditNoteLineInput!]!
+}
+
+input CreditNoteLineInput {
+    itemId: String
+    itemDescription: String!
+    unitCode: String
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+}
+
+type ExpensePayload {
+    id: ID!
+    companyId: ID!
+    expenseNumber: String!
+    description: String!
+    category: String
+    submittedBy: String
+    expenseDate: String!
+    amount: BigDecimal!
+    currencyCode: String
+    status: String!
+    approvedBy: String
+    receiptReference: String
+    expenseAccountId: String
+    company: CompanyPayload
+}
+
+input CreateExpenseInput {
+    companyId: ID!
+    description: String!
+    category: String
+    submittedBy: String
+    expenseDate: String!
+    amount: BigDecimal!
+    currencyCode: String
+    receiptReference: String
+    expenseAccountId: String
+}
+
+extend type Query {
+    account(id: ID!): AccountPayload @auth(permissions: ["ACCOUNT:READ"])
+    accounts(companyId: ID!): [AccountPayload!]! @auth(permissions: ["ACCOUNT:READ"])
+    accountingPeriod(id: ID!): AccountingPeriodPayload @auth(permissions: ["ACCOUNTING_PERIOD:READ"])
+    accountingPeriods(companyId: ID!): [AccountingPeriodPayload!]! @auth(permissions: ["ACCOUNTING_PERIOD:READ"])
+    journalEntry(id: ID!): JournalEntryPayload @auth(permissions: ["JOURNAL_ENTRY:READ"])
+    journalEntries(companyId: ID!): [JournalEntryPayload!]! @auth(permissions: ["JOURNAL_ENTRY:READ"])
+    salesInvoice(id: ID!): SalesInvoicePayload @auth(permissions: ["SALES_INVOICE:READ"])
+    salesInvoices(companyId: ID!): [SalesInvoicePayload!]! @auth(permissions: ["SALES_INVOICE:READ"])
+    payment(id: ID!): PaymentPayload @auth(permissions: ["PAYMENT:READ"])
+    payments(companyId: ID!): [PaymentPayload!]! @auth(permissions: ["PAYMENT:READ"])
+    creditNote(id: ID!): CreditNotePayload @auth(permissions: ["CREDIT_NOTE:READ"])
+    creditNotes(companyId: ID!): [CreditNotePayload!]! @auth(permissions: ["CREDIT_NOTE:READ"])
+    expense(id: ID!): ExpensePayload @auth(permissions: ["EXPENSE:READ"])
+    expenses(companyId: ID!): [ExpensePayload!]! @auth(permissions: ["EXPENSE:READ"])
+}
+
+extend type Mutation {
+    createAccount(input: CreateAccountInput!): AccountPayload! @audit @auth(permissions: ["ACCOUNT:CREATE"])
+    createAccountingPeriod(input: CreateAccountingPeriodInput!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:CREATE"])
+    softCloseAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"])
+    hardCloseAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"])
+    reopenAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"])
+    createJournalEntry(input: CreateJournalEntryInput!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:CREATE"])
+    postJournalEntry(entryId: ID!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:UPDATE"])
+    reverseJournalEntry(entryId: ID!, reason: String!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:UPDATE"])
+    createSalesInvoice(input: CreateSalesInvoiceInput!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:CREATE"])
+    postSalesInvoice(invoiceId: ID!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:UPDATE"])
+    cancelSalesInvoice(invoiceId: ID!, reason: String!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:UPDATE"])
+    createPayment(input: CreatePaymentInput!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:CREATE"])
+    postPayment(paymentId: ID!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:UPDATE"])
+    cancelPayment(paymentId: ID!, reason: String!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:UPDATE"])
+    createCreditNote(input: CreateCreditNoteInput!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:CREATE"])
+    postCreditNote(creditNoteId: ID!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:UPDATE"])
+    applyCreditNote(creditNoteId: ID!, amount: BigDecimal!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:UPDATE"])
+    createExpense(input: CreateExpenseInput!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:CREATE"])
+    submitExpense(expenseId: ID!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
+    approveExpense(expenseId: ID!, approverId: String!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
+    rejectExpense(expenseId: ID!, reason: String!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
+    postExpense(expenseId: ID!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
+}

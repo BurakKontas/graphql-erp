@@ -105,13 +105,13 @@ extend type Query {
 # ─── Mutations ───
 
 extend type Mutation {
-    createSalesOrder(input: CreateSalesOrderInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:CREATE"])
-    addSalesOrderLine(input: AddSalesOrderLineInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
-    updateSalesOrderLine(input: UpdateSalesOrderLineInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
-    removeSalesOrderLine(orderId: ID!, lineId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
-    updateSalesOrderHeader(input: UpdateSalesOrderHeaderInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
-    sendSalesOrder(orderId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:SEND"])
-    acceptSalesOrder(orderId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:ACCEPT"])
-    confirmSalesOrder(orderId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:CONFIRM"])
-    cancelSalesOrder(input: CancelSalesOrderInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:CANCEL"])
+    createSalesOrder(input: CreateSalesOrderInput!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:CREATE"])
+    addSalesOrderLine(input: AddSalesOrderLineInput!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:UPDATE"])
+    updateSalesOrderLine(input: UpdateSalesOrderLineInput!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:UPDATE"])
+    removeSalesOrderLine(orderId: ID!, lineId: ID!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:UPDATE"])
+    updateSalesOrderHeader(input: UpdateSalesOrderHeaderInput!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:UPDATE"])
+    sendSalesOrder(orderId: ID!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:SEND"])
+    acceptSalesOrder(orderId: ID!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:ACCEPT"])
+    confirmSalesOrder(orderId: ID!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:CONFIRM"])
+    cancelSalesOrder(input: CancelSalesOrderInput!): SalesOrderPayload! @audit @auth(permissions: ["SALES_ORDER:CANCEL"])
 }

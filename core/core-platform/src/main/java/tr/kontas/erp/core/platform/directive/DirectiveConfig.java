@@ -8,8 +8,10 @@ import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 public class DirectiveConfig {
 
     @Bean
-    public RuntimeWiringConfigurer runtimeWiringConfigurer(AuthDirective authDirective) {
-        return builder ->
-                builder.directive("auth", authDirective);
+    public RuntimeWiringConfigurer runtimeWiringConfigurer(AuthDirective authDirective,
+                                                           AuditDirective auditDirective) {
+        return builder -> builder
+                .directive("auth", authDirective)
+                .directive("audit", auditDirective);
     }
 }

@@ -175,25 +175,25 @@ extend type Query {
 # ─── Mutations ───
 
 extend type Mutation {
-    createWarehouse(input: CreateWarehouseInput!): WarehousePayload! @auth(permissions: ["WAREHOUSE:CREATE"])
-    renameWarehouse(input: RenameWarehouseInput!): WarehousePayload! @auth(permissions: ["WAREHOUSE:UPDATE"])
-    deactivateWarehouse(warehouseId: ID!): WarehousePayload! @auth(permissions: ["WAREHOUSE:UPDATE"])
-    activateWarehouse(warehouseId: ID!): WarehousePayload! @auth(permissions: ["WAREHOUSE:UPDATE"])
+    createWarehouse(input: CreateWarehouseInput!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:CREATE"])
+    renameWarehouse(input: RenameWarehouseInput!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:UPDATE"])
+    deactivateWarehouse(warehouseId: ID!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:UPDATE"])
+    activateWarehouse(warehouseId: ID!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:UPDATE"])
 
-    createCategory(input: CreateCategoryInput!): CategoryPayload! @auth(permissions: ["CATEGORY:CREATE"])
-    renameCategory(input: RenameCategoryInput!): CategoryPayload! @auth(permissions: ["CATEGORY:UPDATE"])
-    deactivateCategory(categoryId: ID!): CategoryPayload! @auth(permissions: ["CATEGORY:UPDATE"])
-    activateCategory(categoryId: ID!): CategoryPayload! @auth(permissions: ["CATEGORY:UPDATE"])
+    createCategory(input: CreateCategoryInput!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:CREATE"])
+    renameCategory(input: RenameCategoryInput!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:UPDATE"])
+    deactivateCategory(categoryId: ID!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:UPDATE"])
+    activateCategory(categoryId: ID!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:UPDATE"])
 
-    createItem(input: CreateItemInput!): ItemPayload! @auth(permissions: ["ITEM:CREATE"])
-    updateItem(input: UpdateItemInput!): ItemPayload! @auth(permissions: ["ITEM:UPDATE"])
-    deactivateItem(itemId: ID!): ItemPayload! @auth(permissions: ["ITEM:UPDATE"])
-    activateItem(itemId: ID!): ItemPayload! @auth(permissions: ["ITEM:UPDATE"])
+    createItem(input: CreateItemInput!): ItemPayload! @audit @auth(permissions: ["ITEM:CREATE"])
+    updateItem(input: UpdateItemInput!): ItemPayload! @audit @auth(permissions: ["ITEM:UPDATE"])
+    deactivateItem(itemId: ID!): ItemPayload! @audit @auth(permissions: ["ITEM:UPDATE"])
+    activateItem(itemId: ID!): ItemPayload! @audit @auth(permissions: ["ITEM:UPDATE"])
 
-    reserveStock(input: ReserveStockInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
-    releaseReservation(input: ReleaseReservationInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
-    adjustStock(input: AdjustStockInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
-    setReorderPoint(input: SetReorderPointInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    reserveStock(input: ReserveStockInput!): StockLevelPayload! @audit @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    releaseReservation(input: ReleaseReservationInput!): StockLevelPayload! @audit @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    adjustStock(input: AdjustStockInput!): StockLevelPayload! @audit @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    setReorderPoint(input: SetReorderPointInput!): StockLevelPayload! @audit @auth(permissions: ["STOCK_LEVEL:UPDATE"])
 
-    recordStockMovement(input: RecordStockMovementInput!): StockMovementPayload! @auth(permissions: ["STOCK_MOVEMENT:CREATE"])
+    recordStockMovement(input: RecordStockMovementInput!): StockMovementPayload! @audit @auth(permissions: ["STOCK_MOVEMENT:CREATE"])
 }

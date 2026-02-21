@@ -80,4 +80,7 @@ public class TenantJpaEntity {
 
     @Column(name = "ldap_group_search_filter")
     private String ldapGroupSearchFilter = "(member={0})";
+
+    @Column(name = "audit_unauthenticated", nullable = false)
+    private boolean auditUnauthenticated = false;
 }

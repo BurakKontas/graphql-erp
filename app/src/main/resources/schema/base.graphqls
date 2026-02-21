@@ -1,4 +1,5 @@
 directive @auth(permissions:[String], mode: [String]) on FIELD_DEFINITION
+directive @audit on FIELD_DEFINITION
 
 type Mutation {
 

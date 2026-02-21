@@ -21,6 +21,18 @@
         <module>shipment/shipment-domain</module>
         <module>shipment/shipment-application</module>
         <module>shipment/shipment-platform</module>
+        <module>finance/finance-domain</module>
+        <module>finance/finance-application</module>
+        <module>finance/finance-platform</module>
+        <module>purchase/purchase-domain</module>
+        <module>purchase/purchase-application</module>
+        <module>purchase/purchase-platform</module>
+        <module>hr/hr-domain</module>
+        <module>hr/hr-application</module>
+        <module>hr/hr-platform</module>
+        <module>crm/crm-domain</module>
+        <module>crm/crm-platform</module>
+        <module>crm/crm-application</module>
     </modules>
 
     <properties>

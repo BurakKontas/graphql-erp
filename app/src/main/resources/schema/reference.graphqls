@@ -77,11 +77,11 @@ type UnitPayload {
 # ─── Mutations ───
 
 extend type Mutation {
-    createCurrency(input: CreateCurrencyInput!): CurrencyPayload! @auth(permissions: ["CURRENCY:CREATE"])
-    createPaymentTerm(input: CreatePaymentTermInput!): PaymentTermPayload! @auth(permissions: ["PAYMENT_TERM:CREATE"])
-    createTax(input: CreateTaxInput!): TaxPayload! @auth(permissions: ["TAX:CREATE"])
-    updateTaxRate(input: UpdateTaxRateInput!): TaxPayload! @auth(permissions: ["TAX:UPDATE"])
-    createUnit(input: CreateUnitInput!): UnitPayload! @auth(permissions: ["UNIT:CREATE"])
+    createCurrency(input: CreateCurrencyInput!): CurrencyPayload! @audit @auth(permissions: ["CURRENCY:CREATE"])
+    createPaymentTerm(input: CreatePaymentTermInput!): PaymentTermPayload! @audit @auth(permissions: ["PAYMENT_TERM:CREATE"])
+    createTax(input: CreateTaxInput!): TaxPayload! @audit @auth(permissions: ["TAX:CREATE"])
+    updateTaxRate(input: UpdateTaxRateInput!): TaxPayload! @audit @auth(permissions: ["TAX:UPDATE"])
+    createUnit(input: CreateUnitInput!): UnitPayload! @audit @auth(permissions: ["UNIT:CREATE"])
 }
 
 # ─── Queries ───

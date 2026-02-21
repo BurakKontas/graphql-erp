@@ -1,0 +1,2 @@
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS audit_unauthenticated BOOLEAN NOT NULL DEFAULT FALSE;
+

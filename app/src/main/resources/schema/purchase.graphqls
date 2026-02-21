@@ -1,0 +1,392 @@
+# ─── Purchase Request ───
+
+type PurchaseRequestPayload {
+    id: ID!
+    companyId: ID!
+    requestNumber: String!
+    requestedBy: String
+    approvedBy: String
+    requestDate: String!
+    neededBy: String
+    status: String!
+    notes: String
+    lines: [PurchaseRequestLinePayload!]!
+    company: CompanyPayload
+}
+
+type PurchaseRequestLinePayload {
+    id: ID!
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    quantity: BigDecimal!
+    preferredVendorId: String
+    notes: String
+}
+
+# ─── Purchase Order ───
+
+type PurchaseOrderPayload {
+    id: ID!
+    companyId: ID!
+    orderNumber: String!
+    requestId: String
+    vendorId: String!
+    vendorName: String
+    orderDate: String!
+    expectedDeliveryDate: String
+    currencyCode: String
+    paymentTermCode: String
+    deliveryAddress: AddressPayload
+    status: String!
+    subtotal: BigDecimal!
+    taxTotal: BigDecimal!
+    total: BigDecimal!
+    lines: [PurchaseOrderLinePayload!]!
+    company: CompanyPayload
+    vendor: BusinessPartnerPayload
+}
+
+type PurchaseOrderLinePayload {
+    id: ID!
+    requestLineId: String
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    orderedQty: BigDecimal!
+    receivedQty: BigDecimal!
+    remainingQty: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    lineTotal: BigDecimal!
+    taxAmount: BigDecimal!
+    expenseAccountId: String
+}
+
+type AddressPayload {
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    stateOrProvince: String
+    postalCode: String!
+    countryCode: String!
+}
+
+# ─── Goods Receipt ───
+
+type GoodsReceiptPayload {
+    id: ID!
+    companyId: ID!
+    receiptNumber: String!
+    purchaseOrderId: String
+    vendorId: String
+    warehouseId: String
+    receiptDate: String!
+    status: String!
+    vendorDeliveryNote: String
+    lines: [GoodsReceiptLinePayload!]!
+    company: CompanyPayload
+    vendor: BusinessPartnerPayload
+    warehouse: WarehousePayload
+}
+
+type GoodsReceiptLinePayload {
+    id: ID!
+    poLineId: String
+    itemId: String
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    batchNote: String
+}
+
+# ─── Vendor Invoice ───
+
+type VendorInvoicePayload {
+    id: ID!
+    companyId: ID!
+    invoiceNumber: String!
+    vendorInvoiceRef: String
+    purchaseOrderId: String
+    vendorId: String
+    vendorName: String
+    accountingPeriodId: String
+    invoiceDate: String!
+    dueDate: String
+    currencyCode: String
+    exchangeRate: BigDecimal
+    status: String!
+    subtotal: BigDecimal!
+    taxTotal: BigDecimal!
+    total: BigDecimal!
+    paidAmount: BigDecimal!
+    remainingAmount: BigDecimal!
+    lines: [VendorInvoiceLinePayload!]!
+    company: CompanyPayload
+    vendor: BusinessPartnerPayload
+}
+
+type VendorInvoiceLinePayload {
+    id: ID!
+    poLineId: String
+    itemId: String
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    lineTotal: BigDecimal!
+    taxAmount: BigDecimal!
+    lineTotalWithTax: BigDecimal!
+    accountId: String
+}
+
+# ─── Purchase Return ───
+
+type PurchaseReturnPayload {
+    id: ID!
+    companyId: ID!
+    returnNumber: String!
+    purchaseOrderId: String
+    goodsReceiptId: String
+    vendorId: String
+    warehouseId: String
+    returnDate: String!
+    reason: String!
+    status: String!
+    lines: [PurchaseReturnLinePayload!]!
+    company: CompanyPayload
+    vendor: BusinessPartnerPayload
+    warehouse: WarehousePayload
+}
+
+type PurchaseReturnLinePayload {
+    id: ID!
+    receiptLineId: String
+    itemId: String
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    lineReason: String
+}
+
+# ─── Vendor Catalog ───
+
+type VendorCatalogPayload {
+    id: ID!
+    companyId: ID!
+    vendorId: String!
+    vendorName: String
+    currencyCode: String
+    validFrom: String!
+    validTo: String
+    active: Boolean!
+    entries: [VendorCatalogEntryPayload!]!
+    company: CompanyPayload
+    vendor: BusinessPartnerPayload
+}
+
+type VendorCatalogEntryPayload {
+    id: ID!
+    itemId: String
+    itemDescription: String
+    unitCode: String!
+    unitPrice: BigDecimal!
+    minimumOrderQty: BigDecimal
+    priceBreakQty: BigDecimal
+    priceBreakUnitPrice: BigDecimal
+}
+
+# ─── Inputs ───
+
+input CreatePurchaseRequestInput {
+    companyId: ID!
+    requestedBy: String
+    requestDate: String
+    neededBy: String
+    notes: String
+    lines: [PurchaseRequestLineInput!]!
+}
+
+input PurchaseRequestLineInput {
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    quantity: BigDecimal!
+    preferredVendorId: String
+    notes: String
+}
+
+input CreatePurchaseOrderInput {
+    companyId: ID!
+    requestId: String
+    vendorId: String!
+    vendorName: String
+    orderDate: String
+    expectedDeliveryDate: String
+    currencyCode: String
+    paymentTermCode: String
+    addressLine1: String
+    addressLine2: String
+    city: String
+    stateOrProvince: String
+    postalCode: String
+    countryCode: String
+    lines: [PurchaseOrderLineInput!]!
+}
+
+input PurchaseOrderLineInput {
+    requestLineId: String
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    orderedQty: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    expenseAccountId: String
+}
+
+input CreateGoodsReceiptInput {
+    companyId: ID!
+    purchaseOrderId: String
+    vendorId: String
+    warehouseId: String!
+    receiptDate: String
+    vendorDeliveryNote: String
+    lines: [GoodsReceiptLineInput!]!
+}
+
+input GoodsReceiptLineInput {
+    poLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    batchNote: String
+}
+
+input CreateVendorInvoiceInput {
+    companyId: ID!
+    vendorInvoiceRef: String
+    purchaseOrderId: String
+    vendorId: String!
+    vendorName: String
+    accountingPeriodId: String
+    invoiceDate: String
+    dueDate: String
+    currencyCode: String
+    exchangeRate: BigDecimal
+    lines: [VendorInvoiceLineInput!]!
+}
+
+input VendorInvoiceLineInput {
+    poLineId: String
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    accountId: String
+}
+
+input CreatePurchaseReturnInput {
+    companyId: ID!
+    purchaseOrderId: String
+    goodsReceiptId: String
+    vendorId: String
+    warehouseId: String!
+    returnDate: String
+    reason: String!
+    lines: [PurchaseReturnLineInput!]!
+}
+
+input PurchaseReturnLineInput {
+    receiptLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    lineReason: String
+}
+
+input CreateVendorCatalogInput {
+    companyId: ID!
+    vendorId: String!
+    vendorName: String
+    currencyCode: String
+    validFrom: String!
+    validTo: String
+    entries: [VendorCatalogEntryInput!]!
+}
+
+input VendorCatalogEntryInput {
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    unitPrice: BigDecimal!
+    minimumOrderQty: BigDecimal
+    priceBreakQty: BigDecimal
+    priceBreakUnitPrice: BigDecimal
+}
+
+input CancelPurchaseOrderInput {
+    orderId: ID!
+    reason: String!
+}
+
+input CancelVendorInvoiceInput {
+    invoiceId: ID!
+    reason: String!
+}
+
+# ─── Queries ───
+
+extend type Query {
+    purchaseRequest(id: ID!): PurchaseRequestPayload @auth(permissions: ["PURCHASE_REQUEST:READ"])
+    purchaseRequests(companyId: ID!): [PurchaseRequestPayload!]! @auth(permissions: ["PURCHASE_REQUEST:READ"])
+    purchaseOrder(id: ID!): PurchaseOrderPayload @auth(permissions: ["PURCHASE_ORDER:READ"])
+    purchaseOrders(companyId: ID!): [PurchaseOrderPayload!]! @auth(permissions: ["PURCHASE_ORDER:READ"])
+    goodsReceipt(id: ID!): GoodsReceiptPayload @auth(permissions: ["GOODS_RECEIPT:READ"])
+    goodsReceipts(companyId: ID!): [GoodsReceiptPayload!]! @auth(permissions: ["GOODS_RECEIPT:READ"])
+    vendorInvoice(id: ID!): VendorInvoicePayload @auth(permissions: ["VENDOR_INVOICE:READ"])
+    vendorInvoices(companyId: ID!): [VendorInvoicePayload!]! @auth(permissions: ["VENDOR_INVOICE:READ"])
+    purchaseReturn(id: ID!): PurchaseReturnPayload @auth(permissions: ["PURCHASE_RETURN:READ"])
+    purchaseReturns(companyId: ID!): [PurchaseReturnPayload!]! @auth(permissions: ["PURCHASE_RETURN:READ"])
+    vendorCatalog(id: ID!): VendorCatalogPayload @auth(permissions: ["VENDOR_CATALOG:READ"])
+    vendorCatalogs(companyId: ID!): [VendorCatalogPayload!]! @auth(permissions: ["VENDOR_CATALOG:READ"])
+}
+
+# ─── Mutations ───
+
+extend type Mutation {
+    createPurchaseRequest(input: CreatePurchaseRequestInput!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:CREATE"])
+    submitPurchaseRequest(requestId: ID!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:UPDATE"])
+    approvePurchaseRequest(requestId: ID!, approverId: String!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:APPROVE"])
+    rejectPurchaseRequest(requestId: ID!, approverId: String!, reason: String!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:REJECT"])
+    cancelPurchaseRequest(requestId: ID!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:CANCEL"])
+
+    createPurchaseOrder(input: CreatePurchaseOrderInput!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CREATE"])
+    sendPurchaseOrder(orderId: ID!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:SEND"])
+    confirmPurchaseOrder(orderId: ID!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CONFIRM"])
+    cancelPurchaseOrder(input: CancelPurchaseOrderInput!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CANCEL"])
+
+    createGoodsReceipt(input: CreateGoodsReceiptInput!): GoodsReceiptPayload! @audit @auth(permissions: ["GOODS_RECEIPT:CREATE"])
+    postGoodsReceipt(receiptId: ID!): GoodsReceiptPayload! @audit @auth(permissions: ["GOODS_RECEIPT:POST"])
+
+    createVendorInvoice(input: CreateVendorInvoiceInput!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:CREATE"])
+    postVendorInvoice(invoiceId: ID!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:POST"])
+    cancelVendorInvoice(input: CancelVendorInvoiceInput!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:CANCEL"])
+
+    createPurchaseReturn(input: CreatePurchaseReturnInput!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:CREATE"])
+    postPurchaseReturn(returnId: ID!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:POST"])
+    completePurchaseReturn(returnId: ID!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:COMPLETE"])
+
+    createVendorCatalog(input: CreateVendorCatalogInput!): VendorCatalogPayload! @audit @auth(permissions: ["VENDOR_CATALOG:CREATE"])
+    deactivateVendorCatalog(catalogId: ID!): VendorCatalogPayload! @audit @auth(permissions: ["VENDOR_CATALOG:UPDATE"])
+}
+

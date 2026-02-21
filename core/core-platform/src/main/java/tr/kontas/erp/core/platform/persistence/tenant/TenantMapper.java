@@ -48,6 +48,8 @@ public final class TenantMapper {
             entity.setLdapGroupSearchFilter(ldap.getGroupSearchFilter());
         }
 
+        entity.setAuditUnauthenticated(tenant.isAuditUnauthenticated());
+
         return entity;
     }
 
@@ -86,7 +88,9 @@ public final class TenantMapper {
                 new TenantCode(entity.getCode()),
                 entity.getAuthMode(),
                 oidcSettings,
-                ldapSettings
+                ldapSettings,
+                true,
+                entity.isAuditUnauthenticated()
         );
     }
 

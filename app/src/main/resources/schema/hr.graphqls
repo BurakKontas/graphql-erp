@@ -1,0 +1,393 @@
+type PositionPayload {
+    id: ID!
+    companyId: ID!
+    code: String!
+    title: String!
+    departmentId: String
+    level: String
+    salaryGrade: String
+    headcount: Int!
+    filledCount: Int!
+    status: String!
+    company: CompanyPayload
+}
+
+input CreatePositionInput {
+    companyId: ID!
+    code: String!
+    title: String!
+    departmentId: String
+    level: String
+    salaryGrade: String
+    headcount: Int!
+}
+
+type HrEmployeePayload {
+    id: ID!
+    companyId: ID!
+    employeeNumber: String!
+    userId: String
+    firstName: String!
+    lastName: String!
+    dateOfBirth: String
+    nationalId: String
+    gender: String
+    nationality: String
+    personalEmail: String
+    workEmail: String
+    phone: String
+    addressLine: String
+    city: String
+    contactCountryCode: String
+    positionId: String
+    departmentId: String
+    managerId: String
+    hireDate: String!
+    terminationDate: String
+    employmentType: String!
+    status: String!
+    countryCode: String
+    company: CompanyPayload
+}
+
+input CreateHrEmployeeInput {
+    companyId: ID!
+    userId: String
+    firstName: String!
+    lastName: String!
+    dateOfBirth: String
+    nationalId: String
+    gender: String
+    nationality: String
+    personalEmail: String
+    workEmail: String
+    phone: String
+    addressLine: String
+    city: String
+    contactCountryCode: String
+    positionId: String
+    departmentId: String
+    managerId: String
+    hireDate: String!
+    employmentType: String!
+    countryCode: String
+}
+
+type ContractPayload {
+    id: ID!
+    companyId: ID!
+    contractNumber: String!
+    employeeId: String!
+    startDate: String!
+    endDate: String
+    contractType: String!
+    grossSalary: BigDecimal!
+    currencyCode: String
+    payrollConfigId: String
+    status: String!
+    company: CompanyPayload
+}
+
+input CreateContractInput {
+    companyId: ID!
+    employeeId: String!
+    startDate: String!
+    endDate: String
+    contractType: String!
+    grossSalary: BigDecimal!
+    currencyCode: String
+    payrollConfigId: String
+}
+
+type LeavePolicyPayload {
+    id: ID!
+    companyId: ID!
+    name: String!
+    countryCode: String
+    active: Boolean!
+    company: CompanyPayload
+}
+
+input CreateLeavePolicyInput {
+    companyId: ID!
+    name: String!
+    countryCode: String
+}
+
+type LeaveRequestPayload {
+    id: ID!
+    companyId: ID!
+    requestNumber: String!
+    employeeId: String!
+    approverId: String
+    leaveType: String!
+    startDate: String!
+    endDate: String!
+    requestedDays: Int!
+    status: String!
+    reason: String
+    documentRef: String
+    rejectionReason: String
+    company: CompanyPayload
+}
+
+input CreateLeaveRequestInput {
+    companyId: ID!
+    employeeId: String!
+    leaveType: String!
+    startDate: String!
+    endDate: String!
+    requestedDays: Int!
+    reason: String
+    documentRef: String
+}
+
+type LeaveBalancePayload {
+    id: ID!
+    companyId: ID!
+    employeeId: String!
+    leaveType: String!
+    year: Int!
+    entitlementDays: Int!
+    usedDays: Int!
+    carryoverDays: Int!
+    pendingDays: Int!
+    remainingDays: Int!
+    company: CompanyPayload
+}
+
+input CreateLeaveBalanceInput {
+    companyId: ID!
+    employeeId: String!
+    leaveType: String!
+    year: Int!
+    entitlementDays: Int!
+    carryoverDays: Int
+}
+
+type AttendancePayload {
+    id: ID!
+    companyId: ID!
+    employeeId: String!
+    date: String!
+    source: String!
+    checkIn: String
+    checkOut: String
+    status: String!
+    regularMinutes: Int!
+    overtimeMinutes: Int!
+    deviceId: String
+    notes: String
+    company: CompanyPayload
+}
+
+input CreateAttendanceInput {
+    companyId: ID!
+    employeeId: String!
+    date: String!
+    source: String!
+    checkIn: String
+    checkOut: String
+    status: String!
+    deviceId: String
+    notes: String
+}
+
+type PayrollConfigPayload {
+    id: ID!
+    companyId: ID!
+    countryCode: String
+    name: String!
+    validYear: Int!
+    minimumWage: BigDecimal
+    currencyCode: String
+    active: Boolean!
+    company: CompanyPayload
+}
+
+input CreatePayrollConfigInput {
+    companyId: ID!
+    countryCode: String
+    name: String!
+    validYear: Int!
+    minimumWage: BigDecimal
+    currencyCode: String
+}
+
+type PayrollRunPayload {
+    id: ID!
+    companyId: ID!
+    runNumber: String!
+    year: Int!
+    month: Int!
+    status: String!
+    paymentDate: String
+    payrollConfigId: String
+    company: CompanyPayload
+}
+
+input CreatePayrollRunInput {
+    companyId: ID!
+    year: Int!
+    month: Int!
+    paymentDate: String
+    payrollConfigId: String
+}
+
+type PerformanceCyclePayload {
+    id: ID!
+    companyId: ID!
+    name: String!
+    startDate: String!
+    endDate: String!
+    reviewDeadline: String
+    status: String!
+    company: CompanyPayload
+}
+
+input CreatePerformanceCycleInput {
+    companyId: ID!
+    name: String!
+    startDate: String!
+    endDate: String!
+    reviewDeadline: String
+}
+
+type PerformanceReviewPayload {
+    id: ID!
+    companyId: ID!
+    cycleId: String!
+    employeeId: String!
+    reviewerId: String
+    status: String!
+    overallRating: Int
+    strengths: String
+    improvements: String
+    comments: String
+    company: CompanyPayload
+}
+
+input CreatePerformanceReviewInput {
+    companyId: ID!
+    cycleId: String!
+    employeeId: String!
+    reviewerId: String
+}
+
+type JobPostingPayload {
+    id: ID!
+    companyId: ID!
+    postingNumber: String!
+    positionId: String!
+    title: String!
+    description: String
+    employmentType: String!
+    status: String!
+    publishedAt: String
+    closingDate: String
+    company: CompanyPayload
+}
+
+input CreateJobPostingInput {
+    companyId: ID!
+    positionId: String!
+    title: String!
+    description: String
+    employmentType: String!
+    closingDate: String
+}
+
+type JobApplicationPayload {
+    id: ID!
+    companyId: ID!
+    jobPostingId: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    phone: String
+    cvRef: String
+    status: String!
+    currentStageNote: String
+    appliedAt: String!
+    company: CompanyPayload
+}
+
+input CreateJobApplicationInput {
+    companyId: ID!
+    jobPostingId: String!
+    firstName: String!
+    lastName: String!
+    email: String!
+    phone: String
+    cvRef: String
+}
+
+extend type Query {
+    position(id: ID!): PositionPayload @auth(permissions: ["POSITION:READ"])
+    positions(companyId: ID!): [PositionPayload!]! @auth(permissions: ["POSITION:READ"])
+
+    hrEmployee(id: ID!): HrEmployeePayload @auth(permissions: ["HR_EMPLOYEE:READ"])
+    hrEmployees(companyId: ID!): [HrEmployeePayload!]! @auth(permissions: ["HR_EMPLOYEE:READ"])
+
+    contract(id: ID!): ContractPayload @auth(permissions: ["CONTRACT:READ"])
+    contracts(companyId: ID!): [ContractPayload!]! @auth(permissions: ["CONTRACT:READ"])
+
+    leavePolicy(id: ID!): LeavePolicyPayload @auth(permissions: ["LEAVE_POLICY:READ"])
+    leavePolicies(companyId: ID!): [LeavePolicyPayload!]! @auth(permissions: ["LEAVE_POLICY:READ"])
+
+    leaveRequest(id: ID!): LeaveRequestPayload @auth(permissions: ["LEAVE_REQUEST:READ"])
+    leaveRequests(companyId: ID!): [LeaveRequestPayload!]! @auth(permissions: ["LEAVE_REQUEST:READ"])
+
+    leaveBalance(id: ID!): LeaveBalancePayload @auth(permissions: ["LEAVE_BALANCE:READ"])
+    leaveBalances(companyId: ID!): [LeaveBalancePayload!]! @auth(permissions: ["LEAVE_BALANCE:READ"])
+
+    attendance(id: ID!): AttendancePayload @auth(permissions: ["ATTENDANCE:READ"])
+    attendances(companyId: ID!): [AttendancePayload!]! @auth(permissions: ["ATTENDANCE:READ"])
+
+    payrollConfig(id: ID!): PayrollConfigPayload @auth(permissions: ["PAYROLL_CONFIG:READ"])
+    payrollConfigs(companyId: ID!): [PayrollConfigPayload!]! @auth(permissions: ["PAYROLL_CONFIG:READ"])
+
+    payrollRun(id: ID!): PayrollRunPayload @auth(permissions: ["PAYROLL_RUN:READ"])
+    payrollRuns(companyId: ID!): [PayrollRunPayload!]! @auth(permissions: ["PAYROLL_RUN:READ"])
+
+    performanceCycle(id: ID!): PerformanceCyclePayload @auth(permissions: ["PERFORMANCE_CYCLE:READ"])
+    performanceCycles(companyId: ID!): [PerformanceCyclePayload!]! @auth(permissions: ["PERFORMANCE_CYCLE:READ"])
+
+    performanceReview(id: ID!): PerformanceReviewPayload @auth(permissions: ["PERFORMANCE_REVIEW:READ"])
+    performanceReviews(companyId: ID!): [PerformanceReviewPayload!]! @auth(permissions: ["PERFORMANCE_REVIEW:READ"])
+
+    jobPosting(id: ID!): JobPostingPayload @auth(permissions: ["JOB_POSTING:READ"])
+    jobPostings(companyId: ID!): [JobPostingPayload!]! @auth(permissions: ["JOB_POSTING:READ"])
+
+    jobApplication(id: ID!): JobApplicationPayload @auth(permissions: ["JOB_APPLICATION:READ"])
+    jobApplications(companyId: ID!): [JobApplicationPayload!]! @auth(permissions: ["JOB_APPLICATION:READ"])
+}
+
+extend type Mutation {
+    createPosition(input: CreatePositionInput!): PositionPayload! @audit @auth(permissions: ["POSITION:CREATE"])
+
+    createHrEmployee(input: CreateHrEmployeeInput!): HrEmployeePayload! @audit @auth(permissions: ["HR_EMPLOYEE:CREATE"])
+
+    createContract(input: CreateContractInput!): ContractPayload! @audit @auth(permissions: ["CONTRACT:CREATE"])
+
+    createLeavePolicy(input: CreateLeavePolicyInput!): LeavePolicyPayload! @audit @auth(permissions: ["LEAVE_POLICY:CREATE"])
+
+    createLeaveRequest(input: CreateLeaveRequestInput!): LeaveRequestPayload! @audit @auth(permissions: ["LEAVE_REQUEST:CREATE"])
+
+    createLeaveBalance(input: CreateLeaveBalanceInput!): LeaveBalancePayload! @audit @auth(permissions: ["LEAVE_BALANCE:CREATE"])
+
+    createAttendance(input: CreateAttendanceInput!): AttendancePayload! @audit @auth(permissions: ["ATTENDANCE:CREATE"])
+
+    createPayrollConfig(input: CreatePayrollConfigInput!): PayrollConfigPayload! @audit @auth(permissions: ["PAYROLL_CONFIG:CREATE"])
+
+    createPayrollRun(input: CreatePayrollRunInput!): PayrollRunPayload! @audit @auth(permissions: ["PAYROLL_RUN:CREATE"])
+
+    createPerformanceCycle(input: CreatePerformanceCycleInput!): PerformanceCyclePayload! @audit @auth(permissions: ["PERFORMANCE_CYCLE:CREATE"])
+
+    createPerformanceReview(input: CreatePerformanceReviewInput!): PerformanceReviewPayload! @audit @auth(permissions: ["PERFORMANCE_REVIEW:CREATE"])
+
+    createJobPosting(input: CreateJobPostingInput!): JobPostingPayload! @audit @auth(permissions: ["JOB_POSTING:CREATE"])
+
+    createJobApplication(input: CreateJobApplicationInput!): JobApplicationPayload! @audit @auth(permissions: ["JOB_APPLICATION:CREATE"])
+}
+

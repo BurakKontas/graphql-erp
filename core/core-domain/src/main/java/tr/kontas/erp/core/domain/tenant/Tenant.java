@@ -13,28 +13,29 @@ public class Tenant extends AggregateRoot<TenantId> {
     private OidcSettings oidcSettings;
     private LdapSettings ldapSettings;
     private boolean active;
+    private boolean auditUnauthenticated;
 
     public Tenant(TenantId id, TenantName name, TenantCode code) {
-        this(id, name, code, AuthProviderType.LOCAL, null, null);
+        this(id, name, code, AuthProviderType.LOCAL, null, null, true, false);
     }
 
     public Tenant(TenantId id, TenantName name, TenantCode code, AuthProviderType authMode) {
-        this(id, name, code, authMode, null, null);
+        this(id, name, code, authMode, null, null, true, false);
     }
 
     public Tenant(TenantId id, TenantName name, TenantCode code, AuthProviderType authMode,
                   OidcSettings oidcSettings, LdapSettings ldapSettings) {
-        super(id);
-        this.name = name;
-        this.code = code;
-        this.authMode = authMode != null ? authMode : AuthProviderType.LOCAL;
-        this.oidcSettings = oidcSettings;
-        this.ldapSettings = ldapSettings;
-        this.active = true;
+        this(id, name, code, authMode, oidcSettings, ldapSettings, true, false);
     }
 
     public Tenant(TenantId id, TenantName name, TenantCode code, AuthProviderType authMode,
                   OidcSettings oidcSettings, LdapSettings ldapSettings, boolean active) {
+        this(id, name, code, authMode, oidcSettings, ldapSettings, active, false);
+    }
+
+    public Tenant(TenantId id, TenantName name, TenantCode code, AuthProviderType authMode,
+                  OidcSettings oidcSettings, LdapSettings ldapSettings, boolean active,
+                  boolean auditUnauthenticated) {
         super(id);
         this.name = name;
         this.code = code;
@@ -42,6 +43,7 @@ public class Tenant extends AggregateRoot<TenantId> {
         this.oidcSettings = oidcSettings;
         this.ldapSettings = ldapSettings;
         this.active = active;
+        this.auditUnauthenticated = auditUnauthenticated;
     }
 
     public void changeAuthMode(AuthProviderType authMode) {
@@ -60,4 +62,7 @@ public class Tenant extends AggregateRoot<TenantId> {
         this.active = false;
     }
 
+    public void setAuditUnauthenticated(boolean auditUnauthenticated) {
+        this.auditUnauthenticated = auditUnauthenticated;
+    }
 }

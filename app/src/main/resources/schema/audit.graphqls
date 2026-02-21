@@ -1,0 +1,36 @@
+type AuditEntryPayload {
+    id: ID!
+    source: String!
+    tenantId: ID!
+    companyId: String
+    moduleName: String!
+    aggregateType: String!
+    aggregateId: String!
+    action: String!
+    eventType: String
+    userId: String
+    userEmail: String
+    userIp: String
+    userAgent: String
+    occurredAt: String!
+    beforeSnapshot: String
+    afterSnapshot: String
+    changes: [FieldChangePayload!]!
+    correlationId: String
+    sessionId: String
+}
+
+type FieldChangePayload {
+    fieldName: String!
+    oldValue: String
+    newValue: String
+    maskLevel: String
+}
+
+extend type Query {
+    auditByAggregate(aggregateType: String!, aggregateId: String!): [AuditEntryPayload!]! @auth(permissions: ["AUDIT:READ"])
+    auditByUser(userId: String!, from: String!, to: String!): [AuditEntryPayload!]! @auth(permissions: ["AUDIT:READ"])
+    auditByModule(moduleName: String!, from: String!, to: String!): [AuditEntryPayload!]! @auth(permissions: ["AUDIT:READ"])
+    auditEntries(from: String!, to: String!, limit: Int, offset: Int): [AuditEntryPayload!]! @auth(permissions: ["AUDIT:READ"])
+}
+

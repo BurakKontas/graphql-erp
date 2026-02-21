@@ -1,12 +1,13 @@
 package tr.kontas.erp.core.domain.shared;
 
 import lombok.Getter;
+import tr.kontas.erp.core.kernel.domain.model.ValueObject;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Getter
-public final class Email {
+public final class Email extends ValueObject {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^(?:(?![0-9])[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*" +

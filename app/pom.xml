@@ -74,6 +74,69 @@
         </dependency>
 
         <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>finance-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>finance-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>finance-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>purchase-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>purchase-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>purchase-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>hr-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>hr-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>hr-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>crm-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>crm-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>crm-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>

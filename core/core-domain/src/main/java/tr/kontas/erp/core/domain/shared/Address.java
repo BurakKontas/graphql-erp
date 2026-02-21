@@ -10,7 +10,7 @@ import java.util.Objects;
 @Getter
 @Builder
 @ToString(callSuper = false)
-public final class Address {
+public final class Address extends ValueObject {
     private String addressLine1;
     private String addressLine2;      // nullable
     private String city;

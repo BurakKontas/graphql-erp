@@ -53,9 +53,9 @@ extend type Mutation {
     register(input: RegisterInput!): RegisterPayload!
     login(input: LoginInput!): AuthPayload!
     refreshToken(refreshToken: String!): AuthPayload!
-    logout: Boolean! @auth
-    assignRoleToUser(input: AssignRoleToUserInput!): Boolean! @auth(permissions: ["GENERAL:ADMIN"])
-    removeRoleFromUser(input: RemoveRoleFromUserInput!): Boolean! @auth(permissions: ["GENERAL:ADMIN"])
+    logout: Boolean! @audit @auth
+    assignRoleToUser(input: AssignRoleToUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"])
+    removeRoleFromUser(input: RemoveRoleFromUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"])
 }
 
 extend type Query {

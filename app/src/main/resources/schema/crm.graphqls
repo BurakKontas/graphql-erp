@@ -1,0 +1,207 @@
+type ContactPayload {
+    id: ID!
+    companyId: ID!
+    contactNumber: String!
+    contactType: String!
+    firstName: String
+    lastName: String
+    companyName: String
+    jobTitle: String
+    email: String
+    phone: String
+    website: String
+    address: String
+    businessPartnerId: String
+    ownerId: String
+    status: String!
+    source: String
+    notes: String
+    company: CompanyPayload
+}
+
+type LeadPayload {
+    id: ID!
+    companyId: ID!
+    leadNumber: String!
+    title: String!
+    contactId: String
+    ownerId: String
+    status: String!
+    source: String
+    estimatedValue: BigDecimal
+    disqualificationReason: String
+    notes: String
+    expectedCloseDate: String
+    opportunityId: String
+    contact: ContactPayload
+    company: CompanyPayload
+}
+
+type OpportunityPayload {
+    id: ID!
+    companyId: ID!
+    opportunityNumber: String!
+    title: String!
+    contactId: String
+    leadId: String
+    ownerId: String
+    stage: String!
+    probability: BigDecimal
+    expectedValue: BigDecimal
+    currencyCode: String
+    expectedCloseDate: String
+    salesOrderId: String
+    lostReason: String
+    notes: String
+    contact: ContactPayload
+    company: CompanyPayload
+}
+
+type QuoteLinePayload {
+    id: ID!
+    itemId: String
+    itemDescription: String
+    unitCode: String
+    quantity: BigDecimal
+    unitPrice: BigDecimal
+    discountRate: BigDecimal
+    taxCode: String
+    taxRate: BigDecimal
+    lineTotal: BigDecimal
+    taxAmount: BigDecimal
+    lineTotalWithTax: BigDecimal
+}
+
+type QuotePayload {
+    id: ID!
+    companyId: ID!
+    quoteNumber: String!
+    opportunityId: String
+    contactId: String
+    ownerId: String
+    quoteDate: String
+    expiryDate: String
+    currencyCode: String
+    paymentTermCode: String
+    status: String!
+    version: String
+    previousQuoteId: String
+    subtotal: BigDecimal
+    taxTotal: BigDecimal
+    total: BigDecimal
+    discountRate: BigDecimal
+    notes: String
+    lines: [QuoteLinePayload!]!
+    contact: ContactPayload
+    opportunity: OpportunityPayload
+    company: CompanyPayload
+}
+
+type ActivityPayload {
+    id: ID!
+    companyId: ID!
+    activityType: String!
+    subject: String!
+    ownerId: String
+    status: String!
+    relatedEntityType: String
+    relatedEntityId: String
+    scheduledAt: String
+    completedAt: String
+    durationMinutes: Int
+    description: String
+    outcome: String
+    followUpType: String
+    followUpScheduledAt: String
+    followUpNote: String
+    company: CompanyPayload
+}
+
+input CreateContactInput {
+    companyId: ID!
+    contactType: String!
+    firstName: String
+    lastName: String
+    companyName: String
+    jobTitle: String
+    email: String
+    phone: String
+    website: String
+    address: String
+    ownerId: String
+    source: String
+    notes: String
+}
+
+input CreateLeadInput {
+    companyId: ID!
+    title: String!
+    contactId: String
+    ownerId: String
+    source: String
+    estimatedValue: BigDecimal
+    notes: String
+    expectedCloseDate: String
+}
+
+input CreateOpportunityInput {
+    companyId: ID!
+    title: String!
+    contactId: String
+    leadId: String
+    ownerId: String
+    expectedValue: BigDecimal
+    currencyCode: String
+    expectedCloseDate: String
+    notes: String
+}
+
+input CreateQuoteInput {
+    companyId: ID!
+    opportunityId: String
+    contactId: String
+    ownerId: String
+    quoteDate: String!
+    expiryDate: String!
+    currencyCode: String
+    paymentTermCode: String
+    discountRate: BigDecimal
+    notes: String
+}
+
+input CreateActivityInput {
+    companyId: ID!
+    activityType: String!
+    subject: String!
+    ownerId: String
+    relatedEntityType: String
+    relatedEntityId: String
+    scheduledAt: String
+    description: String
+}
+
+extend type Query {
+    crmContact(id: ID!): ContactPayload! @auth(permissions: ["CONTACT:READ"])
+    crmContacts(companyId: ID!): [ContactPayload!]! @auth(permissions: ["CONTACT:READ"])
+
+    lead(id: ID!): LeadPayload! @auth(permissions: ["LEAD:READ"])
+    leads(companyId: ID!): [LeadPayload!]! @auth(permissions: ["LEAD:READ"])
+
+    opportunity(id: ID!): OpportunityPayload! @auth(permissions: ["OPPORTUNITY:READ"])
+    opportunities(companyId: ID!): [OpportunityPayload!]! @auth(permissions: ["OPPORTUNITY:READ"])
+
+    quote(id: ID!): QuotePayload! @auth(permissions: ["QUOTE:READ"])
+    quotes(companyId: ID!): [QuotePayload!]! @auth(permissions: ["QUOTE:READ"])
+
+    activity(id: ID!): ActivityPayload! @auth(permissions: ["ACTIVITY:READ"])
+    activities(companyId: ID!): [ActivityPayload!]! @auth(permissions: ["ACTIVITY:READ"])
+}
+
+extend type Mutation {
+    createContact(input: CreateContactInput!): ContactPayload! @audit @auth(permissions: ["CONTACT:CREATE"])
+    createLead(input: CreateLeadInput!): LeadPayload! @audit @auth(permissions: ["LEAD:CREATE"])
+    createOpportunity(input: CreateOpportunityInput!): OpportunityPayload! @audit @auth(permissions: ["OPPORTUNITY:CREATE"])
+    createQuote(input: CreateQuoteInput!): QuotePayload! @audit @auth(permissions: ["QUOTE:CREATE"])
+    createActivity(input: CreateActivityInput!): ActivityPayload! @audit @auth(permissions: ["ACTIVITY:CREATE"])
+}
+
