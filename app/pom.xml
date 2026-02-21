@@ -42,6 +42,22 @@
         </dependency>
 
         <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>inventory-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>inventory-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>inventory-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
@@ -52,6 +68,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java-extended-scalars</artifactId>
         </dependency>
 
         <dependency>

@@ -9,6 +9,19 @@ type RegisterPayload {
     username: String!
 }
 
+type RolePayload {
+    id: ID!
+    name: String!
+    permissions: [PermissionPayload!]!
+}
+
+type PermissionPayload {
+    id: ID!
+    module: String!
+    action: String!
+    key: String!
+}
+
 input LoginInput {
     username: String
     password: String
@@ -18,6 +31,16 @@ input LoginInput {
 input RegisterInput {
     username: String!
     password: String!
+}
+
+input AssignRoleToUserInput {
+    userId: ID!
+    roleId: ID!
+}
+
+input RemoveRoleFromUserInput {
+    userId: ID!
+    roleId: ID!
 }
 
 enum AuthProviderType {
@@ -31,4 +54,11 @@ extend type Mutation {
     login(input: LoginInput!): AuthPayload!
     refreshToken(refreshToken: String!): AuthPayload!
     logout: Boolean! @auth
+    assignRoleToUser(input: AssignRoleToUserInput!): Boolean! @auth(permissions: ["GENERAL:ADMIN"])
+    removeRoleFromUser(input: RemoveRoleFromUserInput!): Boolean! @auth(permissions: ["GENERAL:ADMIN"])
+}
+
+extend type Query {
+    roles: [RolePayload!]! @auth(permissions: ["GENERAL:ADMIN"])
+    permissions: [PermissionPayload!]! @auth(permissions: ["GENERAL:ADMIN"])
 }

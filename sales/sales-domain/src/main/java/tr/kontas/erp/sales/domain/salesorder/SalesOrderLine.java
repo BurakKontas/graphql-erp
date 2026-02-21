@@ -22,7 +22,7 @@ public class SalesOrderLine extends Entity<SalesOrderLineId> {
     private Quantity quantity;
     private BigDecimal unitPrice;
 
-    private final Tax tax;
+    private Tax tax;
 
     private BigDecimal lineTotal;
     private BigDecimal taxAmount;
@@ -62,6 +62,11 @@ public class SalesOrderLine extends Entity<SalesOrderLineId> {
         if (newUnitPrice == null || newUnitPrice.compareTo(BigDecimal.ZERO) < 0)
             throw new IllegalArgumentException("unitPrice cannot be negative");
         recalculate(newQuantity, newUnitPrice);
+    }
+
+    void updateTax(Tax newTax) {
+        this.tax = newTax;
+        recalculate(this.quantity, this.unitPrice);
     }
 
     private void recalculate(Quantity quantity, BigDecimal unitPrice) {

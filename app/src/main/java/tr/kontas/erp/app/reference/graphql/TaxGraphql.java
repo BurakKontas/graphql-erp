@@ -6,12 +6,18 @@ import org.dataloader.DataLoader;
 import tr.kontas.erp.app.company.dtos.CompanyPayload;
 import tr.kontas.erp.app.reference.dtos.CreateTaxInput;
 import tr.kontas.erp.app.reference.dtos.TaxPayload;
+import tr.kontas.erp.app.reference.dtos.UpdateTaxRateInput;
 import tr.kontas.erp.core.application.reference.tax.CreateTaxCommand;
 import tr.kontas.erp.core.application.reference.tax.CreateTaxUseCase;
 import tr.kontas.erp.core.application.reference.tax.GetTaxesByCompanyUseCase;
+import tr.kontas.erp.core.application.reference.tax.UpdateTaxRateCommand;
+import tr.kontas.erp.core.application.reference.tax.UpdateTaxRateUseCase;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.reference.tax.Tax;
 import tr.kontas.erp.core.domain.reference.tax.TaxCode;
+import tr.kontas.erp.core.domain.reference.tax.TaxRepository;
+import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +28,8 @@ public class TaxGraphql {
 
     private final CreateTaxUseCase createTaxUseCase;
     private final GetTaxesByCompanyUseCase getTaxesByCompanyUseCase;
+    private final UpdateTaxRateUseCase updateTaxRateUseCase;
+    private final TaxRepository taxRepository;
 
     public static TaxPayload toPayload(Tax tax) {
         return new TaxPayload(
@@ -56,6 +64,22 @@ public class TaxGraphql {
                 true,
                 input.getCompanyId()
         );
+    }
+
+    @DgsMutation
+    public TaxPayload updateTaxRate(@InputArgument("input") UpdateTaxRateInput input) {
+        // Core service updates tax + publishes TaxRateChangedEvent
+        // Sales module listens to the event and recalculates DRAFT orders
+        updateTaxRateUseCase.execute(
+                new UpdateTaxRateCommand(input.getCompanyId(), input.getTaxCode(), input.getNewRate())
+        );
+
+        TenantId tenantId = TenantContext.get();
+        CompanyId companyId = CompanyId.of(input.getCompanyId());
+        Tax tax = taxRepository.findByCode(tenantId, companyId, new TaxCode(input.getTaxCode()))
+                .orElseThrow(() -> new IllegalArgumentException("Tax not found after update: " + input.getTaxCode()));
+
+        return toPayload(tax);
     }
 
     @DgsQuery

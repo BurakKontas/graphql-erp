@@ -168,6 +168,29 @@ public class SalesOrder extends AggregateRoot<SalesOrderId> {
         registerEvent(new SalesOrderLineRemovedEvent(getId(), lineId, tenantId));
     }
 
+    public boolean updateTaxOnLines(Tax updatedTax) {
+        if (status != SalesOrderStatus.DRAFT && status != SalesOrderStatus.NEEDS_ACTION) return false;
+
+        String taxCode = updatedTax.getId().getValue();
+        boolean anyUpdated = false;
+        for (SalesOrderLine line : lines) {
+            if (line.getTax() != null && taxCode.equals(line.getTax().getId().getValue())) {
+                line.updateTax(updatedTax);
+                anyUpdated = true;
+            }
+        }
+        if (anyUpdated) {
+            recalculateTotals();
+        }
+        return anyUpdated;
+    }
+
+    public void markNeedsAction() {
+        if (status == SalesOrderStatus.DRAFT) {
+            this.status = SalesOrderStatus.NEEDS_ACTION;
+        }
+    }
+
     public void updateLine(
             SalesOrderLineId lineId,
             Quantity newQuantity,

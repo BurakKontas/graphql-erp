@@ -42,6 +42,12 @@ input CreateTaxInput {
     rate: BigDecimal!
 }
 
+input UpdateTaxRateInput {
+    companyId: ID!
+    taxCode: String!
+    newRate: BigDecimal!
+}
+
 type TaxPayload {
     code: ID!
     name: String!
@@ -74,6 +80,7 @@ extend type Mutation {
     createCurrency(input: CreateCurrencyInput!): CurrencyPayload! @auth(permissions: ["CURRENCY:CREATE"])
     createPaymentTerm(input: CreatePaymentTermInput!): PaymentTermPayload! @auth(permissions: ["PAYMENT_TERM:CREATE"])
     createTax(input: CreateTaxInput!): TaxPayload! @auth(permissions: ["TAX:CREATE"])
+    updateTaxRate(input: UpdateTaxRateInput!): TaxPayload! @auth(permissions: ["TAX:UPDATE"])
     createUnit(input: CreateUnitInput!): UnitPayload! @auth(permissions: ["UNIT:CREATE"])
 }
 

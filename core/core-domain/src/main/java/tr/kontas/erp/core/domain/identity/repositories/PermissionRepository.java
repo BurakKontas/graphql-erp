@@ -9,10 +9,8 @@ import java.util.Optional;
 
 public interface PermissionRepository {
     Optional<Permission> findById(PermissionId id);
-
     Optional<Permission> findByKey(PermissionKey key);
-
     List<Permission> findAllByIds(List<PermissionId> ids);
-
+    List<Permission> findAll();
     void save(Permission permission);
 }

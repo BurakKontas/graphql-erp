@@ -3,19 +3,15 @@ package tr.kontas.erp.core.platform.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tr.kontas.erp.core.application.reference.tax.CreateTaxCommand;
-import tr.kontas.erp.core.application.reference.tax.CreateTaxUseCase;
-import tr.kontas.erp.core.application.reference.tax.GetTaxesByCompanyIdsUseCase;
-import tr.kontas.erp.core.application.reference.tax.GetTaxesByCompanyUseCase;
+import tr.kontas.erp.core.application.reference.tax.*;
 import tr.kontas.erp.core.domain.company.CompanyId;
-import tr.kontas.erp.core.domain.reference.tax.Tax;
-import tr.kontas.erp.core.domain.reference.tax.TaxCode;
-import tr.kontas.erp.core.domain.reference.tax.TaxRate;
-import tr.kontas.erp.core.domain.reference.tax.TaxType;
+import tr.kontas.erp.core.domain.reference.tax.*;
+import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 import tr.kontas.erp.core.platform.persistence.reference.tax.TaxRepositoryImpl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +22,11 @@ import java.util.Map;
 public class TaxService implements
         CreateTaxUseCase,
         GetTaxesByCompanyUseCase,
-        GetTaxesByCompanyIdsUseCase {
+        GetTaxesByCompanyIdsUseCase,
+        UpdateTaxRateUseCase {
 
     private final TaxRepositoryImpl taxRepository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -55,6 +53,30 @@ public class TaxService implements
         taxRepository.save(tax);
 
         return code;
+    }
+
+    @Override
+    @Transactional
+    public void execute(UpdateTaxRateCommand command) {
+        TenantId tenantId = TenantContext.get();
+        CompanyId companyId = CompanyId.of(command.companyId());
+        TaxCode taxCode = new TaxCode(command.taxCode());
+
+        Tax tax = taxRepository.findByCode(tenantId, companyId, taxCode)
+                .orElseThrow(() -> new IllegalArgumentException("Tax not found: " + command.taxCode()));
+
+        BigDecimal oldRate = tax.getRate().getValue();
+        tax.updateRate(new TaxRate(command.newRate()));
+        taxRepository.save(tax);
+
+        // Publish event so sales module can react
+        eventPublisher.publish(new TaxRateChangedEvent(
+                tenantId.asUUID(),
+                companyId.asUUID(),
+                command.taxCode(),
+                oldRate,
+                command.newRate()
+        ));
     }
 
     @Override

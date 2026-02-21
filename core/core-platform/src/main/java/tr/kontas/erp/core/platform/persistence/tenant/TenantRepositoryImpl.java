@@ -19,6 +19,10 @@ public class TenantRepositoryImpl implements TenantRepository {
 
     @Override
     public void save(Tenant tenant) {
+        if(jpaRepository.existsByCode(tenant.getCode().getValue())) {
+            throw new IllegalArgumentException("Tenant code must be unique");
+        }
+
         jpaRepository.save(TenantMapper.toEntity(tenant));
     }
 

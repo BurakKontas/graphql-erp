@@ -15,4 +15,13 @@ public abstract class ValueObject {
     public int hashCode() {
         return Objects.hash(this.toString());
     }
+
+    @Override
+    public String toString() {
+        return getValue().toString();
+    }
+
+    public Object getValue() {
+        return this;
+    }
 }

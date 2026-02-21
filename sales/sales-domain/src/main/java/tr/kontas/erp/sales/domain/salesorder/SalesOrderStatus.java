@@ -2,6 +2,7 @@ package tr.kontas.erp.sales.domain.salesorder;
 
 public enum SalesOrderStatus {
     DRAFT,
+    NEEDS_ACTION,
     SENT,
     ACCEPTED,
     CONFIRMED,
@@ -13,12 +14,13 @@ public enum SalesOrderStatus {
     }
 
     public boolean allowsModification() {
-        return this == DRAFT;
+        return this == DRAFT || this == NEEDS_ACTION;
     }
 
     public boolean canTransitionTo(SalesOrderStatus target) {
         return switch (this) {
-            case DRAFT -> target == SENT || target == CONFIRMED || target == CANCELLED;
+            case DRAFT -> target == SENT || target == CONFIRMED || target == CANCELLED || target == NEEDS_ACTION;
+            case NEEDS_ACTION -> target == DRAFT || target == CANCELLED;
             case SENT -> target == ACCEPTED || target == DRAFT || target == CANCELLED;
             case ACCEPTED -> target == CONFIRMED || target == CANCELLED;
             case CONFIRMED -> target == CLOSED || target == CANCELLED;

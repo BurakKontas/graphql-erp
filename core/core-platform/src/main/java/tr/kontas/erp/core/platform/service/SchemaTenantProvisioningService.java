@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,7 @@ public class SchemaTenantProvisioningService implements TenantProvisioningServic
                 .schemas(schema)
                 .defaultSchema(schema)
                 .locations("classpath:migration/tenant")
+                .placeholders(Map.of("tenant_id", tenant.getId().asUUID().toString()))
                 .baselineOnMigrate(schemaNew)
                 .load();
 

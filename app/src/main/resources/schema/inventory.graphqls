@@ -1,0 +1,198 @@
+# ─── Warehouse ───
+
+type WarehousePayload {
+    id: ID!
+    companyId: ID!
+    code: String!
+    name: String!
+    active: Boolean!
+    company: CompanyPayload
+}
+
+# ─── Category ───
+
+type CategoryPayload {
+    id: ID!
+    companyId: ID!
+    name: String!
+    parentCategoryId: ID
+    active: Boolean!
+    company: CompanyPayload
+    parentCategory: CategoryPayload
+}
+
+# ─── Item ───
+
+type ItemPayload {
+    id: ID!
+    companyId: ID!
+    code: String!
+    name: String!
+    type: String!
+    unitCode: String
+    categoryId: ID
+    allowNegativeStock: Boolean!
+    active: Boolean!
+    company: CompanyPayload
+    category: CategoryPayload
+}
+
+# ─── StockLevel ───
+
+type StockLevelPayload {
+    id: ID!
+    companyId: ID!
+    itemId: ID!
+    warehouseId: ID!
+    quantityOnHand: BigDecimal!
+    quantityReserved: BigDecimal!
+    quantityAvailable: BigDecimal!
+    reorderPoint: BigDecimal
+    allowNegativeStock: Boolean!
+    item: ItemPayload
+    warehouse: WarehousePayload
+    company: CompanyPayload
+}
+
+# ─── StockMovement ───
+
+type StockMovementPayload {
+    id: ID!
+    companyId: ID!
+    itemId: ID!
+    warehouseId: ID!
+    movementType: String!
+    quantity: BigDecimal!
+    referenceType: String!
+    referenceId: String
+    note: String
+    movementDate: String!
+    createdAt: String!
+    item: ItemPayload
+    warehouse: WarehousePayload
+    company: CompanyPayload
+}
+
+# ─── Inputs ───
+
+input CreateWarehouseInput {
+    companyId: ID!
+    code: String!
+    name: String!
+}
+
+input RenameWarehouseInput {
+    warehouseId: ID!
+    name: String!
+}
+
+input CreateCategoryInput {
+    companyId: ID!
+    name: String!
+    parentCategoryId: ID
+}
+
+input RenameCategoryInput {
+    categoryId: ID!
+    name: String!
+}
+
+input CreateItemInput {
+    companyId: ID!
+    code: String!
+    name: String!
+    type: String!
+    unitCode: String
+    categoryId: ID
+    allowNegativeStock: Boolean
+}
+
+input UpdateItemInput {
+    itemId: ID!
+    name: String!
+    unitCode: String
+    categoryId: ID
+}
+
+input ReserveStockInput {
+    itemId: ID!
+    warehouseId: ID!
+    quantity: BigDecimal!
+    referenceId: String
+}
+
+input ReleaseReservationInput {
+    itemId: ID!
+    warehouseId: ID!
+    quantity: BigDecimal!
+    referenceId: String
+}
+
+input AdjustStockInput {
+    itemId: ID!
+    warehouseId: ID!
+    adjustment: BigDecimal!
+}
+
+input SetReorderPointInput {
+    stockLevelId: ID!
+    reorderPoint: BigDecimal
+}
+
+input RecordStockMovementInput {
+    companyId: ID!
+    itemId: ID!
+    warehouseId: ID!
+    movementType: String!
+    quantity: BigDecimal!
+    referenceType: String!
+    referenceId: String
+    note: String
+    movementDate: String
+}
+
+# ─── Queries ───
+
+extend type Query {
+    warehouse(id: ID!): WarehousePayload @auth(permissions: ["WAREHOUSE:READ"])
+    warehouses(companyId: ID!): [WarehousePayload!]! @auth(permissions: ["WAREHOUSE:READ"])
+
+    category(id: ID!): CategoryPayload @auth(permissions: ["CATEGORY:READ"])
+    categories(companyId: ID!): [CategoryPayload!]! @auth(permissions: ["CATEGORY:READ"])
+
+    item(id: ID!): ItemPayload @auth(permissions: ["ITEM:READ"])
+    items(companyId: ID!): [ItemPayload!]! @auth(permissions: ["ITEM:READ"])
+
+    stockLevel(id: ID!): StockLevelPayload @auth(permissions: ["STOCK_LEVEL:READ"])
+    stockLevelsByWarehouse(warehouseId: ID!): [StockLevelPayload!]! @auth(permissions: ["STOCK_LEVEL:READ"])
+    stockLevelsByItem(itemId: ID!): [StockLevelPayload!]! @auth(permissions: ["STOCK_LEVEL:READ"])
+
+    stockMovementsByWarehouse(warehouseId: ID!): [StockMovementPayload!]! @auth(permissions: ["STOCK_MOVEMENT:READ"])
+    stockMovementsByItem(itemId: ID!): [StockMovementPayload!]! @auth(permissions: ["STOCK_MOVEMENT:READ"])
+}
+
+# ─── Mutations ───
+
+extend type Mutation {
+    createWarehouse(input: CreateWarehouseInput!): WarehousePayload! @auth(permissions: ["WAREHOUSE:CREATE"])
+    renameWarehouse(input: RenameWarehouseInput!): WarehousePayload! @auth(permissions: ["WAREHOUSE:UPDATE"])
+    deactivateWarehouse(warehouseId: ID!): WarehousePayload! @auth(permissions: ["WAREHOUSE:UPDATE"])
+    activateWarehouse(warehouseId: ID!): WarehousePayload! @auth(permissions: ["WAREHOUSE:UPDATE"])
+
+    createCategory(input: CreateCategoryInput!): CategoryPayload! @auth(permissions: ["CATEGORY:CREATE"])
+    renameCategory(input: RenameCategoryInput!): CategoryPayload! @auth(permissions: ["CATEGORY:UPDATE"])
+    deactivateCategory(categoryId: ID!): CategoryPayload! @auth(permissions: ["CATEGORY:UPDATE"])
+    activateCategory(categoryId: ID!): CategoryPayload! @auth(permissions: ["CATEGORY:UPDATE"])
+
+    createItem(input: CreateItemInput!): ItemPayload! @auth(permissions: ["ITEM:CREATE"])
+    updateItem(input: UpdateItemInput!): ItemPayload! @auth(permissions: ["ITEM:UPDATE"])
+    deactivateItem(itemId: ID!): ItemPayload! @auth(permissions: ["ITEM:UPDATE"])
+    activateItem(itemId: ID!): ItemPayload! @auth(permissions: ["ITEM:UPDATE"])
+
+    reserveStock(input: ReserveStockInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    releaseReservation(input: ReleaseReservationInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    adjustStock(input: AdjustStockInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+    setReorderPoint(input: SetReorderPointInput!): StockLevelPayload! @auth(permissions: ["STOCK_LEVEL:UPDATE"])
+
+    recordStockMovement(input: RecordStockMovementInput!): StockMovementPayload! @auth(permissions: ["STOCK_MOVEMENT:CREATE"])
+}

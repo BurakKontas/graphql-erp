@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import tr.kontas.erp.core.domain.identity.Role;
 import tr.kontas.erp.core.domain.identity.repositories.RoleRepository;
 import tr.kontas.erp.core.domain.identity.valueobjects.RoleId;
+import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,5 +38,13 @@ public class RoleRepositoryImpl implements RoleRepository {
                 .stream()
                 .map(RoleMapper::toDomain)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<Role> findByTenantId(TenantId tenantId) {
+        return jpaRepository.findByTenantId(tenantId.asUUID())
+                .stream()
+                .map(RoleMapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

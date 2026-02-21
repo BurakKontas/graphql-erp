@@ -17,4 +17,6 @@ public interface JpaTenantRepository extends JpaRepository<TenantJpaEntity, UUID
 
     @Query("SELECT t.authMode FROM TenantJpaEntity t WHERE t.id=:id")
     Optional<AuthProviderType> findAuthModeById(@Param("id") UUID id);
+
+    boolean existsByCode(String code);
 }

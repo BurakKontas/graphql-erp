@@ -1,0 +1,1018 @@
+### ═══════════════════════════════════════════════════════════════
+### GraphQL ERP - Full API Test Suite
+### ═══════════════════════════════════════════════════════════════
+### Run in order. At each step, copy the returned IDs
+### and paste them into the corresponding placeholder
+### in the next step.
+###
+### Placeholders:
+###   {{apiKey}}         = Bootstrap API key from console output
+###   {{token}}          = accessToken returned from login
+###   {{tenantId}}       = id returned from createTenant
+###   {{companyId}}      = id returned from createCompany
+###   {{departmentId}}   = id returned from createDepartment
+###   {{employeeId}}     = id returned from createEmployee
+###   {{bpId}}           = id returned from createBusinessPartner
+###   {{warehouseId}}    = id returned from createWarehouse
+###   {{categoryId}}     = id returned from createCategory
+###   {{subCategoryId}}  = sub-category id
+###   {{itemId}}         = id returned from createItem
+###   {{stockLevelId}}   = id returned from reserveStock
+###   {{movementId}}     = id returned from recordStockMovement
+###   {{salesOrderId}}   = id returned from createSalesOrder
+###   {{salesLineId}}    = line id returned from addSalesOrderLine
+### ═══════════════════════════════════════════════════════════════
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  0. BOOTSTRAP - Paste the API key from console output        │
+### │     into the apiKey variable below                           │
+### └──────────────────────────────────────────────────────────────┘
+
+@apiKey = 4ddd410f-bb69-46bc-9216-a8b1208e1670
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  1. TENANT (via Bootstrap API Key - no auth needed)          │
+### └──────────────────────────────────────────────────────────────┘
+
+### 1.1 Create Tenant
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+
+{
+  "query": "mutation { createTenant(input: { name: \"Test Tenant\", code: \"TST\" }) { id name code authMode } }"
+}
+
+> {%
+    client.global.set("tenantId", response.body.data.createTenant.id);
+%}
+
+### 1.2 Get All Tenants
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "{ tenants { id name code authMode companies { id name } } }"
+}
+
+### 1.3 Get Tenant by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "{ tenant(id: \"{{tenantId}}\") { id name code authMode companies { id name } } }"
+}
+
+### 1.4 Update Auth Mode
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+
+{
+  "query": "mutation { updateTenantAuthMode(input: { tenantId: \"{{tenantId}}\", authMode: \"LOCAL\" }) { id authMode } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  2. IDENTITY - Register, Assign Role & Login                 │
+### │     Register requires X-TENANT header (tenant code)          │
+### └──────────────────────────────────────────────────────────────┘
+
+### 2.1 Register (uses API key + tenant code for bootstrap)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "mutation { register(input: { username: \"admin\", password: \"Admin123!\" }) { userId username } }"
+}
+
+> {%
+    client.global.set("userId", response.body.data.register.userId);
+%}
+
+### 2.2 Get Roles (via API key — GENERAL:ADMIN)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "{ roles { id name permissions { id module action key } } }"
+}
+
+> {%
+    var roles = response.body.data.roles;
+    for (var i = 0; i < roles.length; i++) {
+        if (roles[i].name === "ADMIN") {
+            client.global.set("adminRoleId", roles[i].id);
+        }
+    }
+%}
+
+### 2.3 Get All Permissions
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "{ permissions { id module action key } }"
+}
+
+### 2.4 Assign ADMIN role to user (via API key)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "mutation { assignRoleToUser(input: { userId: \"{{userId}}\", roleId: \"{{adminRoleId}}\" }) }"
+}
+
+### 2.5 Login (now user has ADMIN role with all permissions)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+
+{
+  "query": "mutation { login(input: { username: \"admin\", password: \"Admin123!\" }) { accessToken refreshToken expiresAt } }"
+}
+
+> {%
+    client.global.set("token", response.body.data.login.accessToken);
+%}
+
+### 2.6 Refresh Token
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { refreshToken(refreshToken: \"PASTE_REFRESH_TOKEN_HERE\") { accessToken refreshToken expiresAt } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  3. COMPANY                                                  │
+### └──────────────────────────────────────────────────────────────┘
+
+### 3.1 Create Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createCompany(input: { name: \"Acme Corp\" }) { id name } }"
+}
+
+> {%
+    client.global.set("companyId", response.body.data.createCompany.id);
+%}
+
+### 3.2 Get Company by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ company(id: \"{{companyId}}\") { id name departments { id name } businessPartners { id code name } paymentTerms { code name } taxes { code name rate } } }"
+}
+
+### 3.3 Get Companies by Tenant
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ companies(tenantId: \"{{tenantId}}\") { id name } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  4. REFERENCE DATA - Currency, Unit, PaymentTerm, Tax        │
+### └──────────────────────────────────────────────────────────────┘
+
+### 4.1 Create Currency
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createCurrency(input: { code: \"TRY\", name: \"Turkish Lira\", symbol: \"₺\", fractionDigits: 2 }) { code name symbol fractionDigits active } }"
+}
+
+### 4.2 Create Currency - USD
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createCurrency(input: { code: \"USD\", name: \"US Dollar\", symbol: \"$\", fractionDigits: 2 }) { code name symbol fractionDigits active } }"
+}
+
+### 4.3 Get Currencies
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ currencies { code name symbol fractionDigits active } }"
+}
+
+### 4.4 Get Currency by Code
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ currency(code: \"TRY\") { code name symbol fractionDigits active } }"
+}
+
+### 4.5 Create Unit - Piece
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createUnit(input: { code: \"PCS\", name: \"Piece\", type: \"QUANTITY\" }) { code name type active } }"
+}
+
+### 4.6 Create Unit - Kilogram
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createUnit(input: { code: \"KG\", name: \"Kilogram\", type: \"WEIGHT\" }) { code name type active } }"
+}
+
+### 4.7 Get Units
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ units { code name type active } }"
+}
+
+### 4.8 Get Unit by Code
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ unit(code: \"PCS\") { code name type active } }"
+}
+
+### 4.9 Create Payment Term
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createPaymentTerm(input: { companyId: \"{{companyId}}\", code: \"NET30\", name: \"Net 30 Days\", dueDays: 30 }) { code name dueDays active company { id name } } }"
+}
+
+### 4.10 Get Payment Terms
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ paymentTerms(companyId: \"{{companyId}}\") { code name dueDays active company { id name } } }"
+}
+
+### 4.11 Create Tax
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createTax(input: { companyId: \"{{companyId}}\", code: \"KDV18\", name: \"KDV %18\", type: \"PERCENTAGE\", rate: 18 }) { code name type rate active company { id name } } }"
+}
+
+### 4.12 Get Taxes
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ taxes(companyId: \"{{companyId}}\") { code name type rate active company { id name } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  5. DEPARTMENT                                               │
+### └──────────────────────────────────────────────────────────────┘
+
+### 5.1 Create Department
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createDepartment(input: { name: \"Engineering\", companyId: \"{{companyId}}\" }) { id name company { id name } parent { id name } } }"
+}
+
+> {%
+    client.global.set("departmentId", response.body.data.createDepartment.id);
+%}
+
+### 5.2 Create Sub-Department
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createDepartment(input: { name: \"Backend Team\", companyId: \"{{companyId}}\", parentId: \"{{departmentId}}\" }) { id name company { id name } parent { id name } } }"
+}
+
+### 5.3 Get Department by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ department(id: \"{{departmentId}}\") { id name company { id name } parent { id name } employees { id name } } }"
+}
+
+### 5.4 Get Departments by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ departments(companyId: \"{{companyId}}\") { id name company { id name } parent { id name } employees { id name } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  6. EMPLOYEE                                                 │
+### └──────────────────────────────────────────────────────────────┘
+
+### 6.1 Create Employee
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createEmployee(input: { name: \"John Doe\", departmentId: \"{{departmentId}}\" }) { id name department { id name } } }"
+}
+
+> {%
+    client.global.set("employeeId", response.body.data.createEmployee.id);
+%}
+
+### 6.2 Get Employee by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ employee(id: \"{{employeeId}}\") { id name department { id name company { id name } } } }"
+}
+
+### 6.3 Get Employees by Department
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ employees(departmentId: \"{{departmentId}}\") { id name department { id name } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  7. BUSINESS PARTNER                                         │
+### └──────────────────────────────────────────────────────────────┘
+
+### 7.1 Create Business Partner (Customer)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createBusinessPartner(input: { companyId: \"{{companyId}}\", code: \"CUST-001\", name: \"ABC Trading\", roles: [\"CUSTOMER\"], taxNumber: \"1234567890\" }) { id code name roles taxNumber active company { id name } } }"
+}
+
+> {%
+    client.global.set("bpId", response.body.data.createBusinessPartner.id);
+%}
+
+### 7.2 Create Business Partner (Vendor)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createBusinessPartner(input: { companyId: \"{{companyId}}\", code: \"VEND-001\", name: \"XYZ Supplies\", roles: [\"VENDOR\"], taxNumber: \"9876543210\" }) { id code name roles taxNumber active company { id name } } }"
+}
+
+### 7.3 Get Business Partner by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ businessPartner(id: \"{{bpId}}\") { id code name roles taxNumber active company { id name } } }"
+}
+
+### 7.4 Get Business Partners by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ businessPartners(companyId: \"{{companyId}}\") { id code name roles taxNumber active company { id name } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  8. INVENTORY - Warehouse                                    │
+### └──────────────────────────────────────────────────────────────┘
+
+### 8.1 Create Warehouse
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createWarehouse(input: { companyId: \"{{companyId}}\", code: \"WH-MAIN\", name: \"Main Warehouse\" }) { id companyId code name active company { id name } } }"
+}
+
+> {%
+    client.global.set("warehouseId", response.body.data.createWarehouse.id);
+%}
+
+### 8.2 Create Warehouse 2
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createWarehouse(input: { companyId: \"{{companyId}}\", code: \"WH-SEC\", name: \"Secondary Warehouse\" }) { id code name active } }"
+}
+
+### 8.3 Get Warehouse by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ warehouse(id: \"{{warehouseId}}\") { id companyId code name active company { id name } } }"
+}
+
+### 8.4 Get Warehouses by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ warehouses(companyId: \"{{companyId}}\") { id code name active company { id name } } }"
+}
+
+### 8.5 Rename Warehouse
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { renameWarehouse(input: { warehouseId: \"{{warehouseId}}\", name: \"Main Warehouse (Updated)\" }) { id code name active } }"
+}
+
+### 8.6 Deactivate Warehouse
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { deactivateWarehouse(warehouseId: \"{{warehouseId}}\") { id code name active } }"
+}
+
+### 8.7 Activate Warehouse
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { activateWarehouse(warehouseId: \"{{warehouseId}}\") { id code name active } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  9. INVENTORY - Category                                     │
+### └──────────────────────────────────────────────────────────────┘
+
+### 9.1 Create Category
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createCategory(input: { companyId: \"{{companyId}}\", name: \"Electronics\" }) { id companyId name parentCategoryId active company { id name } parentCategory { id name } } }"
+}
+
+> {%
+    client.global.set("categoryId", response.body.data.createCategory.id);
+%}
+
+### 9.2 Create Sub-Category
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createCategory(input: { companyId: \"{{companyId}}\", name: \"Smartphones\", parentCategoryId: \"{{categoryId}}\" }) { id name parentCategoryId active parentCategory { id name } } }"
+}
+
+> {%
+    client.global.set("subCategoryId", response.body.data.createCategory.id);
+%}
+
+### 9.3 Get Category by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ category(id: \"{{categoryId}}\") { id companyId name parentCategoryId active company { id name } parentCategory { id name } } }"
+}
+
+### 9.4 Get Categories by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ categories(companyId: \"{{companyId}}\") { id name parentCategoryId active parentCategory { id name } } }"
+}
+
+### 9.5 Rename Category
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { renameCategory(input: { categoryId: \"{{categoryId}}\", name: \"Consumer Electronics\" }) { id name active } }"
+}
+
+### 9.6 Deactivate Category
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { deactivateCategory(categoryId: \"{{subCategoryId}}\") { id name active } }"
+}
+
+### 9.7 Activate Category
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { activateCategory(categoryId: \"{{subCategoryId}}\") { id name active } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  10. INVENTORY - Item                                        │
+### └──────────────────────────────────────────────────────────────┘
+
+### 10.1 Create Item (Physical)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createItem(input: { companyId: \"{{companyId}}\", code: \"ITEM-001\", name: \"iPhone 15 Pro\", type: \"PHYSICAL\", unitCode: \"PCS\", categoryId: \"{{subCategoryId}}\", allowNegativeStock: false }) { id companyId code name type unitCode categoryId allowNegativeStock active company { id name } category { id name } } }"
+}
+
+> {%
+    client.global.set("itemId", response.body.data.createItem.id);
+%}
+
+### 10.2 Create Item (Service)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createItem(input: { companyId: \"{{companyId}}\", code: \"SVC-001\", name: \"Installation Service\", type: \"SERVICE\", unitCode: \"PCS\" }) { id code name type unitCode active } }"
+}
+
+### 10.3 Get Item by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ item(id: \"{{itemId}}\") { id companyId code name type unitCode categoryId allowNegativeStock active company { id name } category { id name parentCategory { id name } } } }"
+}
+
+### 10.4 Get Items by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ items(companyId: \"{{companyId}}\") { id code name type unitCode categoryId allowNegativeStock active category { id name } } }"
+}
+
+### 10.5 Update Item
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { updateItem(input: { itemId: \"{{itemId}}\", name: \"iPhone 15 Pro Max\", unitCode: \"PCS\", categoryId: \"{{subCategoryId}}\" }) { id code name unitCode categoryId active category { id name } } }"
+}
+
+### 10.6 Deactivate Item
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { deactivateItem(itemId: \"{{itemId}}\") { id code name active } }"
+}
+
+### 10.7 Activate Item
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { activateItem(itemId: \"{{itemId}}\") { id code name active } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  11. INVENTORY - Stock Level                                 │
+### └──────────────────────────────────────────────────────────────┘
+
+### 11.1 Adjust Stock (+100)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { adjustStock(input: { itemId: \"{{itemId}}\", warehouseId: \"{{warehouseId}}\", adjustment: 100 }) { id companyId itemId warehouseId quantityOnHand quantityReserved quantityAvailable reorderPoint allowNegativeStock item { id code name } warehouse { id code name } company { id name } } }"
+}
+
+> {%
+    client.global.set("stockLevelId", response.body.data.adjustStock.id);
+%}
+
+### 11.2 Reserve Stock (20)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { reserveStock(input: { itemId: \"{{itemId}}\", warehouseId: \"{{warehouseId}}\", quantity: 20, referenceId: \"SO-001\" }) { id quantityOnHand quantityReserved quantityAvailable item { id code name } warehouse { id code name } } }"
+}
+
+### 11.3 Release Reservation (5)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { releaseReservation(input: { itemId: \"{{itemId}}\", warehouseId: \"{{warehouseId}}\", quantity: 5, referenceId: \"SO-001\" }) { id quantityOnHand quantityReserved quantityAvailable item { id code name } warehouse { id code name } } }"
+}
+
+### 11.4 Set Reorder Point
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { setReorderPoint(input: { stockLevelId: \"{{stockLevelId}}\", reorderPoint: 25 }) { id quantityOnHand quantityReserved quantityAvailable reorderPoint } }"
+}
+
+### 11.5 Get Stock Level by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ stockLevel(id: \"{{stockLevelId}}\") { id companyId itemId warehouseId quantityOnHand quantityReserved quantityAvailable reorderPoint allowNegativeStock item { id code name type } warehouse { id code name } company { id name } } }"
+}
+
+### 11.6 Get Stock Levels by Warehouse
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ stockLevelsByWarehouse(warehouseId: \"{{warehouseId}}\") { id itemId warehouseId quantityOnHand quantityReserved quantityAvailable reorderPoint item { id code name } warehouse { id code name } } }"
+}
+
+### 11.7 Get Stock Levels by Item
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ stockLevelsByItem(itemId: \"{{itemId}}\") { id itemId warehouseId quantityOnHand quantityReserved quantityAvailable reorderPoint item { id code name } warehouse { id code name } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  12. INVENTORY - Stock Movement                              │
+### └──────────────────────────────────────────────────────────────┘
+
+### 12.1 Record Stock Movement (RECEIPT)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { recordStockMovement(input: { companyId: \"{{companyId}}\", itemId: \"{{itemId}}\", warehouseId: \"{{warehouseId}}\", movementType: \"RECEIPT\", quantity: 50, referenceType: \"PURCHASE_ORDER\", referenceId: \"PO-001\", note: \"Initial stock receipt\", movementDate: \"2026-02-21\" }) { id companyId itemId warehouseId movementType quantity referenceType referenceId note movementDate createdAt item { id code name } warehouse { id code name } company { id name } } }"
+}
+
+> {%
+    client.global.set("movementId", response.body.data.recordStockMovement.id);
+%}
+
+### 12.2 Record Stock Movement (ISSUE)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { recordStockMovement(input: { companyId: \"{{companyId}}\", itemId: \"{{itemId}}\", warehouseId: \"{{warehouseId}}\", movementType: \"ISSUE\", quantity: 10, referenceType: \"SALES_ORDER\", referenceId: \"SO-001\", note: \"Shipped to customer\" }) { id movementType quantity referenceType referenceId note movementDate item { id code name } warehouse { id code name } } }"
+}
+
+### 12.3 Get Stock Movements by Warehouse
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ stockMovementsByWarehouse(warehouseId: \"{{warehouseId}}\") { id itemId warehouseId movementType quantity referenceType referenceId note movementDate createdAt item { id code name } warehouse { id code name } } }"
+}
+
+### 12.4 Get Stock Movements by Item
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ stockMovementsByItem(itemId: \"{{itemId}}\") { id itemId warehouseId movementType quantity referenceType referenceId note movementDate createdAt item { id code name } warehouse { id code name } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  13. SALES ORDER                                             │
+### └──────────────────────────────────────────────────────────────┘
+
+### 13.1 Create Sales Order
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createSalesOrder(input: { companyId: \"{{companyId}}\", customerId: \"{{bpId}}\", currencyCode: \"TRY\", paymentTermCode: \"NET30\", orderDate: \"2026-02-21\" }) { id companyId orderNumber orderDate customerId currencyCode paymentTermCode status fulfillmentStatus invoicingStatus subtotal taxTotal total lines { id } company { id name } customer { id code name } } }"
+}
+
+> {%
+    client.global.set("salesOrderId", response.body.data.createSalesOrder.id);
+%}
+
+### 13.2 Add Sales Order Line 1
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { addSalesOrderLine(input: { orderId: \"{{salesOrderId}}\", itemId: \"ITEM-001\", itemDescription: \"iPhone 15 Pro Max\", unitCode: \"PCS\", quantity: 5, unitPrice: 45000, taxCode: \"KDV18\" }) { id orderNumber subtotal taxTotal total lines { id sequence itemId itemDescription unitCode quantity unitPrice taxCode taxRate lineTotal taxAmount lineTotalWithTax } } }"
+}
+
+> {%
+    client.global.set("salesLineId", response.body.data.addSalesOrderLine.lines[0].id);
+%}
+
+### 13.3 Add Sales Order Line 2
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { addSalesOrderLine(input: { orderId: \"{{salesOrderId}}\", itemId: \"SVC-001\", itemDescription: \"Installation Service\", unitCode: \"PCS\", quantity: 1, unitPrice: 5000, taxCode: \"KDV18\" }) { id orderNumber subtotal taxTotal total lines { id sequence itemDescription quantity unitPrice lineTotal taxAmount lineTotalWithTax } } }"
+}
+
+### 13.4 Update Sales Order Line
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { updateSalesOrderLine(input: { orderId: \"{{salesOrderId}}\", lineId: \"{{salesLineId}}\", quantity: 10, unitPrice: 42000 }) { id orderNumber subtotal taxTotal total lines { id sequence quantity unitPrice lineTotal taxAmount lineTotalWithTax } } }"
+}
+
+### 13.5 Update Sales Order Header
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { updateSalesOrderHeader(input: { orderId: \"{{salesOrderId}}\", orderDate: \"2026-02-22\", expiryDate: \"2026-03-22\", paymentTermCode: \"NET30\", shippingAddress: { addressLine1: \"123 Main St\", city: \"Istanbul\", postalCode: \"34000\", countryCode: \"TR\" } }) { id orderDate expiryDate paymentTermCode shippingAddress { addressLine1 city postalCode countryCode } } }"
+}
+
+### 13.6 Get Sales Order by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ salesOrder(id: \"{{salesOrderId}}\") { id companyId orderNumber orderDate expiryDate customerId currencyCode paymentTermCode shippingAddress { addressLine1 addressLine2 city stateOrProvince postalCode countryCode } status fulfillmentStatus invoicingStatus invoicedAmount subtotal taxTotal total lines { id sequence itemId itemDescription unitCode quantity unitPrice taxCode taxRate lineTotal taxAmount lineTotalWithTax } company { id name } customer { id code name roles } } }"
+}
+
+### 13.7 Get Sales Orders by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ salesOrders(companyId: \"{{companyId}}\") { id orderNumber orderDate status subtotal total customer { id name } company { id name } lines { id itemDescription quantity lineTotal } } }"
+}
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  14. TAX RATE CHANGE → DRAFT order recalculation             │
+### └──────────────────────────────────────────────────────────────┘
+
+### 14.1 Update KDV rate from 18 → 20 (DRAFT orders auto-recalculate via event)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { updateTaxRate(input: { companyId: \"{{companyId}}\", taxCode: \"KDV18\", newRate: 20 }) { code name type rate active } }"
+}
+
+### 14.2 Verify DRAFT sales order totals recalculated with new rate
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ salesOrder(id: \"{{salesOrderId}}\") { id orderNumber status subtotal taxTotal total lines { id itemDescription taxCode taxRate lineTotal taxAmount lineTotalWithTax } } }"
+}
+
+### 14.3 Revert KDV rate back to 18
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { updateTaxRate(input: { companyId: \"{{companyId}}\", taxCode: \"KDV18\", newRate: 18 }) { code name type rate active } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  15. SALES ORDER LIFECYCLE                                   │
+### └──────────────────────────────────────────────────────────────┘
+
+### 15.1 Send Sales Order
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { sendSalesOrder(orderId: \"{{salesOrderId}}\") { id orderNumber status } }"
+}
+
+### 15.2 Accept Sales Order
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { acceptSalesOrder(orderId: \"{{salesOrderId}}\") { id orderNumber status } }"
+}
+
+### 15.3 Confirm Sales Order
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { confirmSalesOrder(orderId: \"{{salesOrderId}}\") { id orderNumber status } }"
+}
+
+### 15.4 Remove Sales Order Line (create new order first for this test)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+"query": "mutation { removeSalesOrderLine(orderId: \"{{salesOrderId}}\", lineId: \"{{salesLineId}}\") { id orderNumber lines { id sequence } } }"
+}
+
+### 15.5 Cancel Sales Order (create new order first for this test)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+"query": "mutation { cancelSalesOrder(input: { orderId: \"{{salesOrderId}}\", reason: \"Customer request\" }) { id orderNumber status } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  16. LOGOUT                                                  │
+### └──────────────────────────────────────────────────────────────┘
+
+### 16.1 Logout
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { logout }"
+}

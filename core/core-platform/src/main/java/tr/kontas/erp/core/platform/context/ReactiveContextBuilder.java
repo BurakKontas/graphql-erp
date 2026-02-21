@@ -26,11 +26,27 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
     private final TenantRepository tenantRepository;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final BootstrapApiKeyProvider bootstrapApiKeyProvider;
 
     @Override
     public @NonNull Mono<Context> build(@Nullable Map<String, ?> extensions,
                                         @Nullable HttpHeaders headers,
                                         @Nullable ServerRequest serverRequest) {
+
+        String apiKey = extractHeader(headers, "X-API-KEY");
+        if (apiKey != null && bootstrapApiKeyProvider.isValid(apiKey)) {
+            String tenantCode = extractHeader(headers, "X-TENANT");
+            if (tenantCode != null) {
+                return Mono.fromCallable(() ->
+                        tenantRepository.findIdByCode(new TenantCode(tenantCode))
+                                .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
+                ).map(tenantId -> {
+                    TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
+                    return new Context("bootstrap-admin", tenantId.asUUID(), Set.of("GENERAL:ADMIN"));
+                });
+            }
+            return Mono.just(new Context("bootstrap-admin", null, Set.of("GENERAL:ADMIN")));
+        }
 
         String tenantCode = extractHeader(headers, "X-TENANT");
 

@@ -15,6 +15,9 @@
         <module>sales/sales-domain</module>
         <module>sales/sales-application</module>
         <module>sales/sales-platform</module>
+        <module>inventory/inventory-domain</module>
+        <module>inventory/inventory-application</module>
+        <module>inventory/inventory-platform</module>
     </modules>
 
     <properties>

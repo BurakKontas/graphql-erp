@@ -43,6 +43,14 @@ public class PermissionRepositoryImpl implements PermissionRepository {
     }
 
     @Override
+    public List<Permission> findAll() {
+        return jpaRepository.findAll()
+                .stream()
+                .map(PermissionMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public void save(Permission permission) {
         jpaRepository.save(PermissionMapper.toEntity(permission));
     }

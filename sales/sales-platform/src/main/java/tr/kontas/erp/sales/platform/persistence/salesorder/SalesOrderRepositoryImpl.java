@@ -55,6 +55,14 @@ public class SalesOrderRepositoryImpl implements SalesOrderRepository {
     }
 
     @Override
+    public List<SalesOrder> findDraftsByCompanyId(TenantId tenantId, CompanyId companyId) {
+        return jpaRepository.findByTenantIdAndCompanyIdAndStatus(tenantId.asUUID(), companyId.asUUID(), "DRAFT")
+                .stream()
+                .map(this::mapToDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<SalesOrder> findByIds(List<SalesOrderId> ids) {
         List<UUID> uuids = ids.stream()
                 .map(SalesOrderId::asUUID)

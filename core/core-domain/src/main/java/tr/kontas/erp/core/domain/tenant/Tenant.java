@@ -31,8 +31,6 @@ public class Tenant extends AggregateRoot<TenantId> {
         this.oidcSettings = oidcSettings;
         this.ldapSettings = ldapSettings;
         this.active = true;
-
-        registerEvent(new TenantCreatedEvent(id));
     }
 
     public Tenant(TenantId id, TenantName name, TenantCode code, AuthProviderType authMode,

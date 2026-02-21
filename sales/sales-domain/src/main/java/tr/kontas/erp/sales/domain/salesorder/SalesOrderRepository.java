@@ -8,15 +8,11 @@ import java.util.Optional;
 
 public interface SalesOrderRepository {
     void save(SalesOrder order);
-
     Optional<SalesOrder> findById(SalesOrderId id, TenantId tenantId);
-
     Optional<SalesOrder> findByOrderNumber(SalesOrderNumber orderNumber, TenantId tenantId);
-
     boolean existsByOrderNumber(SalesOrderNumber orderNumber, TenantId tenantId);
-
     List<SalesOrder> findByCompanyId(TenantId tenantId, CompanyId companyId);
-
+    List<SalesOrder> findDraftsByCompanyId(TenantId tenantId, CompanyId companyId);
     List<SalesOrder> findByIds(List<SalesOrderId> ids);
 }
 

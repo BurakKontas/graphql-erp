@@ -12,7 +12,7 @@ public class Tax extends Entity<TaxCode> {
     private final CompanyId companyId;
     private final String name;
     private final TaxType type;
-    private final TaxRate rate;
+    private TaxRate rate;
     private boolean active;
 
     public Tax(
@@ -34,6 +34,19 @@ public class Tax extends Entity<TaxCode> {
         this.type = type;
         this.rate = rate;
         this.active = true;
+    }
+
+    public static Tax reconstitute(
+            TaxCode code, TenantId tenantId, CompanyId companyId,
+            String name, TaxType type, TaxRate rate, boolean active) {
+        Tax tax = new Tax(code, tenantId, companyId, name, type, rate);
+        tax.active = active;
+        return tax;
+    }
+
+    public void updateRate(TaxRate newRate) {
+        if (newRate == null) throw new IllegalArgumentException("TaxRate cannot be null");
+        this.rate = newRate;
     }
 
     public void deactivate() {
