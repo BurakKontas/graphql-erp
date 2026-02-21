@@ -58,6 +58,22 @@
         </dependency>
 
         <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>shipment-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>shipment-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>shipment-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>

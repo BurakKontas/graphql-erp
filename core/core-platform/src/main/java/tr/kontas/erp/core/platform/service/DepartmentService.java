@@ -34,18 +34,22 @@ public class DepartmentService implements
     public DepartmentId execute(CreateDepartmentCommand command) {
         TenantId tenantId = TenantContext.get();
 
+        Department parent = null;
         if (command.parentId() != null) {
-            var departmentExists = departmentRepository.existsById(command.parentId());
-
-            if (!departmentExists) {
-                throw new Exception("Parent department doesn't exists");
-            }
+            parent = departmentRepository.findById(command.parentId())
+                    .orElseThrow(() -> new Exception("Parent department doesn't exist"));
         }
 
         DepartmentId id = DepartmentId.newId();
         Department department = new Department(id, tenantId, new DepartmentName(command.name()), command.companyId(), command.parentId());
 
         departmentRepository.save(department);
+
+        if (parent != null) {
+            parent.addSubDepartmentId(id);
+            departmentRepository.save(parent);
+        }
+
         eventPublisher.publishAll(department.getDomainEvents());
         department.clearDomainEvents();
 

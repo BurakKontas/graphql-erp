@@ -32,12 +32,12 @@ public class DepartmentJpaEntity {
     @Column(name = "parent_id")
     private UUID parentId;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
-            name = "department_jpa_entity_sub_departments",
-            joinColumns = @JoinColumn(name = "department_jpa_entity_id")
+            name = "department_sub_departments",
+            joinColumns = @JoinColumn(name = "department_id")
     )
-    @Column(name = "sub_departments")
+    @Column(name = "sub_department_id")
     private Set<UUID> subDepartments = new HashSet<>();
 
     @Column(name = "active", nullable = false)

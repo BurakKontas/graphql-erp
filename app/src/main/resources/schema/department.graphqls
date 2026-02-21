@@ -7,8 +7,11 @@ input CreateDepartmentInput {
 type DepartmentPayload {
     id: ID!
     name: String!
+    parentId: ID
+    companyId: ID!
     company: CompanyPayload
     parent: DepartmentPayload
+    subDepartments: [DepartmentPayload]
     employees: [EmployeePayload]
 }
 

@@ -1,0 +1,185 @@
+# ─── Delivery Order ───
+
+type DeliveryOrderPayload {
+    id: ID!
+    companyId: ID!
+    number: String!
+    salesOrderId: String
+    salesOrderNumber: String
+    customerId: String
+    shippingAddress: ShippingAddressPayload
+    status: String!
+    lines: [DeliveryOrderLinePayload!]!
+    company: CompanyPayload
+    salesOrder: SalesOrderPayload
+}
+
+type DeliveryOrderLinePayload {
+    id: ID!
+    salesOrderLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    orderedQty: BigDecimal!
+    shippedQty: BigDecimal!
+    remainingQty: BigDecimal!
+}
+
+# ─── Shipment ───
+
+type ShipmentPayload {
+    id: ID!
+    companyId: ID!
+    number: String!
+    deliveryOrderId: String
+    salesOrderId: String
+    warehouseId: String
+    shippingAddress: ShippingAddressPayload
+    trackingNumber: String
+    carrierName: String
+    status: String!
+    dispatchedAt: String
+    deliveredAt: String
+    lines: [ShipmentLinePayload!]!
+    company: CompanyPayload
+    deliveryOrder: DeliveryOrderPayload
+    warehouse: WarehousePayload
+}
+
+type ShipmentLinePayload {
+    id: ID!
+    deliveryOrderLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+}
+
+# ─── Shipment Return ───
+
+type ShipmentReturnPayload {
+    id: ID!
+    companyId: ID!
+    number: String!
+    shipmentId: String
+    salesOrderId: String
+    warehouseId: String
+    reason: String
+    status: String!
+    receivedAt: String
+    lines: [ShipmentReturnLinePayload!]!
+    company: CompanyPayload
+    shipment: ShipmentPayload
+}
+
+type ShipmentReturnLinePayload {
+    id: ID!
+    shipmentLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    lineReason: String
+}
+
+# ─── Inputs ───
+
+input CreateDeliveryOrderInput {
+    companyId: ID!
+    salesOrderId: String!
+    salesOrderNumber: String
+    customerId: String
+    addressLine1: String
+    addressLine2: String
+    city: String
+    stateOrProvince: String
+    postalCode: String
+    countryCode: String
+    lines: [CreateDeliveryOrderLineInput!]!
+}
+
+input CreateDeliveryOrderLineInput {
+    salesOrderLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    orderedQty: BigDecimal!
+}
+
+input CancelDeliveryOrderInput {
+    deliveryOrderId: ID!
+    reason: String!
+}
+
+input CreateShipmentInput {
+    companyId: ID!
+    deliveryOrderId: String!
+    salesOrderId: String
+    warehouseId: String!
+    addressLine1: String
+    addressLine2: String
+    city: String
+    stateOrProvince: String
+    postalCode: String
+    countryCode: String
+    lines: [CreateShipmentLineInput!]!
+}
+
+input CreateShipmentLineInput {
+    deliveryOrderLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+}
+
+input SetTrackingInfoInput {
+    shipmentId: ID!
+    carrierName: String
+    trackingNumber: String
+}
+
+input CreateShipmentReturnInput {
+    companyId: ID!
+    shipmentId: String!
+    salesOrderId: String
+    warehouseId: String!
+    reason: String!
+    lines: [CreateShipmentReturnLineInput!]!
+}
+
+input CreateShipmentReturnLineInput {
+    shipmentLineId: String
+    itemId: String!
+    itemDescription: String
+    unitCode: String!
+    quantity: BigDecimal!
+    lineReason: String
+}
+
+# ─── Queries ───
+
+extend type Query {
+    deliveryOrder(id: ID!): DeliveryOrderPayload @auth(permissions: ["DELIVERY_ORDER:READ"])
+    deliveryOrders(companyId: ID!): [DeliveryOrderPayload!]! @auth(permissions: ["DELIVERY_ORDER:READ"])
+    shipment(id: ID!): ShipmentPayload @auth(permissions: ["SHIPMENT:READ"])
+    shipments(companyId: ID!): [ShipmentPayload!]! @auth(permissions: ["SHIPMENT:READ"])
+    shipmentReturn(id: ID!): ShipmentReturnPayload @auth(permissions: ["SHIPMENT_RETURN:READ"])
+    shipmentReturns(companyId: ID!): [ShipmentReturnPayload!]! @auth(permissions: ["SHIPMENT_RETURN:READ"])
+}
+
+# ─── Mutations ───
+
+extend type Mutation {
+    createDeliveryOrder(input: CreateDeliveryOrderInput!): DeliveryOrderPayload! @auth(permissions: ["DELIVERY_ORDER:CREATE"])
+    cancelDeliveryOrder(input: CancelDeliveryOrderInput!): DeliveryOrderPayload! @auth(permissions: ["DELIVERY_ORDER:CANCEL"])
+    createShipment(input: CreateShipmentInput!): ShipmentPayload! @auth(permissions: ["SHIPMENT:CREATE"])
+    setShipmentTrackingInfo(input: SetTrackingInfoInput!): ShipmentPayload! @auth(permissions: ["SHIPMENT:UPDATE"])
+    dispatchShipment(shipmentId: ID!): ShipmentPayload! @auth(permissions: ["SHIPMENT:DISPATCH"])
+    deliverShipment(shipmentId: ID!): ShipmentPayload! @auth(permissions: ["SHIPMENT:DELIVER"])
+    createShipmentReturn(input: CreateShipmentReturnInput!): ShipmentReturnPayload! @auth(permissions: ["SHIPMENT_RETURN:CREATE"])
+    receiveShipmentReturn(shipmentReturnId: ID!): ShipmentReturnPayload! @auth(permissions: ["SHIPMENT_RETURN:RECEIVE"])
+    completeShipmentReturn(shipmentReturnId: ID!): ShipmentReturnPayload! @auth(permissions: ["SHIPMENT_RETURN:COMPLETE"])
+    cancelShipmentReturn(shipmentReturnId: ID!): ShipmentReturnPayload! @auth(permissions: ["SHIPMENT_RETURN:CANCEL"])
+}
+

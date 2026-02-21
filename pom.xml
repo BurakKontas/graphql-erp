@@ -18,6 +18,9 @@
         <module>inventory/inventory-domain</module>
         <module>inventory/inventory-application</module>
         <module>inventory/inventory-platform</module>
+        <module>shipment/shipment-domain</module>
+        <module>shipment/shipment-application</module>
+        <module>shipment/shipment-platform</module>
     </modules>
 
     <properties>

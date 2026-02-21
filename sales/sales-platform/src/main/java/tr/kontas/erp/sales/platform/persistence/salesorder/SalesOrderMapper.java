@@ -5,6 +5,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.reference.currency.Currency;
 import tr.kontas.erp.core.domain.reference.payment.PaymentTerm;
 import tr.kontas.erp.core.domain.reference.tax.Tax;
+import tr.kontas.erp.core.domain.shared.Address;
 import tr.kontas.erp.core.domain.shared.Quantity;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.sales.domain.salesorder.*;
@@ -28,7 +29,7 @@ public class SalesOrderMapper {
         entity.setCurrencyCode(domain.getCurrency() != null ? domain.getCurrency().getId().getValue() : null);
         entity.setPaymentTermCode(domain.getPaymentTerm() != null ? domain.getPaymentTerm().getId().getValue() : null);
 
-        ShippingAddress sa = domain.getShippingAddress();
+        Address sa = domain.getShippingAddress();
         if (sa != null) {
             entity.setShippingAddressLine1(sa.getAddressLine1());
             entity.setShippingAddressLine2(sa.getAddressLine2());
@@ -83,9 +84,9 @@ public class SalesOrderMapper {
                 .map(lineEntity -> toLineDomain(lineEntity, entity.getId(), taxMap))
                 .toList();
 
-        ShippingAddress shippingAddress = null;
+        Address shippingAddress = null;
         if (entity.getShippingAddressLine1() != null) {
-            shippingAddress = new ShippingAddress(
+            shippingAddress = new Address(
                     entity.getShippingAddressLine1(),
                     entity.getShippingAddressLine2(),
                     entity.getShippingCity(),

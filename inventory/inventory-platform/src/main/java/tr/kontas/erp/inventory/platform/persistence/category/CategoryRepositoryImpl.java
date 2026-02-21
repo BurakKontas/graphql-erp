@@ -44,4 +44,12 @@ public class CategoryRepositoryImpl implements CategoryRepository {
                 .map(CategoryMapper::toDomain)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Category> findByParentCategoryId(CategoryId parentId, TenantId tenantId) {
+        return jpaRepository.findByParentCategoryIdAndTenantId(parentId.asUUID(), tenantId.asUUID())
+                .stream()
+                .map(CategoryMapper::toDomain)
+                .collect(Collectors.toList());
+    }
 }

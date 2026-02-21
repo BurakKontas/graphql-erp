@@ -1,4 +1,4 @@
-package tr.kontas.erp.sales.domain.salesorder;
+package tr.kontas.erp.core.domain.shared;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import java.util.Objects;
 @Getter
 @Builder
 @ToString(callSuper = false)
-public class ShippingAddress extends ValueObject {
+public final class Address {
     private String addressLine1;
     private String addressLine2;      // nullable
     private String city;
@@ -18,7 +18,7 @@ public class ShippingAddress extends ValueObject {
     private String postalCode;
     private String countryCode;       // ISO 3166-1 alpha-2
 
-    public ShippingAddress(
+    public Address(
             String addressLine1,
             String addressLine2,
             String city,
@@ -54,7 +54,7 @@ public class ShippingAddress extends ValueObject {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ShippingAddress that)) return false;
+        if (!(o instanceof Address that)) return false;
         return Objects.equals(addressLine1, that.addressLine1)
                 && Objects.equals(addressLine2, that.addressLine2)
                 && Objects.equals(city, that.city)
@@ -68,3 +68,4 @@ public class ShippingAddress extends ValueObject {
         return Objects.hash(addressLine1, addressLine2, city, stateOrProvince, postalCode, countryCode);
     }
 }
+

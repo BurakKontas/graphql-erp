@@ -11,7 +11,7 @@ import tr.kontas.erp.sales.application.salesorder.*;
 import tr.kontas.erp.sales.domain.salesorder.SalesOrder;
 import tr.kontas.erp.sales.domain.salesorder.SalesOrderId;
 import tr.kontas.erp.sales.domain.salesorder.SalesOrderLine;
-import tr.kontas.erp.sales.domain.salesorder.ShippingAddress;
+import tr.kontas.erp.core.domain.shared.Address;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,15 +36,15 @@ public class SalesOrderGraphql {
 
     public static SalesOrderPayload toPayload(SalesOrder order) {
         ShippingAddressPayload shippingAddressPayload = null;
-        ShippingAddress sa = order.getShippingAddress();
-        if (sa != null) {
+        Address shippingAddress = order.getShippingAddress();
+        if (shippingAddress != null) {
             shippingAddressPayload = new ShippingAddressPayload(
-                    sa.getAddressLine1(),
-                    sa.getAddressLine2(),
-                    sa.getCity(),
-                    sa.getStateOrProvince(),
-                    sa.getPostalCode(),
-                    sa.getCountryCode()
+                    shippingAddress.getAddressLine1(),
+                    shippingAddress.getAddressLine2(),
+                    shippingAddress.getCity(),
+                    shippingAddress.getStateOrProvince(),
+                    shippingAddress.getPostalCode(),
+                    shippingAddress.getCountryCode()
             );
         }
 
@@ -173,16 +173,16 @@ public class SalesOrderGraphql {
 
     @DgsMutation
     public SalesOrderPayload updateSalesOrderHeader(@InputArgument("input") UpdateSalesOrderHeaderInput input) {
-        UpdateSalesOrderHeaderCommand.ShippingAddressInput saInput = null;
+        UpdateSalesOrderHeaderCommand.ShippingAddressInput shippingAddressInput = null;
         if (input.getShippingAddress() != null) {
-            var sa = input.getShippingAddress();
-            saInput = new UpdateSalesOrderHeaderCommand.ShippingAddressInput(
-                    sa.getAddressLine1(),
-                    sa.getAddressLine2(),
-                    sa.getCity(),
-                    sa.getStateOrProvince(),
-                    sa.getPostalCode(),
-                    sa.getCountryCode()
+            var shippingAddress = input.getShippingAddress();
+            shippingAddressInput = new UpdateSalesOrderHeaderCommand.ShippingAddressInput(
+                    shippingAddress.getAddressLine1(),
+                    shippingAddress.getAddressLine2(),
+                    shippingAddress.getCity(),
+                    shippingAddress.getStateOrProvince(),
+                    shippingAddress.getPostalCode(),
+                    shippingAddress.getCountryCode()
             );
         }
 
@@ -191,7 +191,7 @@ public class SalesOrderGraphql {
                 input.getOrderDate() != null ? LocalDate.parse(input.getOrderDate()) : null,
                 input.getExpiryDate() != null ? LocalDate.parse(input.getExpiryDate()) : null,
                 input.getPaymentTermCode(),
-                saInput
+                shippingAddressInput
         );
 
         updateSalesOrderHeaderUseCase.execute(command);

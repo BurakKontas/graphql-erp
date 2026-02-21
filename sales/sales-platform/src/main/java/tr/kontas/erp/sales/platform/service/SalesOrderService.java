@@ -8,6 +8,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.reference.currency.Currency;
 import tr.kontas.erp.core.domain.reference.payment.PaymentTerm;
 import tr.kontas.erp.core.domain.reference.tax.Tax;
+import tr.kontas.erp.core.domain.shared.Address;
 import tr.kontas.erp.core.domain.shared.Quantity;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
@@ -171,10 +172,10 @@ public class SalesOrderService implements
                 ? taxResolution.resolvePaymentTerm(tenantId, order.getCompanyId(), command.paymentTermCode())
                 : null;
 
-        ShippingAddress shippingAddress = null;
+        Address shippingAddress = null;
         if (command.shippingAddress() != null) {
             var sa = command.shippingAddress();
-            shippingAddress = new ShippingAddress(
+            shippingAddress = new Address(
                     sa.addressLine1(),
                     sa.addressLine2(),
                     sa.city(),

@@ -8,6 +8,8 @@ import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DepartmentMapper {
 
@@ -33,6 +35,12 @@ public class DepartmentMapper {
     }
 
     public static DepartmentJpaEntity toEntity(Department domain) {
+        Set<UUID> subDeptUuids = domain.getSubDepartments() != null
+                ? domain.getSubDepartments().stream()
+                    .map(DepartmentId::asUUID)
+                    .collect(Collectors.toSet())
+                : new HashSet<>();
+
         return DepartmentJpaEntity.builder()
                 .id(domain.getId().asUUID())
                 .tenantId(domain.getTenantId().asUUID())
@@ -40,6 +48,7 @@ public class DepartmentMapper {
                 .active(domain.isActive())
                 .companyId(domain.getCompanyId().asUUID())
                 .parentId(domain.getParentId() != null ? domain.getParentId().asUUID() : null)
+                .subDepartments(subDeptUuids)
                 .build();
     }
 }

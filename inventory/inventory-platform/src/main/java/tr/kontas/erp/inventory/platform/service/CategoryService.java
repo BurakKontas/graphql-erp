@@ -19,6 +19,7 @@ public class CategoryService implements
         GetCategoryByIdUseCase,
         GetCategoriesByCompanyUseCase,
         GetCategoriesByIdsUseCase,
+        GetSubCategoriesUseCase,
         RenameCategoryUseCase,
         DeactivateCategoryUseCase,
         ActivateCategoryUseCase {
@@ -65,6 +66,12 @@ public class CategoryService implements
     @Override
     public List<Category> execute(List<CategoryId> ids) {
         return categoryRepository.findByIds(ids);
+    }
+
+    @Override
+    public List<Category> getSubCategories(CategoryId parentId) {
+        TenantId tenantId = TenantContext.get();
+        return categoryRepository.findByParentCategoryId(parentId, tenantId);
     }
 
     @Override

@@ -12,4 +12,5 @@ public interface JpaCategoryRepository extends JpaRepository<CategoryJpaEntity, 
     Optional<CategoryJpaEntity> findByIdAndTenantId(UUID id, UUID tenantId);
     List<CategoryJpaEntity> findByTenantIdAndCompanyId(UUID tenantId, UUID companyId);
     List<CategoryJpaEntity> findByIdIn(List<UUID> ids);
+    List<CategoryJpaEntity> findByParentCategoryIdAndTenantId(UUID parentCategoryId, UUID tenantId);
 }

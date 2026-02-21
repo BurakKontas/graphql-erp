@@ -6,6 +6,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.reference.currency.Currency;
 import tr.kontas.erp.core.domain.reference.payment.PaymentTerm;
 import tr.kontas.erp.core.domain.reference.tax.Tax;
+import tr.kontas.erp.core.domain.shared.Address;
 import tr.kontas.erp.core.domain.shared.Quantity;
 import tr.kontas.erp.core.kernel.domain.model.AggregateRoot;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
@@ -37,7 +38,7 @@ public class SalesOrder extends AggregateRoot<SalesOrderId> {
     private final BusinessPartnerId customerId;
     private final Currency currency;
     private PaymentTerm paymentTerm;
-    private ShippingAddress shippingAddress;
+    private Address shippingAddress;
     private SalesOrderStatus status;
     private FulfillmentStatus fulfillmentStatus;
     private BigDecimal invoicedAmount;
@@ -97,7 +98,7 @@ public class SalesOrder extends AggregateRoot<SalesOrderId> {
             PaymentTerm paymentTerm,
             LocalDate orderDate,
             LocalDate expiryDate,
-            ShippingAddress shippingAddress,
+            Address shippingAddress,
             SalesOrderStatus status,
             FulfillmentStatus fulfillmentStatus,
             BigDecimal invoicedAmount,
@@ -213,7 +214,7 @@ public class SalesOrder extends AggregateRoot<SalesOrderId> {
             LocalDate orderDate,
             LocalDate expiryDate,
             PaymentTerm paymentTerm,
-            ShippingAddress shippingAddress) {
+            Address shippingAddress) {
 
         ensureDraft("updateHeader");
 

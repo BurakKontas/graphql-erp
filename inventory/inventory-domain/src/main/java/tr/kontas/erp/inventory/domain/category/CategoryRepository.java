@@ -11,4 +11,5 @@ public interface CategoryRepository {
     Optional<Category> findById(CategoryId id, TenantId tenantId);
     List<Category> findByCompanyId(TenantId tenantId, CompanyId companyId);
     List<Category> findByIds(List<CategoryId> ids);
+    List<Category> findByParentCategoryId(CategoryId parentId, TenantId tenantId);
 }

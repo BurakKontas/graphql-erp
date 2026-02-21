@@ -19,6 +19,7 @@ type CategoryPayload {
     active: Boolean!
     company: CompanyPayload
     parentCategory: CategoryPayload
+    subCategories: [CategoryPayload]
 }
 
 # ─── Item ───

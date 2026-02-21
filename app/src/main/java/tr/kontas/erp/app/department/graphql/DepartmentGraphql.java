@@ -28,11 +28,17 @@ public class DepartmentGraphql {
     private final GetDepartmentsByCompanyIdsUseCase getDepartmentsByCompanyIdsUseCase;
 
     public static DepartmentPayload toPayload(Department department) {
+        List<String> subIds = department.getSubDepartments() != null
+                ? department.getSubDepartments().stream()
+                    .map(id -> id.asUUID().toString())
+                    .toList()
+                : List.of();
         return new DepartmentPayload(
                 department.getId().asUUID().toString(),
                 department.getName().getValue(),
                 department.getParentId() != null ? department.getParentId().asUUID().toString() : null,
-                department.getCompanyId().asUUID().toString()
+                department.getCompanyId().asUUID().toString(),
+                subIds
         );
     }
 
@@ -46,7 +52,8 @@ public class DepartmentGraphql {
 
         DepartmentId id = createDepartmentUseCase.execute(command);
 
-        return new DepartmentPayload(id.asUUID().toString(), input.getName(), input.getParentId(), input.getCompanyId());
+        Department created = getDepartmentByIdUseCase.execute(id);
+        return toPayload(created);
     }
 
     @DgsQuery
@@ -100,6 +107,19 @@ public class DepartmentGraphql {
         }
 
         return dataLoader.load(department.getParentId());
+    }
+
+    @DgsData(parentType = "DepartmentPayload")
+    public CompletableFuture<List<DepartmentPayload>> subDepartments(DgsDataFetchingEnvironment dfe) {
+        DepartmentPayload department = dfe.getSource();
+        DataLoader<String, DepartmentPayload> dataLoader = dfe.getDataLoader("departmentLoader");
+
+        if (dataLoader == null || department == null
+                || department.getSubDepartmentIds() == null || department.getSubDepartmentIds().isEmpty()) {
+            return CompletableFuture.completedFuture(List.of());
+        }
+
+        return dataLoader.loadMany(department.getSubDepartmentIds());
     }
 
     @DgsData(parentType = "DepartmentPayload")

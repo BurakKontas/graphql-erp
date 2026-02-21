@@ -21,6 +21,11 @@
 ###   {{movementId}}     = id returned from recordStockMovement
 ###   {{salesOrderId}}   = id returned from createSalesOrder
 ###   {{salesLineId}}    = line id returned from addSalesOrderLine
+###   {{deliveryOrderId}}= id returned from createDeliveryOrder
+###   {{doLineId}}       = delivery order line id
+###   {{shipmentId}}     = id returned from createShipment
+###   {{shipmentLineId}} = shipment line id
+###   {{shipmentReturnId}} = id returned from createShipmentReturn
 ### ═══════════════════════════════════════════════════════════════
 
 
@@ -29,7 +34,7 @@
 ### │     into the apiKey variable below                           │
 ### └──────────────────────────────────────────────────────────────┘
 
-@apiKey = 4ddd410f-bb69-46bc-9216-a8b1208e1670
+@apiKey = 9404f866-b80e-4539-81db-9bc5284a2d05
 
 
 ### ┌──────────────────────────────────────────────────────────────┐
@@ -150,6 +155,10 @@ X-TENANT: TST
     client.global.set("token", response.body.data.login.accessToken);
 %}
 
+###
+@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZjNmZTcwZi01YTJjLTRhMmUtODBlZC03ZjlmZGJmNmIwNTQiLCJ0ZW5hbnQiOiJkMzZkN2VmZi01N2NiLTRmNzYtODBjNy04NmM0ZmQwOGRjODgiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiNTNkMDBjYjUtMzZlNy1hNDkxLTFkMjQtMzc1MTQ2MGQ2NGI0Il0sInR5cGUiOiJhY2Nlc3MiLCJwZXJtaXNzaW9ucyI6WyJTQUxFU19PUkRFUjpDT05GSVJNIiwiVEFYOlVQREFURSIsIkNPTVBBTlk6UkVBRCIsIlBBWU1FTlRfVEVSTTpDUkVBVEUiLCJTQUxFU19PUkRFUjpDUkVBVEUiLCJVTklUOlVQREFURSIsIkJVU0lORVNTX1BBUlRORVI6VVBEQVRFIiwiQlVTSU5FU1NfUEFSVE5FUjpERUxFVEUiLCJFTVBMT1lFRTpVUERBVEUiLCJTVE9DS19NT1ZFTUVOVDpVUERBVEUiLCJFTVBMT1lFRTpERUxFVEUiLCJFTVBMT1lFRTpDUkVBVEUiLCJXQVJFSE9VU0U6Q1JFQVRFIiwiREVQQVJUTUVOVDpDUkVBVEUiLCJDT01QQU5ZOkRFTEVURSIsIlNUT0NLX0xFVkVMOkRFTEVURSIsIklURU06VVBEQVRFIiwiU1RPQ0tfTU9WRU1FTlQ6REVMRVRFIiwiREVQQVJUTUVOVDpSRUFEIiwiQ0FURUdPUlk6REVMRVRFIiwiSVRFTTpSRUFEIiwiR0VORVJBTDpBRE1JTiIsIldBUkVIT1VTRTpVUERBVEUiLCJQQVlNRU5UX1RFUk06VVBEQVRFIiwiQ1VSUkVOQ1k6VVBEQVRFIiwiUEFZTUVOVF9URVJNOlJFQUQiLCJTQUxFU19PUkRFUjpBQ0NFUFQiLCJVTklUOkRFTEVURSIsIlNUT0NLX01PVkVNRU5UOlJFQUQiLCJDQVRFR09SWTpSRUFEIiwiU1RPQ0tfTEVWRUw6UkVBRCIsIlNBTEVTX09SREVSOlVQREFURSIsIlRBWDpDUkVBVEUiLCJDVVJSRU5DWTpSRUFEIiwiQ1VSUkVOQ1k6Q1JFQVRFIiwiU0FMRVNfT1JERVI6UkVBRCIsIkRFUEFSVE1FTlQ6VVBEQVRFIiwiUEFZTUVOVF9URVJNOkRFTEVURSIsIkRFUEFSVE1FTlQ6REVMRVRFIiwiU0FMRVNfT1JERVI6REVMRVRFIiwiSVRFTTpDUkVBVEUiLCJTQUxFU19PUkRFUjpTRU5EIiwiQ09NUEFOWTpVUERBVEUiLCJTVE9DS19MRVZFTDpVUERBVEUiLCJDQVRFR09SWTpVUERBVEUiLCJCVVNJTkVTU19QQVJUTkVSOkNSRUFURSIsIlVOSVQ6UkVBRCIsIlVOSVQ6Q1JFQVRFIiwiRU1QTE9ZRUU6UkVBRCIsIklURU06REVMRVRFIiwiV0FSRUhPVVNFOkRFTEVURSIsIkNPTVBBTlk6Q1JFQVRFIiwiQ0FURUdPUlk6Q1JFQVRFIiwiU1RPQ0tfTEVWRUw6Q1JFQVRFIiwiQlVTSU5FU1NfUEFSVE5FUjpSRUFEIiwiVEFYOkRFTEVURSIsIldBUkVIT1VTRTpSRUFEIiwiVEFYOlJFQUQiLCJTQUxFU19PUkRFUjpDQU5DRUwiLCJDVVJSRU5DWTpERUxFVEUiLCJTVE9DS19NT1ZFTUVOVDpDUkVBVEUiXSwiYXV0aFZlcnNpb24iOjMsImlhdCI6MTc3MTY4NzA2NiwiZXhwIjoxNzcxNjkwNjY2fQ.8aG52ChbcfMIsSY26R3H6-qwrrtBwyZrrwxGyGM7DoY
+@refreshToken = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZjNmZTcwZi01YTJjLTRhMmUtODBlZC03ZjlmZGJmNmIwNTQiLCJ0eXBlIjoicmVmcmVzaCIsImF1dGhWZXJzaW9uIjoyLCJpYXQiOjE3NzE2ODYwMjQsImV4cCI6MTc3MjI5MDgyNH0.wfcKV4c824RwR-C-kVJXq-OL2VDH2dujtS1_KMEzQAE
+
 ### 2.6 Refresh Token
 POST http://localhost:8080/graphql
 Content-Type: application/json
@@ -157,7 +166,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { refreshToken(refreshToken: \"PASTE_REFRESH_TOKEN_HERE\") { accessToken refreshToken expiresAt } }"
+  "query": "mutation { refreshToken(refreshToken: {{refreshToken}}) { accessToken refreshToken expiresAt } }"
 }
 
 
@@ -281,7 +290,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ unit(code: \"PCS\") { code name type active } }"
+  "query": "{ unit(code: \"KG\") { code name type active } }"
 }
 
 ### 4.9 Create Payment Term
@@ -350,7 +359,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createDepartment(input: { name: \"Backend Team\", companyId: \"{{companyId}}\", parentId: \"{{departmentId}}\" }) { id name company { id name } parent { id name } } }"
+  "query": "mutation { createDepartment(input: { name: \"Backend Team\", companyId: \"{{companyId}}\", parentId: \"{{departmentId}}\" }) { id name company { id name } parent { id name subDepartments { id name } } } }"
 }
 
 ### 5.3 Get Department by ID
@@ -360,7 +369,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ department(id: \"{{departmentId}}\") { id name company { id name } parent { id name } employees { id name } } }"
+  "query": "{ department(id: \"{{departmentId}}\") { id name company { id name } parent { id name } subDepartments { id name } employees { id name } } }"
 }
 
 ### 5.4 Get Departments by Company
@@ -370,7 +379,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ departments(companyId: \"{{companyId}}\") { id name company { id name } parent { id name } employees { id name } } }"
+  "query": "{ departments(companyId: \"{{companyId}}\") { id name company { id name } parent { id name } subDepartments { id name } employees { id name } } }"
 }
 
 
@@ -566,7 +575,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createCategory(input: { companyId: \"{{companyId}}\", name: \"Smartphones\", parentCategoryId: \"{{categoryId}}\" }) { id name parentCategoryId active parentCategory { id name } } }"
+  "query": "mutation { createCategory(input: { companyId: \"{{companyId}}\", name: \"Smartphones\", parentCategoryId: \"{{categoryId}}\" }) { id name parentCategoryId active parentCategory { id name subCategories { id name } } } }"
 }
 
 > {%
@@ -580,7 +589,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ category(id: \"{{categoryId}}\") { id companyId name parentCategoryId active company { id name } parentCategory { id name } } }"
+  "query": "{ category(id: \"{{categoryId}}\") { id companyId name parentCategoryId active company { id name } parentCategory { id name } subCategories { id name active } } }"
 }
 
 ### 9.4 Get Categories by Company
@@ -590,7 +599,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ categories(companyId: \"{{companyId}}\") { id name parentCategoryId active parentCategory { id name } } }"
+  "query": "{ categories(companyId: \"{{companyId}}\") { id name parentCategoryId active parentCategory { id name } subCategories { id name active } } }"
 }
 
 ### 9.5 Rename Category
@@ -849,6 +858,9 @@ Authorization: Bearer {{token}}
     client.global.set("salesOrderId", response.body.data.createSalesOrder.id);
 %}
 
+###
+@salesOrderId = acfadc27-b88e-42a9-9c82-b82ac7d034aa
+
 ### 13.2 Add Sales Order Line 1
 POST http://localhost:8080/graphql
 Content-Type: application/json
@@ -1004,10 +1016,215 @@ Authorization: Bearer {{token}}
 
 
 ### ┌──────────────────────────────────────────────────────────────┐
-### │  16. LOGOUT                                                  │
+### │  16. DELIVERY ORDER                                          │
 ### └──────────────────────────────────────────────────────────────┘
 
-### 16.1 Logout
+### 16.1 Create Delivery Order (from confirmed sales order)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createDeliveryOrder(input: { companyId: \"{{companyId}}\", salesOrderId: \"{{salesOrderId}}\", salesOrderNumber: \"SO-2026-000001\", customerId: \"{{bpId}}\", addressLine1: \"123 Main St\", city: \"Istanbul\", postalCode: \"34000\", countryCode: \"TR\", lines: [{ salesOrderLineId: \"{{salesLineId}}\", itemId: \"{{itemId}}\", itemDescription: \"Test Item\", unitCode: \"PCS\", orderedQty: 10 }] }) { id number status salesOrderId salesOrderNumber lines { id salesOrderLineId itemId orderedQty shippedQty remainingQty } company { id name } salesOrder { id orderNumber } } }"
+}
+
+> {%
+    client.global.set("deliveryOrderId", response.body.data.createDeliveryOrder.id);
+    var lines = response.body.data.createDeliveryOrder.lines;
+    if (lines && lines.length > 0) {
+        client.global.set("doLineId", lines[0].id);
+    }
+%}
+
+### 16.2 Get Delivery Order by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ deliveryOrder(id: \"{{deliveryOrderId}}\") { id number status salesOrderId salesOrderNumber customerId shippingAddress { addressLine1 city countryCode } lines { id itemId orderedQty shippedQty remainingQty } } }"
+}
+
+### 16.3 Get Delivery Orders by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ deliveryOrders(companyId: \"{{companyId}}\") { id number status salesOrderId } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  17. SHIPMENT                                                │
+### └──────────────────────────────────────────────────────────────┘
+
+### 17.1 Create Shipment
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createShipment(input: { companyId: \"{{companyId}}\", deliveryOrderId: \"{{deliveryOrderId}}\", salesOrderId: \"{{salesOrderId}}\", warehouseId: \"{{warehouseId}}\", addressLine1: \"123 Main St\", city: \"Istanbul\", postalCode: \"34000\", countryCode: \"TR\", lines: [{ deliveryOrderLineId: \"{{doLineId}}\", itemId: \"{{itemId}}\", itemDescription: \"Test Item\", unitCode: \"PCS\", quantity: 10 }] }) { id number status deliveryOrderId warehouseId lines { id deliveryOrderLineId itemId quantity } company { id name } deliveryOrder { id number } warehouse { id code name } } }"
+}
+
+> {%
+    client.global.set("shipmentId", response.body.data.createShipment.id);
+    var lines = response.body.data.createShipment.lines;
+    if (lines && lines.length > 0) {
+        client.global.set("shipmentLineId", lines[0].id);
+    }
+%}
+
+### 17.2 Set Tracking Info
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { setShipmentTrackingInfo(input: { shipmentId: \"{{shipmentId}}\", carrierName: \"DHL\", trackingNumber: \"TRK-123456\" }) { id number trackingNumber carrierName status } }"
+}
+
+### 17.3 Dispatch Shipment
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { dispatchShipment(shipmentId: \"{{shipmentId}}\") { id number status dispatchedAt trackingNumber carrierName } }"
+}
+
+### 17.4 Deliver Shipment (also updates DeliveryOrder shippedQty)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { deliverShipment(shipmentId: \"{{shipmentId}}\") { id number status deliveredAt lines { id itemId quantity } } }"
+}
+
+### 17.5 Get Shipment by ID (verify status + nested resolvers)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ shipment(id: \"{{shipmentId}}\") { id number status trackingNumber carrierName dispatchedAt deliveredAt shippingAddress { addressLine1 city countryCode } lines { id deliveryOrderLineId itemId quantity } company { id name } deliveryOrder { id number status lines { id orderedQty shippedQty remainingQty } } warehouse { id code name } } }"
+}
+
+### 17.6 Get Shipments by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ shipments(companyId: \"{{companyId}}\") { id number status deliveryOrderId } }"
+}
+
+### 17.7 Verify DeliveryOrder completed (shippedQty updated)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ deliveryOrder(id: \"{{deliveryOrderId}}\") { id number status lines { id orderedQty shippedQty remainingQty } } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  18. SHIPMENT RETURN                                         │
+### └──────────────────────────────────────────────────────────────┘
+
+### 18.1 Create Shipment Return
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createShipmentReturn(input: { companyId: \"{{companyId}}\", shipmentId: \"{{shipmentId}}\", salesOrderId: \"{{salesOrderId}}\", warehouseId: \"{{warehouseId}}\", reason: \"Damaged items\", lines: [{ shipmentLineId: \"{{shipmentLineId}}\", itemId: \"{{itemId}}\", itemDescription: \"Test Item\", unitCode: \"PCS\", quantity: 2, lineReason: \"Box crushed\" }] }) { id number status reason shipmentId warehouseId lines { id shipmentLineId itemId quantity lineReason } company { id name } shipment { id number } } }"
+}
+
+> {%
+    client.global.set("shipmentReturnId", response.body.data.createShipmentReturn.id);
+%}
+
+### 18.2 Get Shipment Return by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ shipmentReturn(id: \"{{shipmentReturnId}}\") { id number status reason receivedAt lines { id shipmentLineId itemId quantity lineReason } } }"
+}
+
+### 18.3 Get Shipment Returns by Company
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ shipmentReturns(companyId: \"{{companyId}}\") { id number status reason } }"
+}
+
+### 18.4 Receive Shipment Return
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { receiveShipmentReturn(shipmentReturnId: \"{{shipmentReturnId}}\") { id number status receivedAt } }"
+}
+
+### 18.5 Complete Shipment Return
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { completeShipmentReturn(shipmentReturnId: \"{{shipmentReturnId}}\") { id number status } }"
+}
+
+### 18.6 Cancel Shipment Return (create new return for this test)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+"query": "mutation { cancelShipmentReturn(shipmentReturnId: \"NEW_RETURN_ID\") { id number status } }"
+}
+
+### 18.7 Cancel Delivery Order (create new DO for this test)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+"query": "mutation { cancelDeliveryOrder(input: { deliveryOrderId: \"NEW_DO_ID\", reason: \"No longer needed\" }) { id number status } }"
+}
+
+
+### ┌──────────────────────────────────────────────────────────────┐
+### │  19. LOGOUT                                                  │
+### └──────────────────────────────────────────────────────────────┘
+
+### 19.1 Logout
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST

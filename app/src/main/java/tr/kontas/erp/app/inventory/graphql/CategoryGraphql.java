@@ -20,6 +20,7 @@ public class CategoryGraphql {
     private final CreateCategoryUseCase createCategoryUseCase;
     private final GetCategoryByIdUseCase getCategoryByIdUseCase;
     private final GetCategoriesByCompanyUseCase getCategoriesByCompanyUseCase;
+    private final GetSubCategoriesUseCase getSubCategoriesUseCase;
     private final RenameCategoryUseCase renameCategoryUseCase;
     private final DeactivateCategoryUseCase deactivateCategoryUseCase;
     private final ActivateCategoryUseCase activateCategoryUseCase;
@@ -99,5 +100,15 @@ public class CategoryGraphql {
             return CompletableFuture.completedFuture(null);
         }
         return dataLoader.load(payload.getParentCategoryId());
+    }
+
+    @DgsData(parentType = "CategoryPayload")
+    public List<CategoryPayload> subCategories(DgsDataFetchingEnvironment dfe) {
+        CategoryPayload payload = dfe.getSource();
+        if (payload == null || payload.getId() == null) return List.of();
+        return getSubCategoriesUseCase.getSubCategories(CategoryId.of(payload.getId()))
+                .stream()
+                .map(CategoryGraphql::toPayload)
+                .toList();
     }
 }
