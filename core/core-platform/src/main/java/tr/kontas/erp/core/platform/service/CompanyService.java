@@ -8,6 +8,7 @@ import tr.kontas.erp.core.domain.company.Company;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.company.CompanyName;
 import tr.kontas.erp.core.domain.company.CompanyRepository;
+import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
@@ -22,6 +23,7 @@ public class CompanyService implements
         GetCompaniesByIdsUseCase,
         GetCompaniesByTenantIdsUseCase {
     private final CompanyRepository companyRepository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -37,6 +39,8 @@ public class CompanyService implements
         );
 
         companyRepository.save(company);
+        eventPublisher.publishAll(company.getDomainEvents());
+        company.clearDomainEvents();
 
         return companyId;
     }

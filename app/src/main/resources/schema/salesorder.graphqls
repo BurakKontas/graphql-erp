@@ -1,0 +1,117 @@
+# ─── Sales Order ───
+
+type SalesOrderPayload {
+    id: ID!
+    companyId: ID!
+    orderNumber: String!
+    orderDate: String
+    expiryDate: String
+    customerId: ID
+    currencyCode: String
+    paymentTermCode: String
+    shippingAddress: ShippingAddressPayload
+    status: String!
+    fulfillmentStatus: String!
+    invoicingStatus: String!
+    invoicedAmount: BigDecimal!
+    subtotal: BigDecimal!
+    taxTotal: BigDecimal!
+    total: BigDecimal!
+    lines: [SalesOrderLinePayload!]!
+    company: CompanyPayload
+    customer: BusinessPartnerPayload
+}
+
+type SalesOrderLinePayload {
+    id: ID!
+    sequence: Int!
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+    taxRate: BigDecimal
+    lineTotal: BigDecimal!
+    taxAmount: BigDecimal!
+    lineTotalWithTax: BigDecimal!
+}
+
+type ShippingAddressPayload {
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    stateOrProvince: String
+    postalCode: String!
+    countryCode: String!
+}
+
+# ─── Inputs ───
+
+input CreateSalesOrderInput {
+    companyId: ID!
+    customerId: ID
+    currencyCode: String
+    paymentTermCode: String
+    orderDate: String
+}
+
+input AddSalesOrderLineInput {
+    orderId: ID!
+    itemId: String
+    itemDescription: String!
+    unitCode: String!
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+    taxCode: String
+}
+
+input UpdateSalesOrderLineInput {
+    orderId: ID!
+    lineId: ID!
+    quantity: BigDecimal!
+    unitPrice: BigDecimal!
+}
+
+input UpdateSalesOrderHeaderInput {
+    orderId: ID!
+    orderDate: String
+    expiryDate: String
+    paymentTermCode: String
+    shippingAddress: ShippingAddressInput
+}
+
+input ShippingAddressInput {
+    addressLine1: String!
+    addressLine2: String
+    city: String!
+    stateOrProvince: String
+    postalCode: String!
+    countryCode: String!
+}
+
+input CancelSalesOrderInput {
+    orderId: ID!
+    reason: String!
+}
+
+# ─── Queries ───
+
+extend type Query {
+    salesOrder(id: ID!): SalesOrderPayload @auth(permissions: ["SALES_ORDER:READ"])
+    salesOrders(companyId: ID!): [SalesOrderPayload!]! @auth(permissions: ["SALES_ORDER:READ"])
+}
+
+# ─── Mutations ───
+
+extend type Mutation {
+    createSalesOrder(input: CreateSalesOrderInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:CREATE"])
+    addSalesOrderLine(input: AddSalesOrderLineInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
+    updateSalesOrderLine(input: UpdateSalesOrderLineInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
+    removeSalesOrderLine(orderId: ID!, lineId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
+    updateSalesOrderHeader(input: UpdateSalesOrderHeaderInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:UPDATE"])
+    sendSalesOrder(orderId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:SEND"])
+    acceptSalesOrder(orderId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:ACCEPT"])
+    confirmSalesOrder(orderId: ID!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:CONFIRM"])
+    cancelSalesOrder(input: CancelSalesOrderInput!): SalesOrderPayload! @auth(permissions: ["SALES_ORDER:CANCEL"])
+}

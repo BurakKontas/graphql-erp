@@ -1,19 +1,18 @@
 package tr.kontas.erp.core.kernel.domain.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
+@NoArgsConstructor
 public abstract class DomainEvent {
+    private final UUID eventId = UUID.randomUUID();
+    private final Instant occurredOn = Instant.now();
 
-    private final UUID eventId;
-    private final Instant occurredOn;
+    public abstract UUID getAggregateId();
 
-    protected DomainEvent() {
-        this.eventId = UUID.randomUUID();
-        this.occurredOn = Instant.now();
-    }
-
+    public abstract String getAggregateType();
 }

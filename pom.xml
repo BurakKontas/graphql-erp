@@ -12,6 +12,9 @@
         <module>core/core-domain</module>
         <module>core/core-application</module>
         <module>core/core-platform</module>
+        <module>sales/sales-domain</module>
+        <module>sales/sales-application</module>
+        <module>sales/sales-platform</module>
     </modules>
 
     <properties>

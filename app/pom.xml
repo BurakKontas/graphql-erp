@@ -25,6 +25,21 @@
             <artifactId>core-platform</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>sales-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>sales-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>sales-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

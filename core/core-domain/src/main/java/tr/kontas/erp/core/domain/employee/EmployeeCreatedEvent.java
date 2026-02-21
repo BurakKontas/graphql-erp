@@ -1,11 +1,27 @@
 package tr.kontas.erp.core.domain.employee;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import tr.kontas.erp.core.kernel.domain.model.DomainEvent;
 
+import java.util.UUID;
+
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class EmployeeCreatedEvent extends DomainEvent {
-    private final EmployeeId companyId;
+    private UUID employeeId;
+
+    public EmployeeCreatedEvent(EmployeeId id) {
+        this.employeeId = id.asUUID();
+    }
+
+    @Override
+    public UUID getAggregateId() {
+        return employeeId;
+    }
+
+    @Override
+    public String getAggregateType() {
+        return "Employee";
+    }
 }

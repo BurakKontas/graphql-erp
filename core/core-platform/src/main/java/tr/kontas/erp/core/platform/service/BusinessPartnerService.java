@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.application.businesspartner.*;
 import tr.kontas.erp.core.domain.businesspartner.*;
 import tr.kontas.erp.core.domain.company.CompanyId;
+import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
@@ -24,6 +25,7 @@ public class BusinessPartnerService implements
         GetBusinessPartnersByIdsUseCase {
 
     private final BusinessPartnerRepository businessPartnerRepository;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -52,6 +54,8 @@ public class BusinessPartnerService implements
         );
 
         businessPartnerRepository.save(businessPartner);
+        eventPublisher.publishAll(businessPartner.getDomainEvents());
+        businessPartner.clearDomainEvents();
 
         return id;
     }

@@ -10,6 +10,7 @@ import tr.kontas.erp.core.domain.department.Department;
 import tr.kontas.erp.core.domain.department.DepartmentId;
 import tr.kontas.erp.core.domain.department.DepartmentName;
 import tr.kontas.erp.core.domain.department.DepartmentRepository;
+import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
@@ -25,6 +26,7 @@ public class DepartmentService implements
         GetDepartmentsByIdsUseCase {
 
     private final DepartmentRepository departmentRepository;
+    private final DomainEventPublisher eventPublisher;
 
     @SneakyThrows
     @Override
@@ -44,6 +46,8 @@ public class DepartmentService implements
         Department department = new Department(id, tenantId, new DepartmentName(command.name()), command.companyId(), command.parentId());
 
         departmentRepository.save(department);
+        eventPublisher.publishAll(department.getDomainEvents());
+        department.clearDomainEvents();
 
         return id;
     }

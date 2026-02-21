@@ -9,6 +9,7 @@ import tr.kontas.erp.core.domain.tenant.Tenant;
 import tr.kontas.erp.core.domain.tenant.TenantCode;
 import tr.kontas.erp.core.domain.tenant.TenantName;
 import tr.kontas.erp.core.domain.tenant.TenantRepository;
+import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class TenantService implements
         UpdateTenantLdapSettingsUseCase {
     private final TenantRepository tenantRepository;
     private final TenantProvisioningService provisioningService;
+    private final DomainEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -33,6 +35,8 @@ public class TenantService implements
         Tenant tenant = new Tenant(tenantId, new TenantName(command.name()), new TenantCode(command.code()));
 
         tenantRepository.save(tenant);
+        eventPublisher.publishAll(tenant.getDomainEvents());
+        tenant.clearDomainEvents();
 
         provisioningService.provision(tenant);
 

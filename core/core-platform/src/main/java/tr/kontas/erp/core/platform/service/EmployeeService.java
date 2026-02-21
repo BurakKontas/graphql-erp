@@ -14,6 +14,7 @@ import tr.kontas.erp.core.domain.employee.Employee;
 import tr.kontas.erp.core.domain.employee.EmployeeId;
 import tr.kontas.erp.core.domain.employee.EmployeeName;
 import tr.kontas.erp.core.domain.employee.EmployeeRepository;
+import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
@@ -28,6 +29,7 @@ public class EmployeeService implements
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
+    private final DomainEventPublisher eventPublisher;
 
     @SneakyThrows
     @Override
@@ -45,6 +47,8 @@ public class EmployeeService implements
         var employee = new Employee(id, tenantId, new EmployeeName(command.name()), command.departmentId());
 
         employeeRepository.save(employee);
+        eventPublisher.publishAll(employee.getDomainEvents());
+        employee.clearDomainEvents();
 
         return id;
     }
