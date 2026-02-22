@@ -57,7 +57,7 @@ public class SavedReportService implements
 
     @Override
     @Transactional
-    public void execute(String savedReportId) {
+    public void executeDelete(String savedReportId) {
         repository.deleteById(SavedReportId.of(savedReportId));
     }
 }

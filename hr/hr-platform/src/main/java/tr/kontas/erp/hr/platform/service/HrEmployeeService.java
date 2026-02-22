@@ -1,6 +1,7 @@
 package tr.kontas.erp.hr.platform.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.kontas.erp.core.domain.company.CompanyId;
@@ -14,13 +15,13 @@ import tr.kontas.erp.hr.domain.employee.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service("hrEmployeeService")
-@RequiredArgsConstructor
+@Service
 @Transactional
-public class EmployeeService implements CreateEmployeeUseCase, GetEmployeeByIdUseCase,
-        GetEmployeesByCompanyUseCase, GetEmployeesByIdsUseCase {
+@RequiredArgsConstructor
+public class HrEmployeeService implements CreateHrEmployeeUseCase, GetHrEmployeeByIdUseCase,
+        GetHrEmployeesByCompanyUseCase, GetHrEmployeesByIdsUseCase {
 
-    private final EmployeeRepository employeeRepository;
+    private final HrEmployeeRepository employeeRepository;
     private final EmployeeNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
 

@@ -16,7 +16,7 @@ public class AuditEntryMapper {
 
     private static final ObjectMapper objectMapper = JacksonProvider.get();
 
-    public AuditEntryJpaEntity toEntity(AuditEntry a) {
+    public static AuditEntryJpaEntity toEntity(AuditEntry a) {
         AuditEntryJpaEntity e = new AuditEntryJpaEntity();
         e.setId(a.getId());
         e.setSource(a.getSource());

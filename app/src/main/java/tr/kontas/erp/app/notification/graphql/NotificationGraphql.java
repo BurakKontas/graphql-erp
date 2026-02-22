@@ -214,7 +214,7 @@ public class NotificationGraphql {
 
     @DgsQuery
     public List<InAppNotificationPayload> inAppNotifications(@InputArgument("userId") String userId) {
-        return getInAppNotificationsByUserUseCase.execute(userId)
+        return getInAppNotificationsByUserUseCase.executeGet(userId)
                 .stream().map(NotificationGraphql::toInAppPayload).toList();
     }
 

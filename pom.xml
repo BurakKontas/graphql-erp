@@ -7,7 +7,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>app</module>
         <module>core/core-kernel</module>
         <module>core/core-domain</module>
         <module>core/core-application</module>
@@ -39,6 +38,7 @@
         <module>reporting/reporting-domain</module>
         <module>reporting/reporting-application</module>
         <module>reporting/reporting-platform</module>
+        <module>app</module>
     </modules>
 
     <properties>

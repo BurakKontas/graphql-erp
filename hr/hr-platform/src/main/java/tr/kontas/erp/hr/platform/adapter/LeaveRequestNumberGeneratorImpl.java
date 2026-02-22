@@ -9,8 +9,6 @@ import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.hr.application.port.LeaveRequestNumberGeneratorPort;
 import tr.kontas.erp.hr.domain.leaverequest.LeaveRequestNumber;
 
-import java.math.BigInteger;
-
 @Component
 @RequiredArgsConstructor
 public class LeaveRequestNumberGeneratorImpl implements LeaveRequestNumberGeneratorPort {
@@ -20,10 +18,10 @@ public class LeaveRequestNumberGeneratorImpl implements LeaveRequestNumberGenera
     @Override
     public LeaveRequestNumber generate(TenantId tenantId, CompanyId companyId, int year) {
         Query query = entityManager.createNativeQuery(
-                "SELECT COUNT(*) FROM leave_requests WHERE tenant_id = :tid AND company_id = :cid AND request_number LIKE :prefix FOR UPDATE");
-        query.setParameter("tid", tenantId.asUUID());
-        query.setParameter("cid", companyId.asUUID());
-        query.setParameter("prefix", "LR-" + year + "-%");
+        "SELECT COUNT(*) FROM leave_requests WHERE tenant_id = ?1 AND company_id = ?2 AND request_number LIKE ?3 FOR UPDATE");
+        query.setParameter(1, tenantId.asUUID().toString()); // Ensure UUID is converted to String
+        query.setParameter(2, companyId.asUUID().toString()); // Ensure UUID is converted to String
+        query.setParameter(3, "LR-" + year + "-%");
         long count = ((Number) query.getSingleResult()).longValue();
         return new LeaveRequestNumber(String.format("LR-%d-%06d", year, count + 1));
     }

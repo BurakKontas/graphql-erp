@@ -18,5 +18,3 @@ public class CreatePaymentInput {
     private String bankAccountRef;
     private String referenceNumber;
 }
-
-p

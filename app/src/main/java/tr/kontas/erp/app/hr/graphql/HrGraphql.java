@@ -3,16 +3,15 @@ package tr.kontas.erp.app.hr.graphql;
 import com.netflix.graphql.dgs.*;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
-import org.springframework.beans.factory.annotation.Qualifier;
 import tr.kontas.erp.app.company.dtos.CompanyPayload;
 import tr.kontas.erp.app.hr.dtos.*;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.hr.application.attendance.*;
 import tr.kontas.erp.hr.application.contract.*;
 import tr.kontas.erp.hr.application.employee.CreateEmployeeCommand;
-import tr.kontas.erp.hr.application.employee.CreateEmployeeUseCase;
-import tr.kontas.erp.hr.application.employee.GetEmployeeByIdUseCase;
-import tr.kontas.erp.hr.application.employee.GetEmployeesByCompanyUseCase;
+import tr.kontas.erp.hr.application.employee.CreateHrEmployeeUseCase;
+import tr.kontas.erp.hr.application.employee.GetHrEmployeeByIdUseCase;
+import tr.kontas.erp.hr.application.employee.GetHrEmployeesByCompanyUseCase;
 import tr.kontas.erp.hr.application.jobapplication.*;
 import tr.kontas.erp.hr.application.jobposting.*;
 import tr.kontas.erp.hr.application.leavebalance.*;
@@ -50,14 +49,9 @@ public class HrGraphql {
     private final GetPositionByIdUseCase getPositionByIdUseCase;
     private final GetPositionsByCompanyUseCase getPositionsByCompanyUseCase;
 
-    @Qualifier("hrEmployeeService")
-    private final CreateEmployeeUseCase createHrEmployeeUseCase;
-
-    @Qualifier("hrEmployeeService")
-    private final GetEmployeeByIdUseCase getHrEmployeeByIdUseCase;
-
-    @Qualifier("hrEmployeeService")
-    private final GetEmployeesByCompanyUseCase getHrEmployeesByCompanyUseCase;
+    private final CreateHrEmployeeUseCase createHrEmployeeUseCase;
+    private final GetHrEmployeeByIdUseCase getHrEmployeeByIdUseCase;
+    private final GetHrEmployeesByCompanyUseCase getHrEmployeesByCompanyUseCase;
 
     private final CreateContractUseCase createContractUseCase;
     private final GetContractByIdUseCase getContractByIdUseCase;

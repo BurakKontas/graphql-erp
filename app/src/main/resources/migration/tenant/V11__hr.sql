@@ -13,7 +13,7 @@ CREATE TABLE positions (
     UNIQUE (tenant_id, company_id, code)
 );
 
-CREATE TABLE employees (
+CREATE TABLE hr_employees (
     id UUID PRIMARY KEY,
     tenant_id UUID NOT NULL,
     company_id UUID NOT NULL REFERENCES companies(id),
@@ -207,7 +207,7 @@ CREATE TABLE job_applications (
 );
 
 CREATE INDEX idx_positions_tenant_company ON positions(tenant_id, company_id);
-CREATE INDEX idx_employees_tenant_company ON employees(tenant_id, company_id);
+CREATE INDEX idx_employees_tenant_company ON hr_employees(tenant_id, company_id);
 CREATE INDEX idx_contracts_tenant_company ON contracts(tenant_id, company_id);
 CREATE INDEX idx_leave_policies_tenant_company ON leave_policies(tenant_id, company_id);
 CREATE INDEX idx_leave_requests_tenant_company ON leave_requests(tenant_id, company_id);

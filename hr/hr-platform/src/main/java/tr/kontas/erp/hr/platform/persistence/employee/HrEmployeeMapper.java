@@ -4,10 +4,10 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.hr.domain.employee.*;
 
-public class EmployeeMapper {
+public class HrEmployeeMapper {
 
-    public static EmployeeJpaEntity toEntity(Employee emp) {
-        EmployeeJpaEntity e = new EmployeeJpaEntity();
+    public static HrEmployeeJpaEntity toEntity(Employee emp) {
+        HrEmployeeJpaEntity e = new HrEmployeeJpaEntity();
         e.setId(emp.getId().asUUID());
         e.setTenantId(emp.getTenantId().asUUID());
         e.setCompanyId(emp.getCompanyId().asUUID());
@@ -40,7 +40,7 @@ public class EmployeeMapper {
         return e;
     }
 
-    public static Employee toDomain(EmployeeJpaEntity e) {
+    public static Employee toDomain(HrEmployeeJpaEntity e) {
         PersonalInfo pi = new PersonalInfo(
                 e.getFirstName(), e.getLastName(), e.getDateOfBirth(),
                 e.getNationalId(),

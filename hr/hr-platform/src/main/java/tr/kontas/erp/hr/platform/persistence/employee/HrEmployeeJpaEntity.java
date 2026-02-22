@@ -9,11 +9,11 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "hr_employees")
 @Getter
 @Setter
 @NoArgsConstructor
-public class EmployeeJpaEntity {
+public class HrEmployeeJpaEntity {
 
     @Id
     @Column(name = "id")

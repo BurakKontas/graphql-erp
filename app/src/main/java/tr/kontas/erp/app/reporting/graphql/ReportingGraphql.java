@@ -216,7 +216,7 @@ public class ReportingGraphql {
 
     @DgsMutation
     public Boolean deleteSavedReport(@InputArgument("id") String id) {
-        deleteSavedReportUseCase.execute(id);
+        deleteSavedReportUseCase.executeDelete(id);
         return true;
     }
 

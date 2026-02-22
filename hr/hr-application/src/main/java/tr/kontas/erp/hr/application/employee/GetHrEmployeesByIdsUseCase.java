@@ -5,6 +5,6 @@ import tr.kontas.erp.hr.domain.employee.EmployeeId;
 
 import java.util.List;
 
-public interface GetEmployeesByIdsUseCase {
+public interface GetHrEmployeesByIdsUseCase {
     List<Employee> execute(List<EmployeeId> ids);
 }

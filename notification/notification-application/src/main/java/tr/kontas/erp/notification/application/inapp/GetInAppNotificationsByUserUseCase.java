@@ -1,6 +1,8 @@
 package tr.kontas.erp.notification.application.inapp;
 
+import java.util.List;
+
 public interface GetInAppNotificationsByUserUseCase {
-    java.util.List<InAppNotificationResult> execute(String userId);
+    List<InAppNotificationResult> executeGet(String userId);
 }
 

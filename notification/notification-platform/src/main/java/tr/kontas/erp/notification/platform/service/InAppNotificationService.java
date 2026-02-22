@@ -23,7 +23,7 @@ public class InAppNotificationService implements
     private final JpaInAppNotificationRepository repository;
 
     @Override
-    public List<InAppNotificationResult> execute(String userId) {
+    public List<InAppNotificationResult> executeGet(String userId) {
         TenantId tenantId = TenantContext.get();
         return repository.findByUserIdAndTenantIdOrderByCreatedAtDesc(userId, tenantId.asUUID())
                 .stream()

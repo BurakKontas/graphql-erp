@@ -6,7 +6,7 @@ import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import java.util.List;
 import java.util.Optional;
 
-public interface EmployeeRepository {
+public interface HrEmployeeRepository {
     void save(Employee entity);
     Optional<Employee> findById(EmployeeId id, TenantId tenantId);
     List<Employee> findByCompanyId(TenantId tenantId, CompanyId companyId);
