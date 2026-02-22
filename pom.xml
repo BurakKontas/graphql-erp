@@ -33,6 +33,12 @@
         <module>crm/crm-domain</module>
         <module>crm/crm-platform</module>
         <module>crm/crm-application</module>
+        <module>notification/notification-domain</module>
+        <module>notification/notification-application</module>
+        <module>notification/notification-platform</module>
+        <module>reporting/reporting-domain</module>
+        <module>reporting/reporting-application</module>
+        <module>reporting/reporting-platform</module>
     </modules>
 
     <properties>

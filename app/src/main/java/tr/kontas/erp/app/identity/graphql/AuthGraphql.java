@@ -57,6 +57,10 @@ public class AuthGraphql {
 
         List<AuthToken> tokens = authenticationService.authenticate(command);
 
+        if (tokens == null || tokens.size() < 2) {
+            throw new IllegalStateException("Authentication failed: invalid token response");
+        }
+
         AuthToken accessToken = tokens.get(0);
         AuthToken refreshToken = tokens.get(1);
 
@@ -75,6 +79,10 @@ public class AuthGraphql {
         }
 
         List<AuthToken> tokens = refreshTokenUseCase.execute(refreshToken);
+
+        if (tokens == null || tokens.size() < 2) {
+            throw new IllegalStateException("Token refresh failed: invalid token response");
+        }
 
         AuthToken accessToken = tokens.get(0);
         AuthToken newRefreshToken = tokens.get(1);

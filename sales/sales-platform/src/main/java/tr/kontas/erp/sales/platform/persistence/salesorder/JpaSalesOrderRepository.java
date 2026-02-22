@@ -1,10 +1,12 @@
 package tr.kontas.erp.sales.platform.persistence.salesorder;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +20,7 @@ public interface JpaSalesOrderRepository extends JpaRepository<SalesOrderJpaEnti
     List<SalesOrderJpaEntity> findByTenantIdAndCompanyIdAndStatus(UUID tenantId, UUID companyId, String status);
     List<SalesOrderJpaEntity> findByIdIn(List<UUID> ids);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT COALESCE(MAX(CAST(SUBSTRING(e.orderNumber, 9) AS int)), 0) FROM SalesOrderJpaEntity e WHERE e.tenantId = :tenantId")
     int findMaxSequenceByTenantId(@Param("tenantId") UUID tenantId);
 }

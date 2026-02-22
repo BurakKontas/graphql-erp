@@ -43,7 +43,7 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
                 ).map(tenantId -> {
                     TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
                     return new Context("bootstrap-admin", tenantId.asUUID(), Set.of("GENERAL:ADMIN"));
-                });
+                }).doFinally(_ -> TenantContext.clear());
             }
             return Mono.just(new Context("bootstrap-admin", null, Set.of("GENERAL:ADMIN")));
         }
@@ -67,7 +67,7 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
             }
 
             return Mono.just(new Context("anonymous", tenantId.asUUID(), Set.of()));
-        });
+        }).doFinally(_ -> TenantContext.clear());
     }
 
     private Mono<Context> handleJwtAuth(String token, java.util.UUID tenantId) {

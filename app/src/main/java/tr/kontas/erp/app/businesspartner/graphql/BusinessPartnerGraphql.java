@@ -97,8 +97,11 @@ public class BusinessPartnerGraphql {
 
     @DgsEntityFetcher(name = "BusinessPartnerPayload")
     public BusinessPartnerPayload businessPartnerEntity(Map<String, Object> values) {
-        String id = values.get("id").toString();
-        return businessPartner(id);
+        Object id = values.get("id");
+        if (id == null) {
+            throw new IllegalArgumentException("BusinessPartnerPayload entity fetcher requires 'id'");
+        }
+        return businessPartner(id.toString());
     }
 
     @DgsData(parentType = "BusinessPartnerPayload")

@@ -2,8 +2,10 @@ package tr.kontas.erp.crm.platform.persistence.quote;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.configuration.JacksonProvider;
 import tr.kontas.erp.crm.domain.quote.*;
 
 import java.math.BigDecimal;
@@ -11,9 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class QuoteMapper {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JacksonProvider.get();
 
     public static QuoteJpaEntity toEntity(Quote q) {
         QuoteJpaEntity e = new QuoteJpaEntity();
@@ -52,6 +55,7 @@ public class QuoteMapper {
             }).toList();
             e.setLinesJson(MAPPER.writeValueAsString(lineList));
         } catch (Exception ex) {
+            log.warn("Failed to serialize quote lines for quote {}: {}", q.getId(), ex.getMessage());
             e.setLinesJson("[]");
         }
         return e;
@@ -76,7 +80,8 @@ public class QuoteMapper {
                     ));
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            log.warn("Failed to deserialize quote lines: {}", ex.getMessage(), ex);
         }
         return new Quote(
                 QuoteId.of(e.getId()),

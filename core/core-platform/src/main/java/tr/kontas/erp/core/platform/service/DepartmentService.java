@@ -2,7 +2,6 @@ package tr.kontas.erp.core.platform.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.application.department.*;
 import tr.kontas.erp.core.domain.company.CompanyId;
@@ -28,7 +27,6 @@ public class DepartmentService implements
     private final DepartmentRepository departmentRepository;
     private final DomainEventPublisher eventPublisher;
 
-    @SneakyThrows
     @Override
     @Transactional
     public DepartmentId execute(CreateDepartmentCommand command) {
@@ -37,7 +35,7 @@ public class DepartmentService implements
         Department parent = null;
         if (command.parentId() != null) {
             parent = departmentRepository.findById(command.parentId())
-                    .orElseThrow(() -> new Exception("Parent department doesn't exist"));
+                    .orElseThrow(() -> new IllegalArgumentException("Parent department not found"));
         }
 
         DepartmentId id = DepartmentId.newId();
@@ -59,7 +57,7 @@ public class DepartmentService implements
     @Override
     public Department execute(DepartmentId id) {
         return departmentRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Department not found: " + id));
     }
 
     @Override

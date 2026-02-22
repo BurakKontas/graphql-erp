@@ -1,10 +1,11 @@
 package tr.kontas.erp.core.platform.audit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tr.kontas.erp.core.application.audit.AuditWriter;
@@ -21,15 +22,13 @@ import java.util.UUID;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class AuditEntityListener {
 
+    @Setter
     private static AuditWriter auditWriter;
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
-    public static void setAuditWriter(AuditWriter writer) {
-        auditWriter = writer;
-    }
+    private final ObjectMapper objectMapper;
 
     @PostPersist
     public void onPostPersist(Object entity) {
@@ -90,7 +89,8 @@ public class AuditEntityListener {
                 Object val = idField.get(entity);
                 return val != null ? val.toString() : "unknown";
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.debug("Could not extract id from {}: {}", entity.getClass().getSimpleName(), e.getMessage());
         }
         return "unknown";
     }
@@ -105,11 +105,13 @@ public class AuditEntityListener {
                     return uuid;
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.debug("Could not extract tenantId from {}: {}", entity.getClass().getSimpleName(), e.getMessage());
         }
         try {
             return TenantContext.get().asUUID();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.debug("Could not get tenantId from TenantContext: {}", e.getMessage());
         }
         return UUID.fromString("00000000-0000-0000-0000-000000000000");
     }
@@ -122,7 +124,8 @@ public class AuditEntityListener {
                 Object val = field.get(entity);
                 return val != null ? val.toString() : null;
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.debug("Could not extract companyId from {}: {}", entity.getClass().getSimpleName(), e.getMessage());
         }
         return null;
     }
@@ -140,7 +143,7 @@ public class AuditEntityListener {
                     map.put(field.getName(), val != null ? val.toString() : null);
                 }
             }
-            return MAPPER.writeValueAsString(map);
+            return objectMapper.writeValueAsString(map);
         } catch (Exception e) {
             return "{}";
         }
@@ -168,4 +171,3 @@ public class AuditEntityListener {
         return null;
     }
 }
-

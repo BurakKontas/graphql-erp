@@ -1,7 +1,6 @@
 package tr.kontas.erp.core.platform.outbox;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -17,9 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OutboxPublisherJob {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .findAndRegisterModules()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private final ObjectMapper objectMapper;
     private final OutboxRepository outboxRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -55,12 +52,12 @@ public class OutboxPublisherJob {
         try {
             Class<? extends DomainEvent> eventClass =
                     (Class<? extends DomainEvent>) Class.forName(entry.getEventType());
-            return MAPPER.readValue(entry.getPayload(), eventClass);
+            return objectMapper.readValue(entry.getPayload(), eventClass);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "Unknown event type: " + entry.getEventType() + " (id=" + entry.getId() + ")", e);
         } catch (Exception e) {
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "Failed to deserialize event: " + entry.getEventType() + " (id=" + entry.getId() + ")", e);
         }
     }

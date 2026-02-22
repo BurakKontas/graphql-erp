@@ -2,18 +2,21 @@ package tr.kontas.erp.core.platform.persistence.audit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import tr.kontas.erp.core.domain.audit.AuditEntry;
 import tr.kontas.erp.core.domain.audit.FieldChange;
+import tr.kontas.erp.core.platform.configuration.JacksonProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class AuditEntryMapper {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper objectMapper = JacksonProvider.get();
 
-    public static AuditEntryJpaEntity toEntity(AuditEntry a) {
+    public AuditEntryJpaEntity toEntity(AuditEntry a) {
         AuditEntryJpaEntity e = new AuditEntryJpaEntity();
         e.setId(a.getId());
         e.setSource(a.getSource());
@@ -35,14 +38,10 @@ public class AuditEntryMapper {
         e.setSessionId(a.getSessionId());
         try {
             if (a.getChanges() != null && !a.getChanges().isEmpty()) {
-                e.setChangesJson(MAPPER.writeValueAsString(a.getChanges().stream().map(fc -> Map.of(
-                        "fieldName", fc.getFieldName(),
-                        "oldValue", fc.getOldValue() != null ? fc.getOldValue() : "",
-                        "newValue", fc.getNewValue() != null ? fc.getNewValue() : "",
-                        "maskLevel", fc.getMaskLevel() != null ? fc.getMaskLevel() : "NONE"
-                )).toList()));
+                e.setChangesJson(objectMapper.writeValueAsString(a.getChanges()));
             }
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            log.error("Failed to serialize changes for audit entry", ex);
         }
         return e;
     }
@@ -51,7 +50,7 @@ public class AuditEntryMapper {
         List<FieldChange> changes = new ArrayList<>();
         try {
             if (e.getChangesJson() != null && !e.getChangesJson().isBlank()) {
-                List<Map<String, String>> raw = MAPPER.readValue(e.getChangesJson(), new TypeReference<>() {});
+                List<Map<String, String>> raw = objectMapper.readValue(e.getChangesJson(), new TypeReference<>() {});
                 for (Map<String, String> m : raw) {
                     changes.add(new FieldChange(
                             m.get("fieldName"),
@@ -61,7 +60,8 @@ public class AuditEntryMapper {
                     ));
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception ex) {
+            log.warn("Failed to deserialize audit field changes: {}", ex.getMessage());
         }
         return new AuditEntry(
                 e.getId(), e.getSource(), e.getTenantId(), e.getCompanyId(),
@@ -74,4 +74,3 @@ public class AuditEntryMapper {
         );
     }
 }
-

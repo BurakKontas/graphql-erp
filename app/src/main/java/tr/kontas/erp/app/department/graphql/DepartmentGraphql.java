@@ -79,8 +79,11 @@ public class DepartmentGraphql {
 
     @DgsEntityFetcher(name = "DepartmentPayload")
     public DepartmentPayload department(Map<String, Object> values) {
-        String id = values.get("id").toString();
-        return department(id);
+        Object id = values.get("id");
+        if (id == null) {
+            throw new IllegalArgumentException("DepartmentPayload entity fetcher requires 'id'");
+        }
+        return department(id.toString());
     }
 
     @DgsData(parentType = "DepartmentPayload")

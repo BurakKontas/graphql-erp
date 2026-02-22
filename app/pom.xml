@@ -137,6 +137,38 @@
         </dependency>
 
         <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>notification-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>notification-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>notification-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>reporting-domain</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>reporting-application</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>tr.kontas.erp</groupId>
+            <artifactId>reporting-platform</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>

@@ -1,6 +1,8 @@
 package tr.kontas.erp.finance.platform.persistence.salesinvoice;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,6 +18,7 @@ public interface JpaSalesInvoiceRepository extends JpaRepository<SalesInvoiceJpa
     List<SalesInvoiceJpaEntity> findByIdIn(List<UUID> ids);
 
     @Query("SELECT COALESCE(MAX(CAST(SUBSTRING(e.invoiceNumber, 10) AS int)), 0) FROM SalesInvoiceJpaEntity e WHERE e.tenantId = :tenantId")
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     int findMaxSequenceByTenantId(@Param("tenantId") UUID tenantId);
 }
 

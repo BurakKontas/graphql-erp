@@ -1,5 +1,6 @@
 package tr.kontas.erp.core.platform.service.identity;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import tr.kontas.erp.core.application.identity.AuthenticationCommand;
 import tr.kontas.erp.core.application.identity.AuthenticationProvider;
@@ -26,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Component
 public class LdapAuthenticationProvider implements AuthenticationProvider {
 
@@ -125,7 +127,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
             try {
                 createContext(url, userDn, password, config);
                 return;
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                log.debug("LDAP bind failed for url {}: {}", url, e.getMessage());
             }
         }
 

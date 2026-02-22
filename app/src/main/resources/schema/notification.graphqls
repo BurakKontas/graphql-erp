@@ -1,0 +1,174 @@
+# ─── TenantNotificationConfig ───
+
+type TenantNotificationConfigPayload {
+    id: ID!
+    allNotificationsEnabled: Boolean!
+    disabledChannels: [String!]
+    disabledKeys: [String!]
+    disabledReason: String
+    disabledBy: String
+    disabledAt: String
+    disabledUntil: String
+}
+
+# ─── NotificationConfig ───
+
+type NotificationConfigPayload {
+    id: ID!
+    companyId: ID!
+    eventType: String!
+    notificationKey: String!
+    description: String
+    enabledChannels: [String!]
+    deliveryTiming: String!
+    cronExpression: String
+    recipientRoles: [String!]
+    userOverridable: Boolean!
+    active: Boolean!
+    company: CompanyPayload
+}
+
+# ─── NotificationTemplate ───
+
+type NotificationTemplatePayload {
+    id: ID!
+    notificationKey: String!
+    channel: String!
+    locale: String!
+    subject: String
+    bodyTemplate: String!
+    systemTemplate: Boolean!
+    active: Boolean!
+}
+
+# ─── NotificationPreference ───
+
+type NotificationPreferencePayload {
+    id: ID!
+    userId: String!
+    notificationKey: String!
+    disabledChannels: [String!]
+    preferredLocale: String
+}
+
+# ─── WebhookConfig ───
+
+type WebhookConfigPayload {
+    id: ID!
+    companyId: ID!
+    targetUrl: String!
+    eventTypes: [String!]
+    status: String!
+    consecutiveFailures: Int!
+    lastSuccessAt: String
+    company: CompanyPayload
+}
+
+# ─── InAppNotification ───
+
+type InAppNotificationPayload {
+    id: ID!
+    userId: String!
+    notificationKey: String!
+    title: String
+    body: String
+    actionUrl: String
+    read: Boolean!
+    readAt: String
+    createdAt: String!
+}
+
+# ─── Inputs ───
+
+input CreateNotificationConfigInput {
+    companyId: ID!
+    eventType: String!
+    notificationKey: String!
+    description: String
+    enabledChannels: [String!]
+    deliveryTiming: String
+    cronExpression: String
+    recipientRoles: [String!]
+    userOverridable: Boolean
+}
+
+input UpdateTenantNotificationConfigInput {
+    allNotificationsEnabled: Boolean!
+    disabledReason: String
+    disabledUntil: String
+}
+
+input CreateNotificationTemplateInput {
+    notificationKey: String!
+    channel: String!
+    locale: String
+    subject: String
+    bodyTemplate: String!
+    systemTemplate: Boolean
+}
+
+input UpdateNotificationTemplateInput {
+    templateId: ID!
+    subject: String
+    bodyTemplate: String!
+}
+
+input CreateNotificationPreferenceInput {
+    userId: String!
+    notificationKey: String!
+    disabledChannels: [String!]
+    preferredLocale: String
+}
+
+input UpdateNotificationPreferenceInput {
+    preferenceId: ID!
+    disabledChannels: [String!]
+    preferredLocale: String
+}
+
+input CreateWebhookConfigInput {
+    companyId: ID!
+    targetUrl: String!
+    secretKey: String
+    eventTypes: [String!]
+}
+
+# ─── Queries ───
+
+extend type Query {
+    tenantNotificationConfig: TenantNotificationConfigPayload @auth(permissions: ["NOTIFICATION_CONFIG:READ"])
+
+    notificationConfig(id: ID!): NotificationConfigPayload @auth(permissions: ["NOTIFICATION_CONFIG:READ"])
+    notificationConfigs(companyId: ID!): [NotificationConfigPayload!]! @auth(permissions: ["NOTIFICATION_CONFIG:READ"])
+
+    notificationTemplate(id: ID!): NotificationTemplatePayload @auth(permissions: ["NOTIFICATION_TEMPLATE:READ"])
+    notificationTemplates: [NotificationTemplatePayload!]! @auth(permissions: ["NOTIFICATION_TEMPLATE:READ"])
+
+    notificationPreferences(userId: String!): [NotificationPreferencePayload!]! @auth(permissions: ["NOTIFICATION_PREFERENCE:READ"])
+
+    webhookConfig(id: ID!): WebhookConfigPayload @auth(permissions: ["WEBHOOK_CONFIG:READ"])
+    webhookConfigs(companyId: ID!): [WebhookConfigPayload!]! @auth(permissions: ["WEBHOOK_CONFIG:READ"])
+
+    inAppNotifications(userId: String!): [InAppNotificationPayload!]! @auth(permissions: ["IN_APP_NOTIFICATION:READ"])
+}
+
+# ─── Mutations ───
+
+extend type Mutation {
+    createTenantNotificationConfig: TenantNotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:CREATE"])
+    updateTenantNotificationConfig(input: UpdateTenantNotificationConfigInput!): TenantNotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:UPDATE"])
+
+    createNotificationConfig(input: CreateNotificationConfigInput!): NotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:CREATE"])
+
+    createNotificationTemplate(input: CreateNotificationTemplateInput!): NotificationTemplatePayload! @audit @auth(permissions: ["NOTIFICATION_TEMPLATE:CREATE"])
+    updateNotificationTemplate(input: UpdateNotificationTemplateInput!): NotificationTemplatePayload! @audit @auth(permissions: ["NOTIFICATION_TEMPLATE:UPDATE"])
+
+    createNotificationPreference(input: CreateNotificationPreferenceInput!): NotificationPreferencePayload! @audit @auth(permissions: ["NOTIFICATION_PREFERENCE:CREATE"])
+    updateNotificationPreference(input: UpdateNotificationPreferenceInput!): NotificationPreferencePayload! @audit @auth(permissions: ["NOTIFICATION_PREFERENCE:UPDATE"])
+
+    createWebhookConfig(input: CreateWebhookConfigInput!): WebhookConfigPayload! @audit @auth(permissions: ["WEBHOOK_CONFIG:CREATE"])
+
+    markNotificationRead(notificationId: ID!): Boolean! @audit @auth(permissions: ["IN_APP_NOTIFICATION:UPDATE"])
+    markAllNotificationsRead(userId: String!): Boolean! @audit @auth(permissions: ["IN_APP_NOTIFICATION:UPDATE"])
+}
+

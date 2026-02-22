@@ -1,19 +1,14 @@
 package tr.kontas.erp.core.platform.persistence.tenant;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import tr.kontas.erp.core.domain.tenant.*;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.configuration.JacksonProvider;
 
 import java.util.Collections;
 import java.util.List;
 
 public final class TenantMapper {
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    private TenantMapper() {}
 
     public static TenantJpaEntity toEntity(Tenant tenant) {
         TenantJpaEntity entity = new TenantJpaEntity();
@@ -96,20 +91,11 @@ public final class TenantMapper {
 
     private static String toJson(List<String> list) {
         if (list == null) return null;
-        try {
-            return objectMapper.writeValueAsString(list);
-        } catch (JsonProcessingException e) {
-            return null;
-        }
+        return JacksonProvider.serialize(list);
     }
 
     private static List<String> fromJson(String json) {
         if (json == null || json.isBlank()) return Collections.emptyList();
-        try {
-            return objectMapper.readValue(json, new TypeReference<>() {
-            });
-        } catch (JsonProcessingException e) {
-            return Collections.emptyList();
-        }
+        return JacksonProvider.deserialize(json, new TypeReference<>() {});
     }
 }

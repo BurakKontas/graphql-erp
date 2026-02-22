@@ -1707,211 +1707,436 @@ Authorization: Bearer {{token}}
 
 
 ### ═══════════════════════════════════════════════════════════════
-### 20. CRM — Contact
+### 28. NOTIFICATION MODULE
 ### ═══════════════════════════════════════════════════════════════
 
-### 20.1 Create Contact (PERSON)
+### 28.1 Create Tenant Notification Config
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createContact(input: { companyId: \"{{companyId}}\", contactType: \"PERSON\", firstName: \"John\", lastName: \"Doe\", email: \"john.doe@example.com\", phone: \"+905551234567\", source: \"WEB\", notes: \"Potential ERP customer\" }) { id companyId contactNumber contactType firstName lastName email phone status source notes company { id name } } }"
+  "query": "mutation { createTenantNotificationConfig { id allNotificationsEnabled disabledChannels disabledKeys } }"
 }
 
 > {%
-    client.global.set("crmContactId", response.body.data.createContact.id);
+    client.global.set("tenantNotifConfigId", response.body.data.createTenantNotificationConfig.id);
 %}
 
-### 20.2 Create Contact (COMPANY)
+### 25.2 Get Tenant Notification Config
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createContact(input: { companyId: \"{{companyId}}\", contactType: \"COMPANY\", companyName: \"ABC Corp\", email: \"info@abccorp.com\", phone: \"+902121234567\", website: \"https://abccorp.com\", source: \"REFERRAL\" }) { id contactNumber contactType companyName email phone website status source } }"
+  "query": "{ tenantNotificationConfig { id allNotificationsEnabled disabledChannels disabledKeys disabledReason disabledBy disabledAt disabledUntil } }"
 }
 
-### 20.3 Get Contact by ID
+### 25.3 Update Tenant Notification Config (disable all)
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ crmContact(id: \"{{crmContactId}}\") { id contactNumber contactType firstName lastName email phone status source company { id name } } }"
+  "query": "mutation { updateTenantNotificationConfig(input: { allNotificationsEnabled: false, disabledReason: \"Maintenance window\" }) { id allNotificationsEnabled disabledReason } }"
 }
 
-### 20.4 List Contacts by Company
+### 25.4 Update Tenant Notification Config (re-enable)
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ crmContacts(companyId: \"{{companyId}}\") { id contactNumber contactType firstName lastName companyName email status source } }"
+  "query": "mutation { updateTenantNotificationConfig(input: { allNotificationsEnabled: true }) { id allNotificationsEnabled disabledReason } }"
 }
 
-### ═══════════════════════════════════════════════════════════════
-### 21. CRM — Lead
-### ═══════════════════════════════════════════════════════════════
-
-### 21.1 Create Lead
+### 25.5 Create Notification Config
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createLead(input: { companyId: \"{{companyId}}\", title: \"ABC Corp ERP Project\", contactId: \"{{crmContactId}}\", source: \"WEB\", estimatedValue: 50000.00, expectedCloseDate: \"2026-06-01\", notes: \"Large ERP implementation\" }) { id companyId leadNumber title contactId status source estimatedValue expectedCloseDate notes contact { id firstName lastName } company { id name } } }"
+  "query": "mutation { createNotificationConfig(input: { companyId: \"{{companyId}}\", eventType: \"SalesOrderConfirmedEvent\", notificationKey: \"SALES_ORDER_CONFIRMED\", description: \"Notify when a sales order is confirmed\", enabledChannels: [\"EMAIL\", \"IN_APP\"], deliveryTiming: \"IMMEDIATE\", recipientRoles: [\"SALES_MANAGER\"], userOverridable: true }) { id companyId eventType notificationKey description enabledChannels deliveryTiming recipientRoles userOverridable active company { id name } } }"
 }
 
 > {%
-    client.global.set("leadId", response.body.data.createLead.id);
+    client.global.set("notifConfigId", response.body.data.createNotificationConfig.id);
 %}
 
-### 21.2 Get Lead by ID
+### 25.6 Get Notification Config by ID
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ lead(id: \"{{leadId}}\") { id leadNumber title contactId status source estimatedValue expectedCloseDate contact { id firstName lastName email } company { id name } } }"
+  "query": "{ notificationConfig(id: \"{{notifConfigId}}\") { id companyId eventType notificationKey description enabledChannels deliveryTiming recipientRoles userOverridable active company { id name } } }"
 }
 
-### 21.3 List Leads by Company
+### 25.7 List Notification Configs by Company
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ leads(companyId: \"{{companyId}}\") { id leadNumber title status source estimatedValue } }"
+  "query": "{ notificationConfigs(companyId: \"{{companyId}}\") { id eventType notificationKey enabledChannels active } }"
 }
 
-### ═══════════════════════════════════════════════════════════════
-### 22. CRM — Opportunity
-### ═══════════════════════════════════════════════════════════════
-
-### 22.1 Create Opportunity
+### 25.8 Create Notification Template
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createOpportunity(input: { companyId: \"{{companyId}}\", title: \"ABC Corp ERP Deal\", contactId: \"{{crmContactId}}\", leadId: \"{{leadId}}\", expectedValue: 75000.00, currencyCode: \"TRY\", expectedCloseDate: \"2026-07-01\", notes: \"Upgraded from lead\" }) { id companyId opportunityNumber title contactId leadId stage probability expectedValue currencyCode expectedCloseDate notes contact { id firstName lastName } company { id name } } }"
+  "query": "mutation { createNotificationTemplate(input: { notificationKey: \"SALES_ORDER_CONFIRMED\", channel: \"EMAIL\", locale: \"TR\", subject: \"Siparis Onaylandi: {{orderNumber}}\", bodyTemplate: \"Merhaba {{recipientName}}, {{orderNumber}} nolu siparisiniz onaylandi.\", systemTemplate: false }) { id notificationKey channel locale subject bodyTemplate systemTemplate active } }"
 }
 
 > {%
-    client.global.set("opportunityId", response.body.data.createOpportunity.id);
+    client.global.set("notifTemplateId", response.body.data.createNotificationTemplate.id);
 %}
 
-### 22.2 Get Opportunity by ID
+### 25.9 Get Notification Template by ID
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ opportunity(id: \"{{opportunityId}}\") { id opportunityNumber title stage probability expectedValue currencyCode expectedCloseDate contact { id firstName lastName } company { id name } } }"
+  "query": "{ notificationTemplate(id: \"{{notifTemplateId}}\") { id notificationKey channel locale subject bodyTemplate systemTemplate active } }"
 }
 
-### 22.3 List Opportunities by Company
+### 25.10 List All Notification Templates
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ opportunities(companyId: \"{{companyId}}\") { id opportunityNumber title stage probability expectedValue currencyCode } }"
+  "query": "{ notificationTemplates { id notificationKey channel locale subject active } }"
 }
 
-### ═══════════════════════════════════════════════════════════════
-### 23. CRM — Quote
-### ═══════════════════════════════════════════════════════════════
-
-### 23.1 Create Quote
+### 25.11 Update Notification Template
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createQuote(input: { companyId: \"{{companyId}}\", opportunityId: \"{{opportunityId}}\", contactId: \"{{crmContactId}}\", quoteDate: \"2026-02-22\", expiryDate: \"2026-03-22\", currencyCode: \"TRY\", paymentTermCode: \"NET30\", notes: \"Initial proposal\" }) { id companyId quoteNumber opportunityId contactId quoteDate expiryDate currencyCode paymentTermCode status version subtotal taxTotal total notes lines { id } contact { id firstName lastName } opportunity { id title stage } company { id name } } }"
+  "query": "mutation { updateNotificationTemplate(input: { templateId: \"{{notifTemplateId}}\", subject: \"Siparis Onaylandi - Guncellendi\", bodyTemplate: \"Merhaba {{recipientName}}, {{orderNumber}} nolu siparisiniz basariyla onaylandi.\" }) { id notificationKey subject bodyTemplate } }"
+}
+
+### 25.12 Create Notification Preference
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createNotificationPreference(input: { userId: \"{{userId}}\", notificationKey: \"SALES_ORDER_CONFIRMED\", disabledChannels: [\"SMS\"], preferredLocale: \"TR\" }) { id userId notificationKey disabledChannels preferredLocale } }"
 }
 
 > {%
-    client.global.set("quoteId", response.body.data.createQuote.id);
+    client.global.set("notifPrefId", response.body.data.createNotificationPreference.id);
 %}
 
-### 23.2 Get Quote by ID
+### 25.13 List Notification Preferences by User
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ quote(id: \"{{quoteId}}\") { id quoteNumber status version subtotal taxTotal total lines { id itemDescription quantity unitPrice lineTotal } contact { id firstName lastName } opportunity { id title } company { id name } } }"
+  "query": "{ notificationPreferences(userId: \"{{userId}}\") { id userId notificationKey disabledChannels preferredLocale } }"
 }
 
-### 23.3 List Quotes by Company
+### 25.14 Update Notification Preference
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ quotes(companyId: \"{{companyId}}\") { id quoteNumber status version total } }"
+  "query": "mutation { updateNotificationPreference(input: { preferenceId: \"{{notifPrefId}}\", disabledChannels: [\"SMS\", \"PUSH\"], preferredLocale: \"EN\" }) { id userId notificationKey disabledChannels preferredLocale } }"
 }
 
-### ═══════════════════════════════════════════════════════════════
-### 24. CRM — Activity
-### ═══════════════════════════════════════════════════════════════
-
-### 24.1 Create Activity (CALL for Lead)
+### 25.15 Create Webhook Config
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createActivity(input: { companyId: \"{{companyId}}\", activityType: \"CALL\", subject: \"Initial discovery call with ABC Corp\", relatedEntityType: \"LEAD\", relatedEntityId: \"{{leadId}}\", scheduledAt: \"2026-02-23T10:00:00\", description: \"Discuss ERP requirements\" }) { id companyId activityType subject status relatedEntityType relatedEntityId scheduledAt description company { id name } } }"
+  "query": "mutation { createWebhookConfig(input: { companyId: \"{{companyId}}\", targetUrl: \"https://webhook.example.com/erp-events\", secretKey: \"my-secret-123\", eventTypes: [\"SalesOrderConfirmedEvent\", \"ShipmentDeliveredEvent\"] }) { id companyId targetUrl eventTypes status consecutiveFailures lastSuccessAt company { id name } } }"
 }
 
 > {%
-    client.global.set("activityId", response.body.data.createActivity.id);
+    client.global.set("webhookConfigId", response.body.data.createWebhookConfig.id);
 %}
 
-### 24.2 Create Activity (MEETING for Opportunity)
+### 25.16 Get Webhook Config by ID
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createActivity(input: { companyId: \"{{companyId}}\", activityType: \"MEETING\", subject: \"Demo presentation to ABC Corp\", relatedEntityType: \"OPPORTUNITY\", relatedEntityId: \"{{opportunityId}}\", scheduledAt: \"2026-02-25T14:00:00\", description: \"Full ERP demo\" }) { id activityType subject status relatedEntityType relatedEntityId scheduledAt description } }"
+  "query": "{ webhookConfig(id: \"{{webhookConfigId}}\") { id companyId targetUrl eventTypes status consecutiveFailures lastSuccessAt company { id name } } }"
 }
 
-### 24.3 Get Activity by ID
+### 25.17 List Webhook Configs by Company
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ activity(id: \"{{activityId}}\") { id activityType subject status relatedEntityType relatedEntityId scheduledAt description company { id name } } }"
+  "query": "{ webhookConfigs(companyId: \"{{companyId}}\") { id targetUrl eventTypes status consecutiveFailures } }"
 }
 
-### 24.4 List Activities by Company
+### 25.18 List In-App Notifications
 POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "{ activities(companyId: \"{{companyId}}\") { id activityType subject status relatedEntityType relatedEntityId scheduledAt } }"
+  "query": "{ inAppNotifications(userId: \"{{userId}}\") { id userId notificationKey title body actionUrl read readAt createdAt } }"
 }
+
+### 25.19 Mark Notification Read
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { markNotificationRead(notificationId: \"{{inAppNotifId}}\") }"
+}
+
+### 25.20 Mark All Notifications Read
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { markAllNotificationsRead(userId: \"{{userId}}\") }"
+}
+
+### ═══════════════════════════════════════════════════════════════
+### 29. REPORTING
+### ═══════════════════════════════════════════════════════════════
+
+### 29.1 Get Report Definitions
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name description module type dataSource requiredPermission systemReport active } }"
+}
+
+> {%
+    client.global.set("reportDefId", response.body.data.reportDefinitions[0].id);
+%}
+
+### 29.2 Get Report Definition by ID
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinition(id: \"{{reportDefId}}\") { id name description module type dataSource columnsJson filtersJson sqlQuery requiredPermission systemReport active } }"
+}
+
+### 29.3 Create Custom Report Definition
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createReportDefinition(input: { name: \"Custom Sales Report\", description: \"Custom filtered sales report\", module: \"SALES\", type: \"CUSTOM_FILTER\", dataSource: \"rpt_sales_orders\", requiredPermission: \"REPORT:READ\" }) { id name description module type dataSource active } }"
+}
+
+> {%
+    client.global.set("customReportDefId", response.body.data.createReportDefinition.id);
+%}
+
+### 29.4 Update Report Definition
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { updateReportDefinition(input: { definitionId: \"{{customReportDefId}}\", name: \"Updated Custom Sales Report\", description: \"Updated description\" }) { id name description } }"
+}
+
+### 29.5 Run Predefined Report (Sales Orders)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { runReport(input: { reportDefinitionId: \"{{reportDefId}}\", page: 0, size: 50 }) { columns rows totalCount } }"
+}
+
+### 29.6 Run Report with JSON Export
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { runReport(input: { reportDefinitionId: \"{{reportDefId}}\", format: \"JSON\", page: 0, size: 10 }) { columns rows totalCount exportData exportFormat } }"
+}
+
+### 29.7 Run Report with Excel Export
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { runReport(input: { reportDefinitionId: \"{{reportDefId}}\", format: \"EXCEL\", page: 0, size: 10 }) { columns rows totalCount exportData exportFormat } }"
+}
+
+### 29.8 Run Inventory Stock Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+
+### 29.9 Create Saved Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createSavedReport(input: { reportDefinitionId: \"{{reportDefId}}\", name: \"My Saved Sales Report\", savedFiltersJson: \"{\\\"status\\\": \\\"CONFIRMED\\\"}\", shared: false }) { id reportDefinitionId name savedFiltersJson shared } }"
+}
+
+> {%
+    client.global.set("savedReportId", response.body.data.createSavedReport.id);
+%}
+
+### 29.10 Get Saved Reports
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ savedReports(userId: \"{{userId}}\") { id reportDefinitionId name savedFiltersJson shared createdBy createdAt } }"
+}
+
+### 29.11 Delete Saved Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { deleteSavedReport(id: \"{{savedReportId}}\") }"
+}
+
+### 29.12 Create Scheduled Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createScheduledReport(input: { reportDefinitionId: \"{{reportDefId}}\", name: \"Monthly Sales Report\", cronExpression: \"0 0 8 1 * ?\", format: \"EXCEL\", recipientEmails: [\"admin@kontas.tr\"] }) { id reportDefinitionId name cronExpression format recipientEmails active } }"
+}
+
+> {%
+    client.global.set("scheduledReportId", response.body.data.createScheduledReport.id);
+%}
+
+### 29.13 Get Scheduled Reports
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ scheduledReports { id reportDefinitionId name cronExpression format recipientEmails active lastRunAt nextRunAt } }"
+}
+
+### 29.14 Delete Scheduled Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { deleteScheduledReport(id: \"{{scheduledReportId}}\") }"
+}
+
+### 29.15 Run Finance Invoice Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+
+### 29.16 Run HR Employee Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+
+### 29.17 Run CRM Pipeline Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+
+### 29.18 Run Shipment Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+
+### 29.19 Run Purchase Order Report
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+

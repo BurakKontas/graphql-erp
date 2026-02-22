@@ -37,7 +37,7 @@ public class SchemaTenantProvisioningService implements TenantProvisioningServic
                     stmt.execute("CREATE SCHEMA " + schema);
                 }
             } catch (SQLException e) {
-                throw new RuntimeException("Error occurred while creating Schema: " + schema, e);
+                throw new IllegalStateException("Error occurred while creating Schema: " + schema, e);
             }
         }
 

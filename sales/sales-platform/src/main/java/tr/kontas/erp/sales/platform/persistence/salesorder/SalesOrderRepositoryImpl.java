@@ -1,6 +1,7 @@
 package tr.kontas.erp.sales.platform.persistence.salesorder;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.domain.reference.currency.Currency;
@@ -16,6 +17,7 @@ import tr.kontas.erp.sales.domain.salesorder.SalesOrderRepository;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class SalesOrderRepositoryImpl implements SalesOrderRepository {
@@ -83,7 +85,8 @@ public class SalesOrderRepositoryImpl implements SalesOrderRepository {
         if (entity.getCurrencyCode() != null) {
             try {
                 currency = taxResolution.resolveCurrency(entity.getCurrencyCode());
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                log.warn("Failed to resolve currency '{}': {}", entity.getCurrencyCode(), e.getMessage());
             }
         }
 
@@ -91,7 +94,8 @@ public class SalesOrderRepositoryImpl implements SalesOrderRepository {
         if (entity.getPaymentTermCode() != null) {
             try {
                 paymentTerm = taxResolution.resolvePaymentTerm(tenantId, companyId, entity.getPaymentTermCode());
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                log.warn("Failed to resolve payment term '{}': {}", entity.getPaymentTermCode(), e.getMessage());
             }
         }
 
@@ -105,7 +109,8 @@ public class SalesOrderRepositoryImpl implements SalesOrderRepository {
             try {
                 Tax tax = taxResolution.resolveTax(tenantId, companyId, taxCode);
                 taxMap.put(taxCode, tax);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                log.warn("Failed to resolve tax '{}': {}", taxCode, e.getMessage());
             }
         }
 

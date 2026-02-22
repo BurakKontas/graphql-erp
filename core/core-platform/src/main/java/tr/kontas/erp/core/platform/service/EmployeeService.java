@@ -2,7 +2,6 @@ package tr.kontas.erp.core.platform.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.application.employee.CreateEmployeeCommand;
 import tr.kontas.erp.core.application.employee.CreateEmployeeUseCase;
@@ -31,7 +30,6 @@ public class EmployeeService implements
     private final DepartmentRepository departmentRepository;
     private final DomainEventPublisher eventPublisher;
 
-    @SneakyThrows
     @Override
     @Transactional
     public EmployeeId execute(CreateEmployeeCommand command) {
@@ -40,7 +38,7 @@ public class EmployeeService implements
         var departmentExists = departmentRepository.existsById(command.departmentId());
 
         if (!departmentExists) {
-            throw new Exception("Department doesn't exists");
+            throw new IllegalArgumentException("Department not found");
         }
 
         EmployeeId id = EmployeeId.newId();
@@ -71,6 +69,6 @@ public class EmployeeService implements
     @Override
     public Employee execute(EmployeeId id) {
         return employeeRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found: " + id));
     }
 }

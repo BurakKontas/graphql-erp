@@ -1,0 +1,109 @@
+extend type Query {
+    reportDefinitions: [ReportDefinitionPayload] @auth(permissions: ["REPORT:READ"])
+    reportDefinition(id: String!): ReportDefinitionPayload @auth(permissions: ["REPORT:READ"])
+    savedReports(userId: String!): [SavedReportPayload] @auth(permissions: ["REPORT:READ"])
+    scheduledReports: [ScheduledReportPayload] @auth(permissions: ["REPORT:READ"])
+}
+
+extend type Mutation {
+    runReport(input: RunReportInput!): ReportResultPayload @auth(permissions: ["REPORT:READ"]) @audit
+    createReportDefinition(input: CreateReportDefinitionInput!): ReportDefinitionPayload @auth(permissions: ["REPORT:DESIGN"]) @audit
+    updateReportDefinition(input: UpdateReportDefinitionInput!): ReportDefinitionPayload @auth(permissions: ["REPORT:DESIGN"]) @audit
+    createSavedReport(input: CreateSavedReportInput!): SavedReportPayload @auth(permissions: ["REPORT:READ"]) @audit
+    deleteSavedReport(id: String!): Boolean @auth(permissions: ["REPORT:READ"]) @audit
+    createScheduledReport(input: CreateScheduledReportInput!): ScheduledReportPayload @auth(permissions: ["REPORT:DESIGN"]) @audit
+    deleteScheduledReport(id: String!): Boolean @auth(permissions: ["REPORT:DESIGN"]) @audit
+}
+
+type ReportDefinitionPayload {
+    id: String
+    name: String
+    description: String
+    module: String
+    type: String
+    dataSource: String
+    columnsJson: String
+    filtersJson: String
+    requiredPermission: String
+    systemReport: Boolean
+    active: Boolean
+}
+
+type SavedReportPayload {
+    id: String
+    reportDefinitionId: String
+    name: String
+    savedFiltersJson: String
+    savedSortsJson: String
+    shared: Boolean
+    createdBy: String
+    createdAt: String
+    reportDefinition: ReportDefinitionPayload
+}
+
+type ScheduledReportPayload {
+    id: String
+    reportDefinitionId: String
+    name: String
+    cronExpression: String
+    format: String
+    recipientEmails: [String]
+    active: Boolean
+    lastRunAt: String
+    nextRunAt: String
+    createdBy: String
+    reportDefinition: ReportDefinitionPayload
+}
+
+type ReportResultPayload {
+    columns: [String]
+    rows: [String]
+    totalCount: Int
+    exportData: String
+    exportFormat: String
+}
+
+input RunReportInput {
+    reportDefinitionId: String!
+    parameters: String
+    format: String
+    page: Int
+    size: Int
+}
+
+input CreateReportDefinitionInput {
+    name: String!
+    description: String
+    module: String!
+    type: String!
+    dataSource: String
+    columnsJson: String
+    filtersJson: String
+    requiredPermission: String
+    systemReport: Boolean
+}
+
+input UpdateReportDefinitionInput {
+    definitionId: String!
+    name: String!
+    description: String
+    columnsJson: String
+    filtersJson: String
+}
+
+input CreateSavedReportInput {
+    reportDefinitionId: String!
+    name: String!
+    savedFiltersJson: String
+    savedSortsJson: String
+    shared: Boolean
+}
+
+input CreateScheduledReportInput {
+    reportDefinitionId: String!
+    name: String!
+    cronExpression: String!
+    format: String!
+    recipientEmails: [String]
+}
+

@@ -20,7 +20,7 @@ public class ContractNumberGeneratorImpl implements ContractNumberGeneratorPort 
     @Override
     public ContractNumber generate(TenantId tenantId, CompanyId companyId, int year) {
         Query query = entityManager.createNativeQuery(
-                "SELECT COUNT(*) FROM contracts WHERE tenant_id = :tid AND company_id = :cid AND contract_number LIKE :prefix");
+    "SELECT COUNT(*) FROM contracts WHERE tenant_id = :tid AND company_id = :cid AND contract_number LIKE :prefix FOR UPDATE");
         query.setParameter("tid", tenantId.asUUID());
         query.setParameter("cid", companyId.asUUID());
         query.setParameter("prefix", "CTR-" + year + "-%");

@@ -66,8 +66,11 @@ public class EmployeeGraphql {
 
     @DgsEntityFetcher(name = "EmployeePayload")
     public EmployeePayload employee(Map<String, Object> values) {
-        String id = values.get("id").toString();
-        return employee(id);
+        Object id = values.get("id");
+        if (id == null) {
+            throw new IllegalArgumentException("EmployeePayload entity fetcher requires 'id'");
+        }
+        return employee(id.toString());
     }
 
     @DgsData(parentType = "EmployeePayload")

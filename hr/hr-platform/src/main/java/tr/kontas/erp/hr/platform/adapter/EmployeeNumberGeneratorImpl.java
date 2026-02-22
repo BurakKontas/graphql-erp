@@ -20,7 +20,7 @@ public class EmployeeNumberGeneratorImpl implements EmployeeNumberGeneratorPort 
     @Override
     public EmployeeNumber generate(TenantId tenantId, CompanyId companyId, int year) {
         Query query = entityManager.createNativeQuery(
-                "SELECT COUNT(*) FROM employees WHERE tenant_id = :tid AND company_id = :cid AND employee_number LIKE :prefix");
+    "SELECT COUNT(*) FROM employees WHERE tenant_id = :tid AND company_id = :cid AND employee_number LIKE :prefix FOR UPDATE");
         query.setParameter("tid", tenantId.asUUID());
         query.setParameter("cid", companyId.asUUID());
         query.setParameter("prefix", "EMP-" + year + "-%");

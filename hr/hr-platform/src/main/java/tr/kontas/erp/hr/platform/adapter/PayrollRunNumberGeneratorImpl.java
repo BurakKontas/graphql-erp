@@ -20,7 +20,7 @@ public class PayrollRunNumberGeneratorImpl implements PayrollRunNumberGeneratorP
     @Override
     public PayrollRunNumber generate(TenantId tenantId, CompanyId companyId, int year) {
         Query query = entityManager.createNativeQuery(
-                "SELECT COUNT(*) FROM payroll_runs WHERE tenant_id = :tid AND company_id = :cid AND run_number LIKE :prefix");
+                "SELECT COUNT(*) FROM payroll_runs WHERE tenant_id = :tid AND company_id = :cid AND run_number LIKE :prefix FOR UPDATE");
         query.setParameter("tid", tenantId.asUUID());
         query.setParameter("cid", companyId.asUUID());
         query.setParameter("prefix", "PRUN-" + year + "-%");

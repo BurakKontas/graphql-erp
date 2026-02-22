@@ -12,6 +12,7 @@ import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPublicKey;
@@ -27,7 +28,7 @@ public class JwkKeyProvider {
 
     private static final long CIRCUIT_BREAKER_TIMEOUT_MS = 30_000;
     private final TenantRepository tenantRepository;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
     private final Cache<String, Map<String, RSAPublicKey>> tenantKeyCache =
             Caffeine.newBuilder()
                     .maximumSize(100)
@@ -35,8 +36,9 @@ public class JwkKeyProvider {
                     .build();
     private final Map<String, Long> lastFailureTime = new ConcurrentHashMap<>();
 
-    public JwkKeyProvider(TenantRepository tenantRepository) {
+    public JwkKeyProvider(TenantRepository tenantRepository, ObjectMapper mapper) {
         this.tenantRepository = tenantRepository;
+        this.mapper = mapper;
     }
 
     public RSAPublicKey resolve(String tenantId, String kid) {
@@ -70,7 +72,7 @@ public class JwkKeyProvider {
                 throw new IllegalStateException("OIDC is not configured for tenant: " + tenantId);
             }
 
-            URL url = new URL(config.getJwkSetUri());
+            URL url = URI.create(config.getJwkSetUri()).toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);

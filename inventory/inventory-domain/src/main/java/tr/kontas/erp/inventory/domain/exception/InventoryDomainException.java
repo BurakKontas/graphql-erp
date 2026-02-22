@@ -1,6 +1,8 @@
 package tr.kontas.erp.inventory.domain.exception;
 
-public abstract class InventoryDomainException extends RuntimeException {
+import tr.kontas.erp.core.kernel.exception.DomainException;
+
+public abstract class InventoryDomainException extends DomainException {
     protected InventoryDomainException(String message) {
         super(message);
     }

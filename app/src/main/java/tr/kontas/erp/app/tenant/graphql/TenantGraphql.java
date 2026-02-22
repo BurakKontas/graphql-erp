@@ -36,6 +36,11 @@ public class TenantGraphql {
         );
     }
 
+    private Tenant findTenantById(String tenantId) {
+        return getTenantByIdUseCase.execute(TenantId.of(tenantId))
+                .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantId));
+    }
+
     @DgsMutation
     public TenantPayload createTenant(@InputArgument("input") CreateTenantInput input) {
 
@@ -68,7 +73,7 @@ public class TenantGraphql {
 
         updateTenantAuthModeUseCase.execute(command);
 
-        return toPayload(getTenantByIdUseCase.execute(TenantId.of(input.getTenantId())).orElseThrow());
+        return toPayload(findTenantById(input.getTenantId()));
     }
 
     @DgsMutation
@@ -87,7 +92,7 @@ public class TenantGraphql {
 
         updateTenantOidcSettingsUseCase.execute(command);
 
-        return toPayload(getTenantByIdUseCase.execute(TenantId.of(input.getTenantId())).orElseThrow());
+        return toPayload(findTenantById(input.getTenantId()));
     }
 
     @DgsMutation
@@ -114,7 +119,7 @@ public class TenantGraphql {
 
         updateTenantLdapSettingsUseCase.execute(command);
 
-        return toPayload(getTenantByIdUseCase.execute(TenantId.of(input.getTenantId())).orElseThrow());
+        return toPayload(findTenantById(input.getTenantId()));
     }
 
     @DgsQuery
@@ -127,14 +132,16 @@ public class TenantGraphql {
 
     @DgsQuery
     public TenantPayload tenant(@InputArgument("id") String id) {
-        TenantId tenantId = TenantId.of(id);
-        return toPayload(getTenantByIdUseCase.execute(tenantId).orElseThrow());
+        return toPayload(findTenantById(id));
     }
 
     @DgsEntityFetcher(name = "TenantPayload")
     public TenantPayload tenant(Map<String, Object> values) {
-        String id = values.get("id").toString();
-        return tenant(id);
+        Object id = values.get("id");
+        if (id == null) {
+            throw new IllegalArgumentException("TenantPayload entity fetcher requires 'id'");
+        }
+        return tenant(id.toString());
     }
 
     @DgsData(parentType = "TenantPayload")

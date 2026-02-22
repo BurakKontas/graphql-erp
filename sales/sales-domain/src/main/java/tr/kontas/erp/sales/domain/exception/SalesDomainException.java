@@ -1,12 +1,10 @@
 package tr.kontas.erp.sales.domain.exception;
 
-public abstract class SalesDomainException extends RuntimeException {
+import tr.kontas.erp.core.kernel.exception.DomainException;
+
+public abstract class SalesDomainException extends DomainException {
 
     protected SalesDomainException(String message) {
         super(message);
-    }
-
-    protected SalesDomainException(String message, Throwable cause) {
-        super(message, cause);
     }
 }

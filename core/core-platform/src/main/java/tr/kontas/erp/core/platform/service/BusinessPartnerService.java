@@ -63,7 +63,7 @@ public class BusinessPartnerService implements
     @Override
     public BusinessPartner execute(BusinessPartnerId id) {
         return businessPartnerRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Business partner not found: " + id));
     }
 
     @Override

@@ -53,7 +53,7 @@ public class CompanyService implements
     @Override
     public Company execute(CompanyId id) {
         return companyRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Company not found: " + id));
     }
 
     @Override

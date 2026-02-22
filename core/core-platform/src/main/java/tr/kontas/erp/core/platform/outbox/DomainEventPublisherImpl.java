@@ -2,7 +2,6 @@ package tr.kontas.erp.core.platform.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -17,9 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DomainEventPublisherImpl implements DomainEventPublisher {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .findAndRegisterModules()
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    private final ObjectMapper objectMapper;
     private final OutboxRepository outboxRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
@@ -42,7 +39,7 @@ public class DomainEventPublisherImpl implements DomainEventPublisher {
 
     private OutboxEntity saveToOutbox(DomainEvent event) {
         try {
-            String payload = MAPPER.writeValueAsString(event);
+            String payload = objectMapper.writeValueAsString(event);
 
             OutboxEntity entry = new OutboxEntity(
                     event.getEventId(),
@@ -56,7 +53,7 @@ public class DomainEventPublisherImpl implements DomainEventPublisher {
             return outboxRepository.save(entry);
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize domain event to outbox: {}", event.getClass().getSimpleName(), e);
-            throw new RuntimeException("Failed to serialize domain event", e);
+            throw new IllegalStateException("Failed to serialize domain event", e);
         }
     }
 

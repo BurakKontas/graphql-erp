@@ -1,13 +1,11 @@
 package tr.kontas.erp.finance.domain.exception;
 
-public abstract class FinanceDomainException extends RuntimeException {
+import tr.kontas.erp.core.kernel.exception.DomainException;
+
+public abstract class FinanceDomainException extends DomainException {
 
     protected FinanceDomainException(String message) {
         super(message);
-    }
-
-    protected FinanceDomainException(String message, Throwable cause) {
-        super(message, cause);
     }
 }
 

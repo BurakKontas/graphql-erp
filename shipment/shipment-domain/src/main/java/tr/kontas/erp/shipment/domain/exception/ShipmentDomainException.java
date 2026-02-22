@@ -1,13 +1,11 @@
 package tr.kontas.erp.shipment.domain.exception;
 
-public abstract class ShipmentDomainException extends RuntimeException {
+import tr.kontas.erp.core.kernel.exception.DomainException;
+
+public abstract class ShipmentDomainException extends DomainException {
 
     protected ShipmentDomainException(String message) {
         super(message);
-    }
-
-    protected ShipmentDomainException(String message, Throwable cause) {
-        super(message, cause);
     }
 }
 
