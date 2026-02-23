@@ -5,7 +5,7 @@ CREATE TABLE positions (
     code VARCHAR(50) NOT NULL,
     title VARCHAR(255) NOT NULL,
     department_id VARCHAR(36),
-    level VARCHAR(20),
+    position_level VARCHAR(20),
     salary_grade VARCHAR(50),
     headcount INT NOT NULL DEFAULT 1,
     filled_count INT NOT NULL DEFAULT 0,

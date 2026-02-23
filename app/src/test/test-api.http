@@ -45,7 +45,7 @@
 ### │     into the apiKey variable below                           │
 ### └──────────────────────────────────────────────────────────────┘
 
-@apiKey = 9404f866-b80e-4539-81db-9bc5284a2d05
+@apiKey = 9ad83843-dd45-4f84-b47d-31105ba6110f
 
 ### 1.1 Create Tenant
 POST http://localhost:8080/graphql
@@ -154,11 +154,8 @@ X-TENANT: TST
 
 > {%
     client.global.set("token", response.body.data.login.accessToken);
+    client.global.set("refreshToken", response.body.data.login.refreshToken)
 %}
-
-###
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZjNmZTcwZi01YTJjLTRhMmUtODBlZC03ZjlmZGJmNmIwNTQiLCJ0ZW5hbnQiOiJkMzZkN2VmZi01N2NiLTRmNzYtODBjNy04NmM0ZmQwOGRjODgiLCJ1c2VybmFtZSI6ImFkbWluIiwicm9sZXMiOlsiNTNkMDBjYjUtMzZlNy1hNDkxLTFkMjQtMzc1MTQ2MGQ2NGI0Il0sInR5cGUiOiJhY2Nlc3MiLCJwZXJtaXNzaW9ucyI6WyJTQUxFU19PUkRFUjpDT05GSVJNIiwiVEFYOlVQREFURSIsIkNPTVBBTlk6UkVBRCIsIlBBWU1FTlRfVEVSTTpDUkVBVEUiLCJTQUxFU19PUkRFUjpDUkVBVEUiLCJVTklUOlVQREFURSIsIkJVU0lORVNTX1BBUlRORVI6VVBEQVRFIiwiQlVTSU5FU1NfUEFSVE5FUjpERUxFVEUiLCJFTVBMT1lFRTpVUERBVEUiLCJTVE9DS19NT1ZFTUVOVDpVUERBVEUiLCJFTVBMT1lFRTpERUxFVEUiLCJFTVBMT1lFRTpDUkVBVEUiLCJXQVJFSE9VU0U6Q1JFQVRFIiwiREVQQVJUTUVOVDpDUkVBVEUiLCJDT01QQU5ZOkRFTEVURSIsIlNUT0NLX0xFVkVMOkRFTEVURSIsIklURU06VVBEQVRFIiwiU1RPQ0tfTU9WRU1FTlQ6REVMRVRFIiwiREVQQVJUTUVOVDpSRUFEIiwiQ0FURUdPUlk6REVMRVRFIiwiSVRFTTpSRUFEIiwiR0VORVJBTDpBRE1JTiIsIldBUkVIT1VTRTpVUERBVEUiLCJQQVlNRU5UX1RFUk06VVBEQVRFIiwiQ1VSUkVOQ1k6VVBEQVRFIiwiUEFZTUVOVF9URVJNOlJFQUQiLCJTQUxFU19PUkRFUjpBQ0NFUFQiLCJVTklUOkRFTEVURSIsIlNUT0NLX01PVkVNRU5UOlJFQUQiLCJDQVRFR09SWTpSRUFEIiwiU1RPQ0tfTEVWRUw6UkVBRCIsIlNBTEVTX09SREVSOlVQREFURSIsIlRBWDpDUkVBVEUiLCJDVVJSRU5DWTpSRUFEIiwiQ1VSUkVOQ1k6Q1JFQVRFIiwiU0FMRVNfT1JERVI6UkVBRCIsIkRFUEFSVE1FTlQ6VVBEQVRFIiwiUEFZTUVOVF9URVJNOkRFTEVURSIsIkRFUEFSVE1FTlQ6REVMRVRFIiwiU0FMRVNfT1JERVI6REVMRVRFIiwiSVRFTTpDUkVBVEUiLCJTQUxFU19PUkRFUjpTRU5EIiwiQ09NUEFOWTpVUERBVEUiLCJTVE9DS19MRVZFTDpVUERBVEUiLCJDQVRFR09SWTpVUERBVEUiLCJCVVNJTkVTU19QQVJUTkVSOkNSRUFURSIsIlVOSVQ6UkVBRCIsIlVOSVQ6Q1JFQVRFIiwiRU1QTE9ZRUU6UkVBRCIsIklURU06REVMRVRFIiwiV0FSRUhPVVNFOkRFTEVURSIsIkNPTVBBTlk6Q1JFQVRFIiwiQ0FURUdPUlk6Q1JFQVRFIiwiU1RPQ0tfTEVWRUw6Q1JFQVRFIiwiQlVTSU5FU1NfUEFSVE5FUjpSRUFEIiwiVEFYOkRFTEVURSIsIldBUkVIT1VTRTpSRUFEIiwiVEFYOlJFQUQiLCJTQUxFU19PUkRFUjpDQU5DRUwiLCJDVVJSRU5DWTpERUxFVEUiLCJTVE9DS19NT1ZFTUVOVDpDUkVBVEUiXSwiYXV0aFZlcnNpb24iOjMsImlhdCI6MTc3MTY4NzA2NiwiZXhwIjoxNzcxNjkwNjY2fQ.8aG52ChbcfMIsSY26R3H6-qwrrtBwyZrrwxGyGM7DoY
-@refreshToken = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZjNmZTcwZi01YTJjLTRhMmUtODBlZC03ZjlmZGJmNmIwNTQiLCJ0eXBlIjoicmVmcmVzaCIsImF1dGhWZXJzaW9uIjoyLCJpYXQiOjE3NzE2ODYwMjQsImV4cCI6MTc3MjI5MDgyNH0.wfcKV4c824RwR-C-kVJXq-OL2VDH2dujtS1_KMEzQAE
 
 ### 2.6 Refresh Token
 POST http://localhost:8080/graphql
@@ -167,7 +164,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { refreshToken(refreshToken: {{refreshToken}}) { accessToken refreshToken expiresAt } }"
+  "query": "mutation { refreshToken(refreshToken: \"{{refreshToken}}\") { accessToken refreshToken expiresAt } }"
 }
 
 
@@ -680,7 +677,6 @@ Authorization: Bearer {{token}}
   "query": "mutation { activateItem(itemId: \"{{itemId}}\") { id code name active } }"
 }
 
-
 ### 11.1 Adjust Stock (+100)
 POST http://localhost:8080/graphql
 Content-Type: application/json
@@ -814,9 +810,6 @@ Authorization: Bearer {{token}}
 > {%
     client.global.set("salesOrderId", response.body.data.createSalesOrder.id);
 %}
-
-###
-@salesOrderId = acfadc27-b88e-42a9-9c82-b82ac7d034aa
 
 ### 13.2 Add Sales Order Line 1
 POST http://localhost:8080/graphql
@@ -1153,16 +1146,6 @@ Authorization: Bearer {{token}}
 
 {
 "query": "mutation { cancelDeliveryOrder(input: { deliveryOrderId: \"NEW_DO_ID\", reason: \"No longer needed\" }) { id number status } }"
-}
-
-### 19.1 Logout
-POST http://localhost:8080/graphql
-Content-Type: application/json
-X-TENANT: TST
-Authorization: Bearer {{token}}
-
-{
-  "query": "mutation { logout }"
 }
 
 ### ═══════════════════════════════════════════════════════════════
@@ -1503,6 +1486,57 @@ Authorization: Bearer {{token}}
 
 ### ─── Credit Note ───
 
+### 25.preA Ensure there's a Sales Order to confirm (list existing)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ salesOrders(companyId: \"{{companyId}}\") { id orderNumber status } }"
+}
+
+> {%
+    var s = response.body.data.salesOrders;
+    if (s && s.length > 0) {
+        client.global.set("notifSalesOrderId", s[0].id);
+    }
+%}
+
+### 25.preB Create a Sales Order (only used if none exist)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createSalesOrder(input: { companyId: \"{{companyId}}\", customerId: \"{{bpId}}\", currencyCode: \"TRY\", paymentTermCode: \"NET30\", orderDate: \"2026-02-23\" }) { id orderNumber status } }"
+}
+
+> {%
+    // If notifSalesOrderId wasn't set by the list request above, set it from the created order
+    if (!client.global.get("notifSalesOrderId") && response.body && response.body.data && response.body.data.createSalesOrder) {
+        client.global.set("notifSalesOrderId", response.body.data.createSalesOrder.id);
+    }
+%}
+
+### 25.preC Confirm the Sales Order (this should trigger notifications via domain events)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { confirmSalesOrder(orderId: \"{{notifSalesOrderId}}\") { id orderNumber status } }"
+}
+
+> {%
+    // helpful debug: set a global flag if confirmation succeeded
+    if (response.body && response.body.data && response.body.data.confirmSalesOrder) {
+        client.global.set("notifSalesOrderConfirmed", "true");
+    }
+%}
+
 ### 25.1 Create Credit Note
 POST http://localhost:8080/graphql
 Content-Type: application/json
@@ -1795,7 +1829,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { createNotificationTemplate(input: { notificationKey: \"SALES_ORDER_CONFIRMED\", channel: \"EMAIL\", locale: \"TR\", subject: \"Siparis Onaylandi: {{orderNumber}}\", bodyTemplate: \"Merhaba {{recipientName}}, {{orderNumber}} nolu siparisiniz onaylandi.\", systemTemplate: false }) { id notificationKey channel locale subject bodyTemplate systemTemplate active } }"
+  "query": "mutation { createNotificationTemplate(input: { notificationKey: \"SALES_ORDER_CONFIRMED\", channel: \"EMAIL\", locale: \"TR\", subject: \"Siparis Onaylandi: \\u007B\\u007BorderNumber\\u007D\\u007D\", bodyTemplate: \"Merhaba \\u007B\\u007BrecipientName\\u007D\\u007D, \\u007B\\u007BorderNumber\\u007D\\u007D nolu siparisiniz onaylandi.\", systemTemplate: false }) { id notificationKey channel locale subject bodyTemplate systemTemplate active } }"
 }
 
 > {%
@@ -1829,7 +1863,7 @@ X-TENANT: TST
 Authorization: Bearer {{token}}
 
 {
-  "query": "mutation { updateNotificationTemplate(input: { templateId: \"{{notifTemplateId}}\", subject: \"Siparis Onaylandi - Guncellendi\", bodyTemplate: \"Merhaba {{recipientName}}, {{orderNumber}} nolu siparisiniz basariyla onaylandi.\" }) { id notificationKey subject bodyTemplate } }"
+  "query": "mutation { updateNotificationTemplate(input: { templateId: \"{{notifTemplateId}}\", subject: \"Siparis Onaylandi - Guncellendi\", bodyTemplate: \"Merhaba \\u007B\\u007BrecipientName\\u007D\\u007D, \\u007B\\u007BorderNumber\\u007D\\u007D nolu siparisiniz basariyla onaylandi.\" }) { id notificationKey subject bodyTemplate } }"
 }
 
 ### 25.12 Create Notification Preference
@@ -1910,6 +1944,13 @@ Authorization: Bearer {{token}}
   "query": "{ inAppNotifications(userId: \"{{userId}}\") { id userId notificationKey title body actionUrl read readAt createdAt } }"
 }
 
+> {%
+    var notifs = response.body.data.inAppNotifications;
+    if (notifs && notifs.length > 0) {
+        client.global.set("inAppNotifId", notifs[0].id);
+    }
+%}
+
 ### 25.19 Mark Notification Read
 POST http://localhost:8080/graphql
 Content-Type: application/json
@@ -1933,6 +1974,39 @@ Authorization: Bearer {{token}}
 ### ═══════════════════════════════════════════════════════════════
 ### 29. REPORTING
 ### ═══════════════════════════════════════════════════════════════
+
+### 29.pre Create sample Report Definition (use when none exist)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { createReportDefinition(input: { name: \"Auto Test Report\", description: \"Auto-created report for tests\", module: \"SALES\", type: \"PREDEFINED\", dataSource: \"rpt_sales_orders\", requiredPermission: \"REPORT:READ\" }) { id name module } }"
+}
+
+> {%
+    if (response && response.body && response.body.data && response.body.data.createReportDefinition) {
+        client.global.set("reportDefId", response.body.data.createReportDefinition.id);
+    }
+%}
+
+### 29.0 Ensure Report Definition ID (run this if you see unsubstituted 'reportDefId')
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "{ reportDefinitions { id name module } }"
+}
+
+> {%
+    var defs = response.body.data.reportDefinitions;
+    if (defs && defs.length > 0) {
+        client.global.set("reportDefId", defs[0].id);
+    }
+%}
 
 ### 29.1 Get Report Definitions
 POST http://localhost:8080/graphql
@@ -2139,4 +2213,16 @@ Authorization: Bearer {{token}}
 {
   "query": "{ reportDefinitions { id name module } }"
 }
+
+### 30.1 Logout
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{token}}
+
+{
+  "query": "mutation { logout }"
+}
+
+
 

@@ -7,6 +7,7 @@
         <groupId>tr.kontas.erp</groupId>
         <artifactId>root</artifactId>
         <version>1.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>core-domain</artifactId>

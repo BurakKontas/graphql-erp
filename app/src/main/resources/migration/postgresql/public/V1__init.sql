@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS public.tenants (
+CREATE SCHEMA IF NOT EXISTS ERP_USR;
+
+CREATE TABLE IF NOT EXISTS ERP_USR.tenants (
     id uuid NOT NULL,
     code varchar(255) NOT NULL UNIQUE,
     name varchar(255) NOT NULL,

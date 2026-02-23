@@ -28,7 +28,9 @@ public class TenantContext implements CurrentTenantIdentifierResolver<String> {
     @Override
     public String resolveCurrentTenantIdentifier() {
         String tenantId = CURRENT_TENANT.get();
-        return tenantId != null ? "tenant_" + tenantId.replace("-", "") : "public";
+        if (tenantId == null) return "ERP_USR";
+        int hash = Math.abs(tenantId.replace("-", "").hashCode());
+        return ("tenant_" + hash).toUpperCase();
     }
 
     @Override

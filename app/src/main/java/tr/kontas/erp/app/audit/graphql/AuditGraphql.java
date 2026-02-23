@@ -21,17 +21,17 @@ public class AuditGraphql {
 
     @DgsQuery
     public List<AuditEntryPayload> auditByAggregate(
-            @InputArgument String aggregateType,
-            @InputArgument String aggregateId) {
+            @InputArgument("aggregateType") String aggregateType,
+            @InputArgument("aggregateId") String aggregateId) {
         return auditQueryService.findByAggregate(aggregateType, aggregateId, TenantContext.get().asUUID())
                 .stream().map(AuditGraphql::toPayload).toList();
     }
 
     @DgsQuery
     public List<AuditEntryPayload> auditByUser(
-            @InputArgument String userId,
-            @InputArgument String from,
-            @InputArgument String to) {
+            @InputArgument("userId") String userId,
+            @InputArgument("from") String from,
+            @InputArgument("to") String to) {
         return auditQueryService.findByUser(userId, TenantContext.get().asUUID(),
                         Instant.parse(from), Instant.parse(to))
                 .stream().map(AuditGraphql::toPayload).toList();
@@ -39,9 +39,9 @@ public class AuditGraphql {
 
     @DgsQuery
     public List<AuditEntryPayload> auditByModule(
-            @InputArgument String moduleName,
-            @InputArgument String from,
-            @InputArgument String to) {
+            @InputArgument("moduleName") String moduleName,
+            @InputArgument("from") String from,
+            @InputArgument("to") String to) {
         return auditQueryService.findByModule(moduleName, TenantContext.get().asUUID(),
                         Instant.parse(from), Instant.parse(to))
                 .stream().map(AuditGraphql::toPayload).toList();
@@ -49,10 +49,10 @@ public class AuditGraphql {
 
     @DgsQuery
     public List<AuditEntryPayload> auditEntries(
-            @InputArgument String from,
-            @InputArgument String to,
-            @InputArgument Integer limit,
-            @InputArgument Integer offset) {
+            @InputArgument("from") String from,
+            @InputArgument("to") String to,
+            @InputArgument("limit") Integer limit,
+            @InputArgument("offset") Integer offset) {
         return auditQueryService.findAll(TenantContext.get().asUUID(),
                         Instant.parse(from), Instant.parse(to),
                         limit != null ? limit : 50,

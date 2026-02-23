@@ -1,3 +1,7 @@
+-- Ensure tenant schema exists and use it
+CREATE SCHEMA IF NOT EXISTS "${schema}";
+SET search_path TO "${schema}";
+
 CREATE TABLE permissions
 (
     id          UUID PRIMARY KEY,

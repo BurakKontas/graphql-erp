@@ -25,7 +25,7 @@ public class DeliveryOrderJpaEntity {
     @Column(name = "company_id", nullable = false)
     private UUID companyId;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "delivery_number", nullable = false)
     private String number;
 
     @Column(name = "sales_order_id")

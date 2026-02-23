@@ -72,8 +72,7 @@ public class AuthGraphql {
     }
 
     @DgsMutation
-    public AuthPayload refreshToken(@InputArgument("refreshToken") String refreshToken,
-                                    DataFetchingEnvironment env) {
+    public AuthPayload refreshToken(@InputArgument("refreshToken") String refreshToken) {
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new IllegalArgumentException("Refresh token is required");
         }

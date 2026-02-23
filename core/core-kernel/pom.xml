@@ -7,12 +7,10 @@
         <groupId>tr.kontas.erp</groupId>
         <artifactId>root</artifactId>
         <version>1.0.0</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>core-kernel</artifactId>
-    <name>core-kernel</name>
-    <description>Core shared kernel abstractions</description>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>

@@ -39,6 +39,7 @@ import tr.kontas.erp.hr.domain.position.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @DgsComponent
@@ -98,17 +99,17 @@ public class HrGraphql {
     private final GetJobApplicationsByCompanyUseCase getJobApplicationsByCompanyUseCase;
 
     @DgsQuery
-    public PositionPayload position(@InputArgument String id) {
+    public PositionPayload position(@InputArgument("id") String id) {
         return toPayload(getPositionByIdUseCase.execute(PositionId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<PositionPayload> positions(@InputArgument String companyId) {
+    public List<PositionPayload> positions(@InputArgument("companyId") String companyId) {
         return getPositionsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public PositionPayload createPosition(@InputArgument CreatePositionInput input) {
+    public PositionPayload createPosition(@InputArgument("input") CreatePositionInput input) {
         PositionId id = createPositionUseCase.execute(new CreatePositionCommand(
                 CompanyId.of(input.getCompanyId()), input.getCode(), input.getTitle(),
                 input.getDepartmentId(), input.getLevel(), input.getSalaryGrade(), input.getHeadcount()));
@@ -116,17 +117,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public HrEmployeePayload hrEmployee(@InputArgument String id) {
+    public HrEmployeePayload hrEmployee(@InputArgument("id") String id) {
         return toPayload(getHrEmployeeByIdUseCase.execute(EmployeeId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<HrEmployeePayload> hrEmployees(@InputArgument String companyId) {
+    public List<HrEmployeePayload> hrEmployees(@InputArgument("companyId") String companyId) {
         return getHrEmployeesByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public HrEmployeePayload createHrEmployee(@InputArgument CreateHrEmployeeInput input) {
+    public HrEmployeePayload createHrEmployee(@InputArgument("input") CreateHrEmployeeInput input) {
         EmployeeId id = createHrEmployeeUseCase.execute(new CreateEmployeeCommand(
                 CompanyId.of(input.getCompanyId()), input.getUserId(),
                 input.getFirstName(), input.getLastName(),
@@ -140,17 +141,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public ContractPayload contract(@InputArgument String id) {
+    public ContractPayload contract(@InputArgument("id") String id) {
         return toPayload(getContractByIdUseCase.execute(ContractId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<ContractPayload> contracts(@InputArgument String companyId) {
+    public List<ContractPayload> contracts(@InputArgument("companyId") String companyId) {
         return getContractsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public ContractPayload createContract(@InputArgument CreateContractInput input) {
+    public ContractPayload createContract(@InputArgument("input") CreateContractInput input) {
         ContractId id = createContractUseCase.execute(new CreateContractCommand(
                 CompanyId.of(input.getCompanyId()), input.getEmployeeId(),
                 LocalDate.parse(input.getStartDate()),
@@ -161,34 +162,34 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public LeavePolicyPayload leavePolicy(@InputArgument String id) {
+    public LeavePolicyPayload leavePolicy(@InputArgument("id") String id) {
         return toPayload(getLeavePolicyByIdUseCase.execute(LeavePolicyId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<LeavePolicyPayload> leavePolicies(@InputArgument String companyId) {
+    public List<LeavePolicyPayload> leavePolicies(@InputArgument("companyId") String companyId) {
         return getLeavePolicysByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public LeavePolicyPayload createLeavePolicy(@InputArgument CreateLeavePolicyInput input) {
+    public LeavePolicyPayload createLeavePolicy(@InputArgument("input") CreateLeavePolicyInput input) {
         LeavePolicyId id = createLeavePolicyUseCase.execute(new CreateLeavePolicyCommand(
                 CompanyId.of(input.getCompanyId()), input.getName(), input.getCountryCode(), null));
         return toPayload(getLeavePolicyByIdUseCase.execute(id));
     }
 
     @DgsQuery
-    public LeaveRequestPayload leaveRequest(@InputArgument String id) {
+    public LeaveRequestPayload leaveRequest(@InputArgument("id") String id) {
         return toPayload(getLeaveRequestByIdUseCase.execute(LeaveRequestId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<LeaveRequestPayload> leaveRequests(@InputArgument String companyId) {
+    public List<LeaveRequestPayload> leaveRequests(@InputArgument("companyId") String companyId) {
         return getLeaveRequestsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public LeaveRequestPayload createLeaveRequest(@InputArgument CreateLeaveRequestInput input) {
+    public LeaveRequestPayload createLeaveRequest(@InputArgument("input") CreateLeaveRequestInput input) {
         LeaveRequestId id = createLeaveRequestUseCase.execute(new CreateLeaveRequestCommand(
                 CompanyId.of(input.getCompanyId()), input.getEmployeeId(), input.getLeaveType(),
                 LocalDate.parse(input.getStartDate()), LocalDate.parse(input.getEndDate()),
@@ -197,17 +198,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public LeaveBalancePayload leaveBalance(@InputArgument String id) {
+    public LeaveBalancePayload leaveBalance(@InputArgument("id") String id) {
         return toPayload(getLeaveBalanceByIdUseCase.execute(LeaveBalanceId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<LeaveBalancePayload> leaveBalances(@InputArgument String companyId) {
+    public List<LeaveBalancePayload> leaveBalances(@InputArgument("companyId") String companyId) {
         return getLeaveBalancesByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public LeaveBalancePayload createLeaveBalance(@InputArgument CreateLeaveBalanceInput input) {
+    public LeaveBalancePayload createLeaveBalance(@InputArgument("input") CreateLeaveBalanceInput input) {
         LeaveBalanceId id = createLeaveBalanceUseCase.execute(new CreateLeaveBalanceCommand(
                 CompanyId.of(input.getCompanyId()), input.getEmployeeId(), input.getLeaveType(),
                 input.getYear(), input.getEntitlementDays(), input.getCarryoverDays()));
@@ -215,17 +216,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public AttendancePayload attendance(@InputArgument String id) {
+    public AttendancePayload attendance(@InputArgument("id") String id) {
         return toPayload(getAttendanceByIdUseCase.execute(AttendanceId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<AttendancePayload> attendances(@InputArgument String companyId) {
+    public List<AttendancePayload> attendances(@InputArgument("companyId") String companyId) {
         return getAttendancesByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public AttendancePayload createAttendance(@InputArgument CreateAttendanceInput input) {
+    public AttendancePayload createAttendance(@InputArgument("input") CreateAttendanceInput input) {
         AttendanceId id = createAttendanceUseCase.execute(new CreateAttendanceCommand(
                 CompanyId.of(input.getCompanyId()), input.getEmployeeId(),
                 LocalDate.parse(input.getDate()), input.getSource(),
@@ -236,17 +237,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public PayrollConfigPayload payrollConfig(@InputArgument String id) {
+    public PayrollConfigPayload payrollConfig(@InputArgument("id") String id) {
         return toPayload(getPayrollConfigByIdUseCase.execute(PayrollConfigId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<PayrollConfigPayload> payrollConfigs(@InputArgument String companyId) {
+    public List<PayrollConfigPayload> payrollConfigs(@InputArgument("companyId") String companyId) {
         return getPayrollConfigsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public PayrollConfigPayload createPayrollConfig(@InputArgument CreatePayrollConfigInput input) {
+    public PayrollConfigPayload createPayrollConfig(@InputArgument("input") CreatePayrollConfigInput input) {
         PayrollConfigId id = createPayrollConfigUseCase.execute(new CreatePayrollConfigCommand(
                 CompanyId.of(input.getCompanyId()), input.getCountryCode(), input.getName(),
                 input.getValidYear(),
@@ -256,17 +257,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public PayrollRunPayload payrollRun(@InputArgument String id) {
+    public PayrollRunPayload payrollRun(@InputArgument("id") String id) {
         return toPayload(getPayrollRunByIdUseCase.execute(PayrollRunId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<PayrollRunPayload> payrollRuns(@InputArgument String companyId) {
+    public List<PayrollRunPayload> payrollRuns(@InputArgument("companyId") String companyId) {
         return getPayrollRunsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public PayrollRunPayload createPayrollRun(@InputArgument CreatePayrollRunInput input) {
+    public PayrollRunPayload createPayrollRun(@InputArgument("input") CreatePayrollRunInput input) {
         PayrollRunId id = createPayrollRunUseCase.execute(new CreatePayrollRunCommand(
                 CompanyId.of(input.getCompanyId()), input.getYear(), input.getMonth(),
                 input.getPaymentDate() != null ? LocalDate.parse(input.getPaymentDate()) : null,
@@ -275,17 +276,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public PerformanceCyclePayload performanceCycle(@InputArgument String id) {
+    public PerformanceCyclePayload performanceCycle(@InputArgument("id") String id) {
         return toPayload(getPerformanceCycleByIdUseCase.execute(PerformanceCycleId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<PerformanceCyclePayload> performanceCycles(@InputArgument String companyId) {
+    public List<PerformanceCyclePayload> performanceCycles(@InputArgument("companyId") String companyId) {
         return getPerformanceCyclesByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public PerformanceCyclePayload createPerformanceCycle(@InputArgument CreatePerformanceCycleInput input) {
+    public PerformanceCyclePayload createPerformanceCycle(@InputArgument("input") CreatePerformanceCycleInput input) {
         PerformanceCycleId id = createPerformanceCycleUseCase.execute(new CreatePerformanceCycleCommand(
                 CompanyId.of(input.getCompanyId()), input.getName(),
                 LocalDate.parse(input.getStartDate()), LocalDate.parse(input.getEndDate()),
@@ -294,34 +295,34 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public PerformanceReviewPayload performanceReview(@InputArgument String id) {
+    public PerformanceReviewPayload performanceReview(@InputArgument("id") String id) {
         return toPayload(getPerformanceReviewByIdUseCase.execute(PerformanceReviewId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<PerformanceReviewPayload> performanceReviews(@InputArgument String companyId) {
+    public List<PerformanceReviewPayload> performanceReviews(@InputArgument("companyId") String companyId) {
         return getPerformanceReviewsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public PerformanceReviewPayload createPerformanceReview(@InputArgument CreatePerformanceReviewInput input) {
+    public PerformanceReviewPayload createPerformanceReview(@InputArgument("input") CreatePerformanceReviewInput input) {
         PerformanceReviewId id = createPerformanceReviewUseCase.execute(new CreatePerformanceReviewCommand(
                 CompanyId.of(input.getCompanyId()), input.getCycleId(), input.getEmployeeId(), input.getReviewerId()));
         return toPayload(getPerformanceReviewByIdUseCase.execute(id));
     }
 
     @DgsQuery
-    public JobPostingPayload jobPosting(@InputArgument String id) {
+    public JobPostingPayload jobPosting(@InputArgument("id") String id) {
         return toPayload(getJobPostingByIdUseCase.execute(JobPostingId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<JobPostingPayload> jobPostings(@InputArgument String companyId) {
+    public List<JobPostingPayload> jobPostings(@InputArgument("companyId") String companyId) {
         return getJobPostingsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public JobPostingPayload createJobPosting(@InputArgument CreateJobPostingInput input) {
+    public JobPostingPayload createJobPosting(@InputArgument("input") CreateJobPostingInput input) {
         JobPostingId id = createJobPostingUseCase.execute(new CreateJobPostingCommand(
                 CompanyId.of(input.getCompanyId()), input.getPositionId(), input.getTitle(),
                 input.getDescription(), input.getEmploymentType(),
@@ -330,17 +331,17 @@ public class HrGraphql {
     }
 
     @DgsQuery
-    public JobApplicationPayload jobApplication(@InputArgument String id) {
+    public JobApplicationPayload jobApplication(@InputArgument("id") String id) {
         return toPayload(getJobApplicationByIdUseCase.execute(JobApplicationId.of(id)));
     }
 
     @DgsQuery
-    public java.util.List<JobApplicationPayload> jobApplications(@InputArgument String companyId) {
+    public List<JobApplicationPayload> jobApplications(@InputArgument("companyId") String companyId) {
         return getJobApplicationsByCompanyUseCase.execute(CompanyId.of(companyId)).stream().map(this::toPayload).toList();
     }
 
     @DgsMutation
-    public JobApplicationPayload createJobApplication(@InputArgument CreateJobApplicationInput input) {
+    public JobApplicationPayload createJobApplication(@InputArgument("input") CreateJobApplicationInput input) {
         JobApplicationId id = createJobApplicationUseCase.execute(new CreateJobApplicationCommand(
                 CompanyId.of(input.getCompanyId()), input.getJobPostingId(),
                 input.getFirstName(), input.getLastName(), input.getEmail(),

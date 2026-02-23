@@ -35,7 +35,7 @@ public class PositionJpaEntity {
     @Column(name = "department_id")
     private String departmentId;
 
-    @Column(name = "level")
+    @Column(name = "position_level")
     private String level;
 
     @Column(name = "salary_grade")

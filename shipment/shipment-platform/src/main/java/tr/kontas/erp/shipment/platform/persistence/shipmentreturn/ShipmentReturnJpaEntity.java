@@ -26,7 +26,7 @@ public class ShipmentReturnJpaEntity {
     @Column(name = "company_id", nullable = false)
     private UUID companyId;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "return_number", nullable = false)
     private String number;
 
     @Column(name = "shipment_id")

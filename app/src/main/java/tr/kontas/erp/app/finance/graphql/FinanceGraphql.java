@@ -271,8 +271,8 @@ public class FinanceGraphql {
         return toAccountPayload(getAccountByIdUseCase.execute(id));
     }
 
-    @DgsData(parentType = "AccountPayload")
-    public CompletableFuture<CompanyPayload> company(DgsDataFetchingEnvironment dfe) {
+    @DgsData(parentType = "AccountPayload", field = "company")
+    public CompletableFuture<CompanyPayload> accCompany(DgsDataFetchingEnvironment dfe) {
         AccountPayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");
         if (loader == null || payload.getCompanyId() == null) return CompletableFuture.completedFuture(null);
@@ -319,7 +319,7 @@ public class FinanceGraphql {
         return toPeriodPayload(getAccountingPeriodByIdUseCase.execute(AccountingPeriodId.of(periodId)));
     }
 
-    @DgsData(parentType = "AccountingPeriodPayload")
+    @DgsData(parentType = "AccountingPeriodPayload", field = "company")
     public CompletableFuture<CompanyPayload> periodCompany(DgsDataFetchingEnvironment dfe) {
         AccountingPeriodPayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");
@@ -378,7 +378,7 @@ public class FinanceGraphql {
         return toJePayload(getJournalEntryByIdUseCase.execute(reversalId));
     }
 
-    @DgsData(parentType = "JournalEntryPayload")
+    @DgsData(parentType = "JournalEntryPayload", field = "company")
     public CompletableFuture<CompanyPayload> jeCompany(DgsDataFetchingEnvironment dfe) {
         JournalEntryPayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");
@@ -441,7 +441,7 @@ public class FinanceGraphql {
         return toInvoicePayload(getSalesInvoiceByIdUseCase.execute(SalesInvoiceId.of(invoiceId)));
     }
 
-    @DgsData(parentType = "SalesInvoicePayload")
+    @DgsData(parentType = "SalesInvoicePayload", field = "company")
     public CompletableFuture<CompanyPayload> invCompany(DgsDataFetchingEnvironment dfe) {
         SalesInvoicePayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");
@@ -491,7 +491,7 @@ public class FinanceGraphql {
         return toPaymentPayload(getPaymentByIdUseCase.execute(PaymentId.of(paymentId)));
     }
 
-    @DgsData(parentType = "PaymentPayload")
+    @DgsData(parentType = "PaymentPayload", field = "company")
     public CompletableFuture<CompanyPayload> payCompany(DgsDataFetchingEnvironment dfe) {
         PaymentPayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");
@@ -548,7 +548,7 @@ public class FinanceGraphql {
         return toCreditNotePayload(getCreditNoteByIdUseCase.execute(CreditNoteId.of(creditNoteId)));
     }
 
-    @DgsData(parentType = "CreditNotePayload")
+    @DgsData(parentType = "CreditNotePayload", field = "company")
     public CompletableFuture<CompanyPayload> cnCompany(DgsDataFetchingEnvironment dfe) {
         CreditNotePayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");
@@ -609,7 +609,7 @@ public class FinanceGraphql {
         return toExpensePayload(getExpenseByIdUseCase.execute(ExpenseId.of(expenseId)));
     }
 
-    @DgsData(parentType = "ExpensePayload")
+    @DgsData(parentType = "ExpensePayload", field = "company")
     public CompletableFuture<CompanyPayload> expCompany(DgsDataFetchingEnvironment dfe) {
         ExpensePayload payload = dfe.getSource();
         DataLoader<String, CompanyPayload> loader = dfe.getDataLoader("companyLoader");

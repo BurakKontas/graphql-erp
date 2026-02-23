@@ -5,7 +5,7 @@ CREATE TABLE delivery_orders
     id                  UUID PRIMARY KEY,
     tenant_id           UUID         NOT NULL,
     company_id          UUID         NOT NULL,
-    number              VARCHAR(20)  NOT NULL,
+    delivery_number     VARCHAR(20)  NOT NULL,
     sales_order_id      VARCHAR(255),
     sales_order_number  VARCHAR(20),
     customer_id         VARCHAR(255),
@@ -20,7 +20,7 @@ CREATE TABLE delivery_orders
     CONSTRAINT fk_delivery_order_company
         FOREIGN KEY (company_id) REFERENCES companies (id),
 
-    CONSTRAINT uq_delivery_order_number UNIQUE (tenant_id, number)
+    CONSTRAINT uq_delivery_order_number UNIQUE (tenant_id, delivery_number)
 );
 
 CREATE INDEX idx_delivery_order_tenant_id ON delivery_orders (tenant_id);
@@ -54,7 +54,7 @@ CREATE TABLE shipments
     id                UUID PRIMARY KEY,
     tenant_id         UUID         NOT NULL,
     company_id        UUID         NOT NULL,
-    number            VARCHAR(20)  NOT NULL,
+    shipment_number   VARCHAR(20)  NOT NULL,
     delivery_order_id VARCHAR(255),
     sales_order_id    VARCHAR(255),
     warehouse_id      VARCHAR(255),
@@ -73,7 +73,7 @@ CREATE TABLE shipments
     CONSTRAINT fk_shipment_company
         FOREIGN KEY (company_id) REFERENCES companies (id),
 
-    CONSTRAINT uq_shipment_number UNIQUE (tenant_id, number)
+    CONSTRAINT uq_shipment_number UNIQUE (tenant_id, shipment_number)
 );
 
 CREATE INDEX idx_shipment_tenant_id ON shipments (tenant_id);
@@ -107,7 +107,7 @@ CREATE TABLE shipment_returns
     id             UUID PRIMARY KEY,
     tenant_id      UUID         NOT NULL,
     company_id     UUID         NOT NULL,
-    number         VARCHAR(20)  NOT NULL,
+    return_number  VARCHAR(20)  NOT NULL,
     shipment_id    VARCHAR(255),
     sales_order_id VARCHAR(255),
     warehouse_id   VARCHAR(255),
@@ -118,7 +118,7 @@ CREATE TABLE shipment_returns
     CONSTRAINT fk_shipment_return_company
         FOREIGN KEY (company_id) REFERENCES companies (id),
 
-    CONSTRAINT uq_shipment_return_number UNIQUE (tenant_id, number)
+    CONSTRAINT uq_shipment_return_number UNIQUE (tenant_id, return_number)
 );
 
 CREATE INDEX idx_shipment_return_tenant_id ON shipment_returns (tenant_id);
@@ -150,20 +150,20 @@ CREATE INDEX idx_sr_line_shipment_return_id ON shipment_return_lines (shipment_r
 INSERT INTO permissions (id, module, action, description)
 VALUES
     -- DELIVERY_ORDER
-    ('00000000-0000-0000-00F0-000000000001', 'DELIVERY_ORDER', 'CREATE', 'Create a delivery order'),
-    ('00000000-0000-0000-00F0-000000000002', 'DELIVERY_ORDER', 'READ', 'View delivery order details'),
-    ('00000000-0000-0000-00F0-000000000003', 'DELIVERY_ORDER', 'UPDATE', 'Update delivery order'),
-    ('00000000-0000-0000-00F0-000000000004', 'DELIVERY_ORDER', 'CANCEL', 'Cancel a delivery order'),
+    ('00000000-0000-0000-0FF0-000000000001', 'DELIVERY_ORDER', 'CREATE', 'Create a delivery order'),
+    ('00000000-0000-0000-0FF0-000000000002', 'DELIVERY_ORDER', 'READ', 'View delivery order details'),
+    ('00000000-0000-0000-0FF0-000000000003', 'DELIVERY_ORDER', 'UPDATE', 'Update delivery order'),
+    ('00000000-0000-0000-0FF0-000000000004', 'DELIVERY_ORDER', 'CANCEL', 'Cancel a delivery order'),
     -- SHIPMENT
-    ('00000000-0000-0000-00F1-000000000001', 'SHIPMENT', 'CREATE', 'Create a shipment'),
-    ('00000000-0000-0000-00F1-000000000002', 'SHIPMENT', 'READ', 'View shipment details'),
-    ('00000000-0000-0000-00F1-000000000003', 'SHIPMENT', 'UPDATE', 'Update shipment'),
-    ('00000000-0000-0000-00F1-000000000004', 'SHIPMENT', 'DISPATCH', 'Dispatch a shipment'),
-    ('00000000-0000-0000-00F1-000000000005', 'SHIPMENT', 'DELIVER', 'Mark shipment as delivered'),
+    ('00000000-0000-0000-0FF1-000000000001', 'SHIPMENT', 'CREATE', 'Create a shipment'),
+    ('00000000-0000-0000-0FF1-000000000002', 'SHIPMENT', 'READ', 'View shipment details'),
+    ('00000000-0000-0000-0FF1-000000000003', 'SHIPMENT', 'UPDATE', 'Update shipment'),
+    ('00000000-0000-0000-0FF1-000000000004', 'SHIPMENT', 'DISPATCH', 'Dispatch a shipment'),
+    ('00000000-0000-0000-0FF1-000000000005', 'SHIPMENT', 'DELIVER', 'Mark shipment as delivered'),
     -- SHIPMENT_RETURN
-    ('00000000-0000-0000-00F2-000000000001', 'SHIPMENT_RETURN', 'CREATE', 'Create a shipment return'),
-    ('00000000-0000-0000-00F2-000000000002', 'SHIPMENT_RETURN', 'READ', 'View shipment return details'),
-    ('00000000-0000-0000-00F2-000000000003', 'SHIPMENT_RETURN', 'RECEIVE', 'Receive a shipment return'),
-    ('00000000-0000-0000-00F2-000000000004', 'SHIPMENT_RETURN', 'COMPLETE', 'Complete a shipment return'),
-    ('00000000-0000-0000-00F2-000000000005', 'SHIPMENT_RETURN', 'CANCEL', 'Cancel a shipment return');
+    ('00000000-0000-0000-0FF2-000000000001', 'SHIPMENT_RETURN', 'CREATE', 'Create a shipment return'),
+    ('00000000-0000-0000-0FF2-000000000002', 'SHIPMENT_RETURN', 'READ', 'View shipment return details'),
+    ('00000000-0000-0000-0FF2-000000000003', 'SHIPMENT_RETURN', 'RECEIVE', 'Receive a shipment return'),
+    ('00000000-0000-0000-0FF2-000000000004', 'SHIPMENT_RETURN', 'COMPLETE', 'Complete a shipment return'),
+    ('00000000-0000-0000-0FF2-000000000005', 'SHIPMENT_RETURN', 'CANCEL', 'Cancel a shipment return');
 

@@ -26,7 +26,7 @@ public class ShipmentJpaEntity {
     @Column(name = "company_id", nullable = false)
     private UUID companyId;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "shipment_number", nullable = false)
     private String number;
 
     @Column(name = "delivery_order_id")
