@@ -198,10 +198,9 @@ extend type Query {
 }
 
 extend type Mutation {
-    createContact(input: CreateContactInput!): ContactPayload! @audit @auth(permissions: ["CONTACT:CREATE"])
-    createLead(input: CreateLeadInput!): LeadPayload! @audit @auth(permissions: ["LEAD:CREATE"])
-    createOpportunity(input: CreateOpportunityInput!): OpportunityPayload! @audit @auth(permissions: ["OPPORTUNITY:CREATE"])
-    createQuote(input: CreateQuoteInput!): QuotePayload! @audit @auth(permissions: ["QUOTE:CREATE"])
-    createActivity(input: CreateActivityInput!): ActivityPayload! @audit @auth(permissions: ["ACTIVITY:CREATE"])
+    createContact(input: CreateContactInput!): ContactPayload! @audit @auth(permissions: ["CONTACT:CREATE"]) @idempotency
+    createLead(input: CreateLeadInput!): LeadPayload! @audit @auth(permissions: ["LEAD:CREATE"]) @idempotency
+    createOpportunity(input: CreateOpportunityInput!): OpportunityPayload! @audit @auth(permissions: ["OPPORTUNITY:CREATE"]) @idempotency
+    createQuote(input: CreateQuoteInput!): QuotePayload! @audit @auth(permissions: ["QUOTE:CREATE"]) @idempotency
+    createActivity(input: CreateActivityInput!): ActivityPayload! @audit @auth(permissions: ["ACTIVITY:CREATE"]) @idempotency
 }
-

@@ -173,6 +173,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+X-IDEMPOTENCY-KEY: cfbdff0f-94ba-428f-a838-0d42f8b6d2d9
 
 {
   "query": "mutation { createCompany(input: { name: \"Acme Corp\" }) { id name } }"
@@ -963,6 +964,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createDeliveryOrder(input: { companyId: \"{{companyId}}\", salesOrderId: \"{{salesOrderId}}\", salesOrderNumber: \"SO-2026-000001\", customerId: \"{{bpId}}\", addressLine1: \"123 Main St\", city: \"Istanbul\", postalCode: \"34000\", countryCode: \"TR\", lines: [{ salesOrderLineId: \"{{salesLineId}}\", itemId: \"{{itemId}}\", itemDescription: \"Test Item\", unitCode: \"PCS\", orderedQty: 10 }] }) { id number status salesOrderId salesOrderNumber lines { id salesOrderLineId itemId orderedQty shippedQty remainingQty } company { id name } salesOrder { id orderNumber } } }"
@@ -1001,6 +1003,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createShipment(input: { companyId: \"{{companyId}}\", deliveryOrderId: \"{{deliveryOrderId}}\", salesOrderId: \"{{salesOrderId}}\", warehouseId: \"{{warehouseId}}\", addressLine1: \"123 Main St\", city: \"Istanbul\", postalCode: \"34000\", countryCode: \"TR\", lines: [{ deliveryOrderLineId: \"{{doLineId}}\", itemId: \"{{itemId}}\", itemDescription: \"Test Item\", unitCode: \"PCS\", quantity: 10 }] }) { id number status deliveryOrderId warehouseId lines { id deliveryOrderLineId itemId quantity } company { id name } deliveryOrder { id number } warehouse { id code name } } }"
@@ -1029,6 +1032,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { dispatchShipment(shipmentId: \"{{shipmentId}}\") { id number status dispatchedAt trackingNumber carrierName } }"
@@ -1039,6 +1043,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { deliverShipment(shipmentId: \"{{shipmentId}}\") { id number status deliveredAt lines { id itemId quantity } } }"
@@ -1079,6 +1084,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createShipmentReturn(input: { companyId: \"{{companyId}}\", shipmentId: \"{{shipmentId}}\", salesOrderId: \"{{salesOrderId}}\", warehouseId: \"{{warehouseId}}\", reason: \"Damaged items\", lines: [{ shipmentLineId: \"{{shipmentLineId}}\", itemId: \"{{itemId}}\", itemDescription: \"Test Item\", unitCode: \"PCS\", quantity: 2, lineReason: \"Box crushed\" }] }) { id number status reason shipmentId warehouseId lines { id shipmentLineId itemId quantity lineReason } company { id name } shipment { id number } } }"
@@ -1123,6 +1129,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { completeShipmentReturn(shipmentReturnId: \"{{shipmentReturnId}}\") { id number status } }"
@@ -1401,6 +1408,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createPayment(input: { companyId: \"{{companyId}}\", paymentType: \"RECEIVED\", invoiceId: \"{{salesInvoiceId}}\", customerId: \"{{bpId}}\", paymentDate: \"2026-02-21\", amount: 500.00, currencyCode: \"TRY\", paymentMethod: \"BANK_TRANSFER\", referenceNumber: \"TRF-001\" }) { id paymentNumber paymentType status amount paymentMethod referenceNumber company { id name } } }"
@@ -1435,6 +1443,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { postPayment(paymentId: \"{{paymentId}}\") { id paymentNumber status } }"
@@ -1827,6 +1836,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createNotificationTemplate(input: { notificationKey: \"SALES_ORDER_CONFIRMED\", channel: \"EMAIL\", locale: \"TR\", subject: \"Siparis Onaylandi: \\u007B\\u007BorderNumber\\u007D\\u007D\", bodyTemplate: \"Merhaba \\u007B\\u007BrecipientName\\u007D\\u007D, \\u007B\\u007BorderNumber\\u007D\\u007D nolu siparisiniz onaylandi.\", systemTemplate: false }) { id notificationKey channel locale subject bodyTemplate systemTemplate active } }"
@@ -1905,6 +1915,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createWebhookConfig(input: { companyId: \"{{companyId}}\", targetUrl: \"https://webhook.example.com/erp-events\", secretKey: \"my-secret-123\", eventTypes: [\"SalesOrderConfirmedEvent\", \"ShipmentDeliveredEvent\"] }) { id companyId targetUrl eventTypes status consecutiveFailures lastSuccessAt company { id name } } }"
@@ -1956,6 +1967,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { markNotificationRead(notificationId: \"{{inAppNotifId}}\") }"
@@ -1980,6 +1992,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createReportDefinition(input: { name: \"Auto Test Report\", description: \"Auto-created report for tests\", module: \"SALES\", type: \"PREDEFINED\", dataSource: \"rpt_sales_orders\", requiredPermission: \"REPORT:READ\" }) { id name module } }"
@@ -2135,6 +2148,7 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
+Idempotency-Key: {{$random.uuid}}
 
 {
   "query": "mutation { createScheduledReport(input: { reportDefinitionId: \"{{reportDefId}}\", name: \"Monthly Sales Report\", cronExpression: \"0 0 8 1 * ?\", format: \"EXCEL\", recipientEmails: [\"admin@kontas.tr\"] }) { id reportDefinitionId name cronExpression format recipientEmails active } }"

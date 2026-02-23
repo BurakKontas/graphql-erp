@@ -286,26 +286,26 @@ extend type Query {
 }
 
 extend type Mutation {
-    createAccount(input: CreateAccountInput!): AccountPayload! @audit @auth(permissions: ["ACCOUNT:CREATE"])
-    createAccountingPeriod(input: CreateAccountingPeriodInput!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:CREATE"])
-    softCloseAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"])
-    hardCloseAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"])
-    reopenAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"])
-    createJournalEntry(input: CreateJournalEntryInput!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:CREATE"])
-    postJournalEntry(entryId: ID!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:UPDATE"])
+    createAccount(input: CreateAccountInput!): AccountPayload! @audit @auth(permissions: ["ACCOUNT:CREATE"]) @idempotency
+    createAccountingPeriod(input: CreateAccountingPeriodInput!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:CREATE"]) @idempotency
+    softCloseAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"]) @idempotency
+    hardCloseAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"]) @idempotency
+    reopenAccountingPeriod(periodId: ID!): AccountingPeriodPayload! @audit @auth(permissions: ["ACCOUNTING_PERIOD:UPDATE"]) @idempotency
+    createJournalEntry(input: CreateJournalEntryInput!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:CREATE"]) @idempotency
+    postJournalEntry(entryId: ID!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:UPDATE"]) @idempotency
     reverseJournalEntry(entryId: ID!, reason: String!): JournalEntryPayload! @audit @auth(permissions: ["JOURNAL_ENTRY:UPDATE"])
-    createSalesInvoice(input: CreateSalesInvoiceInput!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:CREATE"])
-    postSalesInvoice(invoiceId: ID!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:UPDATE"])
-    cancelSalesInvoice(invoiceId: ID!, reason: String!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:UPDATE"])
-    createPayment(input: CreatePaymentInput!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:CREATE"])
-    postPayment(paymentId: ID!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:UPDATE"])
-    cancelPayment(paymentId: ID!, reason: String!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:UPDATE"])
-    createCreditNote(input: CreateCreditNoteInput!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:CREATE"])
-    postCreditNote(creditNoteId: ID!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:UPDATE"])
-    applyCreditNote(creditNoteId: ID!, amount: BigDecimal!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:UPDATE"])
-    createExpense(input: CreateExpenseInput!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:CREATE"])
-    submitExpense(expenseId: ID!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
-    approveExpense(expenseId: ID!, approverId: String!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
-    rejectExpense(expenseId: ID!, reason: String!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
-    postExpense(expenseId: ID!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"])
+    createSalesInvoice(input: CreateSalesInvoiceInput!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:CREATE"]) @idempotency
+    postSalesInvoice(invoiceId: ID!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:UPDATE"]) @idempotency
+    cancelSalesInvoice(invoiceId: ID!): SalesInvoicePayload! @audit @auth(permissions: ["SALES_INVOICE:UPDATE"]) @idempotency
+    createPayment(input: CreatePaymentInput!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:CREATE"]) @idempotency
+    postPayment(paymentId: ID!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:UPDATE"]) @idempotency
+    cancelPayment(paymentId: ID!, reason: String!): PaymentPayload! @audit @auth(permissions: ["PAYMENT:UPDATE"]) @idempotency
+    createCreditNote(input: CreateCreditNoteInput!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:CREATE"]) @idempotency
+    postCreditNote(creditNoteId: ID!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:UPDATE"]) @idempotency
+    applyCreditNote(creditNoteId: ID!, amount: BigDecimal!): CreditNotePayload! @audit @auth(permissions: ["CREDIT_NOTE:UPDATE"]) @idempotency
+    createExpense(input: CreateExpenseInput!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:CREATE"]) @idempotency
+    submitExpense(expenseId: ID!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"]) @idempotency
+    approveExpense(expenseId: ID!, approverId: String!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"]) @idempotency
+    rejectExpense(expenseId: ID!, reason: String!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"]) @idempotency
+    postExpense(expenseId: ID!): ExpensePayload! @audit @auth(permissions: ["EXPENSE:UPDATE"]) @idempotency
 }

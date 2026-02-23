@@ -364,29 +364,28 @@ extend type Query {
 # ─── Mutations ───
 
 extend type Mutation {
-    createPurchaseRequest(input: CreatePurchaseRequestInput!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:CREATE"])
+    createPurchaseRequest(input: CreatePurchaseRequestInput!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:CREATE"]) @idempotency
     submitPurchaseRequest(requestId: ID!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:UPDATE"])
     approvePurchaseRequest(requestId: ID!, approverId: String!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:APPROVE"])
     rejectPurchaseRequest(requestId: ID!, approverId: String!, reason: String!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:REJECT"])
     cancelPurchaseRequest(requestId: ID!): PurchaseRequestPayload! @audit @auth(permissions: ["PURCHASE_REQUEST:CANCEL"])
 
-    createPurchaseOrder(input: CreatePurchaseOrderInput!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CREATE"])
-    sendPurchaseOrder(orderId: ID!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:SEND"])
-    confirmPurchaseOrder(orderId: ID!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CONFIRM"])
+    createPurchaseOrder(input: CreatePurchaseOrderInput!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CREATE"]) @idempotency
+    sendPurchaseOrder(orderId: ID!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:SEND"]) @idempotency
+    confirmPurchaseOrder(orderId: ID!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CONFIRM"]) @idempotency
     cancelPurchaseOrder(input: CancelPurchaseOrderInput!): PurchaseOrderPayload! @audit @auth(permissions: ["PURCHASE_ORDER:CANCEL"])
 
-    createGoodsReceipt(input: CreateGoodsReceiptInput!): GoodsReceiptPayload! @audit @auth(permissions: ["GOODS_RECEIPT:CREATE"])
-    postGoodsReceipt(receiptId: ID!): GoodsReceiptPayload! @audit @auth(permissions: ["GOODS_RECEIPT:POST"])
+    createGoodsReceipt(input: CreateGoodsReceiptInput!): GoodsReceiptPayload! @audit @auth(permissions: ["GOODS_RECEIPT:CREATE"]) @idempotency
+    postGoodsReceipt(receiptId: ID!): GoodsReceiptPayload! @audit @auth(permissions: ["GOODS_RECEIPT:POST"]) @idempotency
 
-    createVendorInvoice(input: CreateVendorInvoiceInput!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:CREATE"])
-    postVendorInvoice(invoiceId: ID!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:POST"])
+    createVendorInvoice(input: CreateVendorInvoiceInput!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:CREATE"]) @idempotency
+    postVendorInvoice(invoiceId: ID!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:POST"]) @idempotency
     cancelVendorInvoice(input: CancelVendorInvoiceInput!): VendorInvoicePayload! @audit @auth(permissions: ["VENDOR_INVOICE:CANCEL"])
 
-    createPurchaseReturn(input: CreatePurchaseReturnInput!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:CREATE"])
-    postPurchaseReturn(returnId: ID!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:POST"])
-    completePurchaseReturn(returnId: ID!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:COMPLETE"])
+    createPurchaseReturn(input: CreatePurchaseReturnInput!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:CREATE"]) @idempotency
+    postPurchaseReturn(returnId: ID!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:POST"]) @idempotency
+    completePurchaseReturn(returnId: ID!): PurchaseReturnPayload! @audit @auth(permissions: ["PURCHASE_RETURN:COMPLETE"]) @idempotency
 
-    createVendorCatalog(input: CreateVendorCatalogInput!): VendorCatalogPayload! @audit @auth(permissions: ["VENDOR_CATALOG:CREATE"])
+    createVendorCatalog(input: CreateVendorCatalogInput!): VendorCatalogPayload! @audit @auth(permissions: ["VENDOR_CATALOG:CREATE"]) @idempotency
     deactivateVendorCatalog(catalogId: ID!): VendorCatalogPayload! @audit @auth(permissions: ["VENDOR_CATALOG:UPDATE"])
 }
-

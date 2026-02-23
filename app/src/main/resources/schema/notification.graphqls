@@ -155,20 +155,19 @@ extend type Query {
 # ─── Mutations ───
 
 extend type Mutation {
-    createTenantNotificationConfig: TenantNotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:CREATE"])
+    createTenantNotificationConfig: TenantNotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:CREATE"]) @idempotency
     updateTenantNotificationConfig(input: UpdateTenantNotificationConfigInput!): TenantNotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:UPDATE"])
 
-    createNotificationConfig(input: CreateNotificationConfigInput!): NotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:CREATE"])
+    createNotificationConfig(input: CreateNotificationConfigInput!): NotificationConfigPayload! @audit @auth(permissions: ["NOTIFICATION_CONFIG:CREATE"]) @idempotency
 
-    createNotificationTemplate(input: CreateNotificationTemplateInput!): NotificationTemplatePayload! @audit @auth(permissions: ["NOTIFICATION_TEMPLATE:CREATE"])
+    createNotificationTemplate(input: CreateNotificationTemplateInput!): NotificationTemplatePayload! @audit @auth(permissions: ["NOTIFICATION_TEMPLATE:CREATE"]) @idempotency
     updateNotificationTemplate(input: UpdateNotificationTemplateInput!): NotificationTemplatePayload! @audit @auth(permissions: ["NOTIFICATION_TEMPLATE:UPDATE"])
 
-    createNotificationPreference(input: CreateNotificationPreferenceInput!): NotificationPreferencePayload! @audit @auth(permissions: ["NOTIFICATION_PREFERENCE:CREATE"])
+    createNotificationPreference(input: CreateNotificationPreferenceInput!): NotificationPreferencePayload! @audit @auth(permissions: ["NOTIFICATION_PREFERENCE:CREATE"]) @idempotency
     updateNotificationPreference(input: UpdateNotificationPreferenceInput!): NotificationPreferencePayload! @audit @auth(permissions: ["NOTIFICATION_PREFERENCE:UPDATE"])
 
-    createWebhookConfig(input: CreateWebhookConfigInput!): WebhookConfigPayload! @audit @auth(permissions: ["WEBHOOK_CONFIG:CREATE"])
+    createWebhookConfig(input: CreateWebhookConfigInput!): WebhookConfigPayload! @audit @auth(permissions: ["WEBHOOK_CONFIG:CREATE"]) @idempotency
 
-    markNotificationRead(notificationId: ID!): Boolean! @audit @auth(permissions: ["IN_APP_NOTIFICATION:UPDATE"])
-    markAllNotificationsRead(userId: String!): Boolean! @audit @auth(permissions: ["IN_APP_NOTIFICATION:UPDATE"])
+    markNotificationRead(notificationId: ID!): Boolean! @audit @auth(permissions: ["IN_APP_NOTIFICATION:UPDATE"]) @idempotency
+    markAllNotificationsRead(userId: String!): Boolean! @audit @auth(permissions: ["IN_APP_NOTIFICATION:UPDATE"]) @idempotency
 }
-

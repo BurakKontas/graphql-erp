@@ -50,12 +50,12 @@ enum AuthProviderType {
 }
 
 extend type Mutation {
-    register(input: RegisterInput!): RegisterPayload!
+    register(input: RegisterInput!): RegisterPayload! @idempotency
     login(input: LoginInput!): AuthPayload!
     refreshToken(refreshToken: String!): AuthPayload!
     logout: Boolean! @audit @auth
-    assignRoleToUser(input: AssignRoleToUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"])
-    removeRoleFromUser(input: RemoveRoleFromUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"])
+    assignRoleToUser(input: AssignRoleToUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"]) @idempotency
+    removeRoleFromUser(input: RemoveRoleFromUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"]) @idempotency
 }
 
 extend type Query {

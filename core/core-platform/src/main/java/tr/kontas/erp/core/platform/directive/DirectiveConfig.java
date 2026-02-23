@@ -9,9 +9,11 @@ public class DirectiveConfig {
 
     @Bean
     public RuntimeWiringConfigurer runtimeWiringConfigurer(AuthDirective authDirective,
-                                                           AuditDirective auditDirective) {
+                                                           AuditDirective auditDirective,
+                                                           IdempotencyDirective idempotencyDirective) {
         return builder -> builder
                 .directive("auth", authDirective)
-                .directive("audit", auditDirective);
+                .directive("audit", auditDirective)
+                .directive("idempotency", idempotencyDirective);
     }
 }

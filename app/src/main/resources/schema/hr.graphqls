@@ -364,30 +364,23 @@ extend type Query {
 }
 
 extend type Mutation {
-    createPosition(input: CreatePositionInput!): PositionPayload! @audit @auth(permissions: ["POSITION:CREATE"])
+    createPosition(input: CreatePositionInput!): PositionPayload! @audit @auth(permissions: ["POSITION:CREATE"]) @idempotency
 
-    createHrEmployee(input: CreateHrEmployeeInput!): HrEmployeePayload! @audit @auth(permissions: ["HR_EMPLOYEE:CREATE"])
+    createHrEmployee(input: CreateHrEmployeeInput!): HrEmployeePayload! @audit @auth(permissions: ["HR_EMPLOYEE:CREATE"]) @idempotency
 
-    createContract(input: CreateContractInput!): ContractPayload! @audit @auth(permissions: ["CONTRACT:CREATE"])
+    createContract(input: CreateContractInput!): ContractPayload! @audit @auth(permissions: ["CONTRACT:CREATE"]) @idempotency
+    createLeavePolicy(input: CreateLeavePolicyInput!): LeavePolicyPayload! @audit @auth(permissions: ["LEAVE_POLICY:CREATE"]) @idempotency
+    createLeaveRequest(input: CreateLeaveRequestInput!): LeaveRequestPayload! @audit @auth(permissions: ["LEAVE_REQUEST:CREATE"]) @idempotency
+    createLeaveBalance(input: CreateLeaveBalanceInput!): LeaveBalancePayload! @audit @auth(permissions: ["LEAVE_BALANCE:CREATE"]) @idempotency
 
-    createLeavePolicy(input: CreateLeavePolicyInput!): LeavePolicyPayload! @audit @auth(permissions: ["LEAVE_POLICY:CREATE"])
+    createAttendance(input: CreateAttendanceInput!): AttendancePayload! @audit @auth(permissions: ["ATTENDANCE:CREATE"]) @idempotency
 
-    createLeaveRequest(input: CreateLeaveRequestInput!): LeaveRequestPayload! @audit @auth(permissions: ["LEAVE_REQUEST:CREATE"])
+    createPayrollConfig(input: CreatePayrollConfigInput!): PayrollConfigPayload! @audit @auth(permissions: ["PAYROLL_CONFIG:CREATE"]) @idempotency
+    createPayrollRun(input: CreatePayrollRunInput!): PayrollRunPayload! @audit @auth(permissions: ["PAYROLL_RUN:CREATE"]) @idempotency
 
-    createLeaveBalance(input: CreateLeaveBalanceInput!): LeaveBalancePayload! @audit @auth(permissions: ["LEAVE_BALANCE:CREATE"])
+    createPerformanceCycle(input: CreatePerformanceCycleInput!): PerformanceCyclePayload! @audit @auth(permissions: ["PERFORMANCE_CYCLE:CREATE"]) @idempotency
+    createPerformanceReview(input: CreatePerformanceReviewInput!): PerformanceReviewPayload! @audit @auth(permissions: ["PERFORMANCE_REVIEW:CREATE"]) @idempotency
 
-    createAttendance(input: CreateAttendanceInput!): AttendancePayload! @audit @auth(permissions: ["ATTENDANCE:CREATE"])
-
-    createPayrollConfig(input: CreatePayrollConfigInput!): PayrollConfigPayload! @audit @auth(permissions: ["PAYROLL_CONFIG:CREATE"])
-
-    createPayrollRun(input: CreatePayrollRunInput!): PayrollRunPayload! @audit @auth(permissions: ["PAYROLL_RUN:CREATE"])
-
-    createPerformanceCycle(input: CreatePerformanceCycleInput!): PerformanceCyclePayload! @audit @auth(permissions: ["PERFORMANCE_CYCLE:CREATE"])
-
-    createPerformanceReview(input: CreatePerformanceReviewInput!): PerformanceReviewPayload! @audit @auth(permissions: ["PERFORMANCE_REVIEW:CREATE"])
-
-    createJobPosting(input: CreateJobPostingInput!): JobPostingPayload! @audit @auth(permissions: ["JOB_POSTING:CREATE"])
-
-    createJobApplication(input: CreateJobApplicationInput!): JobApplicationPayload! @audit @auth(permissions: ["JOB_APPLICATION:CREATE"])
+    createJobPosting(input: CreateJobPostingInput!): JobPostingPayload! @audit @auth(permissions: ["JOB_POSTING:CREATE"]) @idempotency
+    createJobApplication(input: CreateJobApplicationInput!): JobApplicationPayload! @audit @auth(permissions: ["JOB_APPLICATION:CREATE"]) @idempotency
 }
-

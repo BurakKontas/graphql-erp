@@ -175,17 +175,17 @@ extend type Query {
 # ─── Mutations ───
 
 extend type Mutation {
-    createWarehouse(input: CreateWarehouseInput!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:CREATE"])
+    createWarehouse(input: CreateWarehouseInput!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:CREATE"]) @idempotency
     renameWarehouse(input: RenameWarehouseInput!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:UPDATE"])
     deactivateWarehouse(warehouseId: ID!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:UPDATE"])
     activateWarehouse(warehouseId: ID!): WarehousePayload! @audit @auth(permissions: ["WAREHOUSE:UPDATE"])
 
-    createCategory(input: CreateCategoryInput!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:CREATE"])
+    createCategory(input: CreateCategoryInput!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:CREATE"]) @idempotency
     renameCategory(input: RenameCategoryInput!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:UPDATE"])
     deactivateCategory(categoryId: ID!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:UPDATE"])
     activateCategory(categoryId: ID!): CategoryPayload! @audit @auth(permissions: ["CATEGORY:UPDATE"])
 
-    createItem(input: CreateItemInput!): ItemPayload! @audit @auth(permissions: ["ITEM:CREATE"])
+    createItem(input: CreateItemInput!): ItemPayload! @audit @auth(permissions: ["ITEM:CREATE"]) @idempotency
     updateItem(input: UpdateItemInput!): ItemPayload! @audit @auth(permissions: ["ITEM:UPDATE"])
     deactivateItem(itemId: ID!): ItemPayload! @audit @auth(permissions: ["ITEM:UPDATE"])
     activateItem(itemId: ID!): ItemPayload! @audit @auth(permissions: ["ITEM:UPDATE"])
@@ -195,5 +195,5 @@ extend type Mutation {
     adjustStock(input: AdjustStockInput!): StockLevelPayload! @audit @auth(permissions: ["STOCK_LEVEL:UPDATE"])
     setReorderPoint(input: SetReorderPointInput!): StockLevelPayload! @audit @auth(permissions: ["STOCK_LEVEL:UPDATE"])
 
-    recordStockMovement(input: RecordStockMovementInput!): StockMovementPayload! @audit @auth(permissions: ["STOCK_MOVEMENT:CREATE"])
+    recordStockMovement(input: RecordStockMovementInput!): StockMovementPayload! @audit @auth(permissions: ["STOCK_MOVEMENT:CREATE"]) @idempotency
 }

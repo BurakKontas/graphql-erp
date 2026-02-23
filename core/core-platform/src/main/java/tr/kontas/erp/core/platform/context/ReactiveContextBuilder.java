@@ -18,6 +18,7 @@ import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -34,26 +35,34 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
                                         @Nullable ServerRequest serverRequest) {
 
         String apiKey = extractHeader(headers, "X-API-KEY");
+        String idempotencyKey = extractHeader(headers, "X-IDEMPOTENCY-KEY");
+
+        if(idempotencyKey == null || idempotencyKey.isBlank()) {
+            idempotencyKey = UUID.randomUUID().toString();
+        }
+
         if (apiKey != null && bootstrapApiKeyProvider.isValid(apiKey)) {
             String tenantCode = extractHeader(headers, "X-TENANT");
             if (tenantCode != null) {
+                String finalIdempotencyKey1 = idempotencyKey;
                 return Mono.fromCallable(() ->
                         tenantRepository.findIdByCode(new TenantCode(tenantCode))
                                 .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
                 ).map(tenantId -> {
                     TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
-                    return new Context("bootstrap-admin", tenantId.asUUID(), Set.of("GENERAL:ADMIN"));
+                    return new Context("bootstrap-admin", tenantId.asUUID(), Set.of("GENERAL:ADMIN"), finalIdempotencyKey1);
                 }).doFinally(_ -> TenantContext.clear());
             }
-            return Mono.just(new Context("bootstrap-admin", null, Set.of("GENERAL:ADMIN")));
+            return Mono.just(new Context("bootstrap-admin", null, Set.of("GENERAL:ADMIN"), idempotencyKey));
         }
 
         String tenantCode = extractHeader(headers, "X-TENANT");
 
         if (tenantCode == null) {
-            return Mono.just(new Context("anonymous", null, Set.of()));
+            return Mono.just(new Context("anonymous", null, Set.of(), idempotencyKey));
         }
 
+        String finalIdempotencyKey = idempotencyKey;
         return Mono.fromCallable(() ->
                 tenantRepository.findIdByCode(new TenantCode(tenantCode))
                         .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
@@ -63,14 +72,14 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
             String bearer = extractHeader(headers, "Authorization");
 
             if (bearer != null && bearer.startsWith("Bearer ")) {
-                return handleJwtAuth(bearer.substring(7), tenantId.asUUID());
+                return handleJwtAuth(bearer.substring(7), tenantId.asUUID(), finalIdempotencyKey);
             }
 
-            return Mono.just(new Context("anonymous", tenantId.asUUID(), Set.of()));
+            return Mono.just(new Context("anonymous", tenantId.asUUID(), Set.of(), finalIdempotencyKey));
         }).doFinally(_ -> TenantContext.clear());
     }
 
-    private Mono<Context> handleJwtAuth(String token, java.util.UUID tenantId) {
+    private Mono<Context> handleJwtAuth(String token, UUID tenantId, String idempotencyKey) {
         return Mono.fromCallable(() -> {
             JwtPrincipal principal = jwtService.parse(token);
 
@@ -86,7 +95,8 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
             return new Context(
                     principal.userId().toString(),
                     tenantId,
-                    principal.permissions()
+                    principal.permissions(),
+                    idempotencyKey
             );
         });
     }
