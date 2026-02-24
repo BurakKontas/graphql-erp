@@ -8,6 +8,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.hr.application.employee.*;
 import tr.kontas.erp.hr.application.port.EmployeeNumberGeneratorPort;
 import tr.kontas.erp.hr.domain.employee.*;
@@ -24,10 +25,12 @@ public class HrEmployeeService implements CreateHrEmployeeUseCase, GetHrEmployee
     private final HrEmployeeRepository employeeRepository;
     private final EmployeeNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     public EmployeeId execute(CreateEmployeeCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         EmployeeId id = EmployeeId.newId();
         EmployeeNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
         PersonalInfo pi = new PersonalInfo(
@@ -72,4 +75,3 @@ public class HrEmployeeService implements CreateHrEmployeeUseCase, GetHrEmployee
         employee.clearDomainEvents();
     }
 }
-

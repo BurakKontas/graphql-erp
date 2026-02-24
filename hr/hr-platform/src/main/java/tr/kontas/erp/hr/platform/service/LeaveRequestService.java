@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.hr.application.leaverequest.*;
 import tr.kontas.erp.hr.application.port.LeaveRequestNumberGeneratorPort;
 import tr.kontas.erp.hr.domain.leavepolicy.LeaveType;
@@ -22,10 +23,12 @@ public class LeaveRequestService implements CreateLeaveRequestUseCase, GetLeaveR
 
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveRequestNumberGeneratorPort numberGenerator;
+    private final CompanyValidator companyValidator;
 
     @Override
     public LeaveRequestId execute(CreateLeaveRequestCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         LeaveRequestId id = LeaveRequestId.newId();
         LeaveRequestNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
         LeaveRequest request = new LeaveRequest(id, tenantId, cmd.companyId(), number, cmd.employeeId(),

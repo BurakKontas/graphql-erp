@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.inventory.application.category.*;
 import tr.kontas.erp.inventory.domain.category.*;
 
@@ -26,11 +27,13 @@ public class CategoryService implements
 
     private final CategoryRepository categoryRepository;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public CategoryId execute(CreateCategoryCommand command) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
         CategoryId parentId = command.parentCategoryId() != null

@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.crm.application.port.QuoteNumberGeneratorPort;
 import tr.kontas.erp.crm.application.quote.*;
 import tr.kontas.erp.crm.domain.quote.*;
@@ -22,11 +23,13 @@ public class QuoteService implements CreateQuoteUseCase, GetQuoteByIdUseCase,
     private final QuoteRepository quoteRepository;
     private final QuoteNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public QuoteId execute(CreateQuoteCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         QuoteNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
         QuoteId id = QuoteId.newId();
@@ -53,4 +56,3 @@ public class QuoteService implements CreateQuoteUseCase, GetQuoteByIdUseCase,
         return quoteRepository.findByCompanyId(tenantId, companyId);
     }
 }
-

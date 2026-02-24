@@ -31,6 +31,11 @@ public class CompanyRepositoryImpl implements CompanyRepository {
     }
 
     @Override
+    public boolean existsByIdAndTenant(CompanyId id, TenantId tenantId) {
+        return jpaRepository.existsByIdAndTenantIdAndActive(id.asUUID(), tenantId.asUUID(), true);
+    }
+
+    @Override
     public List<Company> findAll() {
         return jpaRepository.findAll()
                 .stream()

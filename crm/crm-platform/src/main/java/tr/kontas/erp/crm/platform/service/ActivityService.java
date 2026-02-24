@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.crm.application.activity.*;
 import tr.kontas.erp.crm.domain.activity.*;
 
@@ -19,11 +20,13 @@ public class ActivityService implements CreateActivityUseCase, GetActivityByIdUs
 
     private final ActivityRepository activityRepository;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public ActivityId execute(CreateActivityCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         ActivityId id = ActivityId.newId();
         Activity activity = Activity.create(id, tenantId, cmd.companyId(),
                 ActivityType.valueOf(cmd.activityType()),
@@ -49,4 +52,3 @@ public class ActivityService implements CreateActivityUseCase, GetActivityByIdUs
         return activityRepository.findByCompanyId(tenantId, companyId);
     }
 }
-

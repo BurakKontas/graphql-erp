@@ -8,6 +8,7 @@ import tr.kontas.erp.core.domain.shared.Address;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.shipment.application.deliveryorder.*;
 import tr.kontas.erp.shipment.application.port.DeliveryOrderNumberGeneratorPort;
 import tr.kontas.erp.shipment.domain.deliveryorder.*;
@@ -27,11 +28,13 @@ public class DeliveryOrderService implements
     private final DeliveryOrderRepository deliveryOrderRepository;
     private final DeliveryOrderNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public DeliveryOrderId execute(CreateDeliveryOrderCommand command) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
         DeliveryOrderNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
@@ -101,4 +104,3 @@ public class DeliveryOrderService implements
         order.clearDomainEvents();
     }
 }
-

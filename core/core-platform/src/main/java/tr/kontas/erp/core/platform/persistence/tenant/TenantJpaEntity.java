@@ -10,7 +10,7 @@ import tr.kontas.erp.core.domain.identity.enums.AuthProviderType;
 import java.util.UUID;
 
 @Entity
-@Table(name = "tenants", schema = "ERP_USR")
+@Table(name = "tenants", schema = "${erp.public.schema}")
 @Getter
 @Setter
 @NoArgsConstructor

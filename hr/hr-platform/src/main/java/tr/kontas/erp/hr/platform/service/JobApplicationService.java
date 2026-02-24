@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.hr.application.jobapplication.*;
 import tr.kontas.erp.hr.domain.jobapplication.*;
 
@@ -19,10 +20,12 @@ public class JobApplicationService implements CreateJobApplicationUseCase, GetJo
         GetJobApplicationsByCompanyUseCase, GetJobApplicationsByIdsUseCase {
 
     private final JobApplicationRepository jobApplicationRepository;
+    private final CompanyValidator companyValidator;
 
     @Override
     public JobApplicationId execute(CreateJobApplicationCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         JobApplicationId id = JobApplicationId.newId();
         ApplicantInfo ai = new ApplicantInfo(cmd.firstName(), cmd.lastName(), cmd.email(), cmd.phone(), cmd.cvRef());
         JobApplication application = new JobApplication(id, tenantId, cmd.companyId(), cmd.jobPostingId(),

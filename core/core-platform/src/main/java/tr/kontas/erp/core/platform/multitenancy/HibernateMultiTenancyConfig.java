@@ -15,11 +15,13 @@ public class HibernateMultiTenancyConfig {
     @Bean
     public HibernatePropertiesCustomizer hibernatePropertiesCustomizer(
             MultiTenantConnectionProvider<String> connectionProvider,
-            CurrentTenantIdentifierResolver<String> tenantResolver) {
+            CurrentTenantIdentifierResolver<String> tenantResolver,
+            DynamicSchemaNamingStrategy namingStrategy) {
 
         return hibernateProperties -> {
             hibernateProperties.put(AvailableSettings.MULTI_TENANT_CONNECTION_PROVIDER, connectionProvider);
             hibernateProperties.put(AvailableSettings.MULTI_TENANT_IDENTIFIER_RESOLVER, tenantResolver);
+            hibernateProperties.put(AvailableSettings.PHYSICAL_NAMING_STRATEGY, namingStrategy);
         };
     }
 }

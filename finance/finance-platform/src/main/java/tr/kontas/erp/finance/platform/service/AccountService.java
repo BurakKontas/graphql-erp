@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.finance.application.account.*;
 import tr.kontas.erp.finance.domain.account.*;
 
@@ -16,11 +17,13 @@ import java.util.List;
 public class AccountService implements CreateAccountUseCase, GetAccountByIdUseCase, GetAccountsByCompanyUseCase {
 
     private final AccountRepository accountRepository;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public AccountId execute(CreateAccountCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
 
         if (accountRepository.existsByCode(tenantId, companyId, cmd.code())) {
@@ -51,4 +54,3 @@ public class AccountService implements CreateAccountUseCase, GetAccountByIdUseCa
         return accountRepository.findByCompanyId(tenantId, companyId);
     }
 }
-

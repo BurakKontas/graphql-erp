@@ -1,7 +1,7 @@
 -- V5__idempotency.sql (Idempotency table - PostgreSQL)
 -- Stores responses for idempotency keys as JSONB
 
-CREATE TABLE IF NOT EXISTS ERP_USR.idempotencies (
+CREATE TABLE IF NOT EXISTS ${schema}.idempotencies (
     id uuid NOT NULL,
     response TEXT NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS ERP_USR.idempotencies (
 );
 
 -- index to speed up lookups by created_at if needed
-CREATE INDEX IF NOT EXISTS idx_idempotencies_created_at ON ERP_USR.idempotencies (created_at);
+CREATE INDEX IF NOT EXISTS idx_idempotencies_created_at ON ${schema}.idempotencies (created_at);

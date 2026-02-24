@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.kontas.erp.core.domain.company.CompanyId;
-import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.hr.application.position.*;
 import tr.kontas.erp.hr.domain.position.*;
 
@@ -19,11 +19,12 @@ public class PositionService implements CreatePositionUseCase, GetPositionByIdUs
         GetPositionsByCompanyUseCase, GetPositionsByIdsUseCase {
 
     private final PositionRepository positionRepository;
-    private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     public PositionId execute(CreatePositionCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         PositionId id = PositionId.newId();
         Position position = new Position(
                 id, tenantId, cmd.companyId(),
@@ -55,4 +56,3 @@ public class PositionService implements CreatePositionUseCase, GetPositionByIdUs
         return positionRepository.findByIds(ids);
     }
 }
-

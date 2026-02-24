@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.hr.application.jobposting.*;
 import tr.kontas.erp.hr.application.port.JobPostingNumberGeneratorPort;
 import tr.kontas.erp.hr.domain.employee.EmploymentType;
@@ -22,10 +23,12 @@ public class JobPostingService implements CreateJobPostingUseCase, GetJobPosting
 
     private final JobPostingRepository jobPostingRepository;
     private final JobPostingNumberGeneratorPort numberGenerator;
+    private final CompanyValidator companyValidator;
 
     @Override
     public JobPostingId execute(CreateJobPostingCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         JobPostingId id = JobPostingId.newId();
         JobPostingNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
         List<JobRequirement> reqs = cmd.requirements() != null ? cmd.requirements().stream()

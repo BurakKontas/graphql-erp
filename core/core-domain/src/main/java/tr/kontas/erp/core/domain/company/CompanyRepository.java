@@ -14,4 +14,7 @@ public interface CompanyRepository extends Repository<Company, CompanyId> {
     List<Company> findByTenant(TenantId tenantId);
     List<Company> findByCompanyIds(List<CompanyId> ids);
     Set<Company> findByTenantIds(List<TenantId> ids);
+
+    // returns true if company with id exists and belongs to tenant and is active
+    boolean existsByIdAndTenant(CompanyId id, TenantId tenantId);
 }

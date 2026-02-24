@@ -12,4 +12,6 @@ public interface JpaCompanyRepository extends JpaRepository<CompanyJpaEntity, UU
     List<CompanyJpaEntity> findByIdIn(Collection<UUID> ids);
 
     List<CompanyJpaEntity> findByTenantIdIn(Collection<UUID> tenantIds);
+
+    boolean existsByIdAndTenantIdAndActive(UUID id, UUID tenantId, boolean active);
 }

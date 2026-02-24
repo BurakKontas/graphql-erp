@@ -8,6 +8,7 @@ import tr.kontas.erp.core.domain.reference.unit.Unit;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.inventory.application.item.*;
 import tr.kontas.erp.inventory.application.port.UnitResolutionPort;
 import tr.kontas.erp.inventory.domain.category.CategoryId;
@@ -29,11 +30,13 @@ public class ItemService implements
     private final ItemRepository itemRepository;
     private final UnitResolutionPort unitResolution;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public ItemId execute(CreateItemCommand command) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
         Unit unit = command.unitCode() != null

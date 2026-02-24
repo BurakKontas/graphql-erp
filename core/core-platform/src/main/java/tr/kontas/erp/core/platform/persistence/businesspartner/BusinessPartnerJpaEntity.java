@@ -32,7 +32,7 @@ public class BusinessPartnerJpaEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "taxNumber", nullable = false)
+    @Column(name = "tax_number", nullable = false)
     private String taxNumber;
 
     @Column(name = "active", nullable = false)

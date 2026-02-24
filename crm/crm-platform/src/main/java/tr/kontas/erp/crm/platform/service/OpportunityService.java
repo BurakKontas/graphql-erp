@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.crm.application.opportunity.*;
 import tr.kontas.erp.crm.application.port.OpportunityNumberGeneratorPort;
 import tr.kontas.erp.crm.domain.opportunity.*;
@@ -22,11 +23,13 @@ public class OpportunityService implements CreateOpportunityUseCase, GetOpportun
     private final OpportunityRepository opportunityRepository;
     private final OpportunityNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public OpportunityId execute(CreateOpportunityCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         OpportunityNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
         OpportunityId id = OpportunityId.newId();
@@ -58,6 +61,3 @@ public class OpportunityService implements CreateOpportunityUseCase, GetOpportun
         return opportunityRepository.findByIds(ids);
     }
 }
-
-
-

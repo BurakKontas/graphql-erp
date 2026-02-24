@@ -1,13 +1,16 @@
 -- V5__idempotency.sql (Idempotency table - MSSQL)
--- Stores responses for idempotency keys as NVARCHAR(MAX) or JSON (depending on version)
+-- Stores responses for idempotency keys
 
-CREATE TABLE [${schema}].[idempotencies] (
-    [id] UNIQUEIDENTIFIER NOT NULL,
-    [response] NVARCHAR(MAX) NOT NULL,
-    [created_at] DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
-    CONSTRAINT [PK_idempotencies] PRIMARY KEY ([id])
-);
-GO
+IF NOT EXISTS (SELECT 1 FROM sys.objects o WHERE o.object_id = OBJECT_ID('[${schema}].idempotencies') AND o.type IN ('U'))
+BEGIN
+    CREATE TABLE [${schema}].[idempotencies] (
+        [id] NVARCHAR(255) NOT NULL PRIMARY KEY,
+        [response] NVARCHAR(MAX) NOT NULL,
+        [created_at] DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+    );
+END
 
-CREATE INDEX [idx_idempotencies_created_at] ON [${schema}].[idempotencies] ([created_at]);
-GO
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('[${schema}].idempotencies') AND name = 'idx_idempotencies_created_at')
+BEGIN
+    CREATE INDEX idx_idempotencies_created_at ON [${schema}].[idempotencies] ([created_at]);
+END

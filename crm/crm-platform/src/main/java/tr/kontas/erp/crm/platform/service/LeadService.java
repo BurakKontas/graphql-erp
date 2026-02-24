@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.crm.application.lead.*;
 import tr.kontas.erp.crm.application.port.LeadNumberGeneratorPort;
 import tr.kontas.erp.crm.domain.lead.*;
@@ -22,11 +23,13 @@ public class LeadService implements CreateLeadUseCase, GetLeadByIdUseCase,
     private final LeadRepository leadRepository;
     private final LeadNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public LeadId execute(CreateLeadCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         LeadNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
         LeadId id = LeadId.newId();
@@ -53,4 +56,3 @@ public class LeadService implements CreateLeadUseCase, GetLeadByIdUseCase,
         return leadRepository.findByCompanyId(tenantId, companyId);
     }
 }
-

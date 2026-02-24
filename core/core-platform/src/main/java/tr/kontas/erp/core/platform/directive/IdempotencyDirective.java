@@ -58,8 +58,25 @@ public class IdempotencyDirective implements SchemaDirectiveWiring {
 
                 return result;
             } catch (Exception ex) {
+                if (ex instanceof GraphqlErrorException) {
+                    throw ex;
+                }
+
+                Throwable cause = ex.getCause();
+                if (cause instanceof GraphqlErrorException) {
+                    throw (GraphqlErrorException) cause;
+                }
+
+                if (cause != null && cause.getMessage() != null) {
+                    throw GraphqlErrorException.newErrorException()
+                            .message(cause.getMessage())
+                            .cause(ex)
+                            .build();
+                }
+
                 throw GraphqlErrorException.newErrorException()
                         .message("Idempotency check failed: " + ex.getMessage())
+                        .cause(ex)
                         .build();
             }
         };

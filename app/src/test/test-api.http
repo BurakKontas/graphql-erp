@@ -173,7 +173,6 @@ POST http://localhost:8080/graphql
 Content-Type: application/json
 X-TENANT: TST
 Authorization: Bearer {{token}}
-X-IDEMPOTENCY-KEY: cfbdff0f-94ba-428f-a838-0d42f8b6d2d9
 
 {
   "query": "mutation { createCompany(input: { name: \"Acme Corp\" }) { id name } }"
@@ -2237,6 +2236,5 @@ Authorization: Bearer {{token}}
 {
   "query": "mutation { logout }"
 }
-
 
 

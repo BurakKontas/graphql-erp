@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.crm.application.contact.*;
 import tr.kontas.erp.crm.application.port.ContactNumberGeneratorPort;
 import tr.kontas.erp.crm.domain.contact.*;
@@ -22,11 +23,13 @@ public class ContactService implements CreateContactUseCase, GetContactByIdUseCa
     private final ContactRepository contactRepository;
     private final ContactNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public ContactId execute(CreateContactCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         ContactNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
         ContactId id = ContactId.newId();
@@ -61,6 +64,3 @@ public class ContactService implements CreateContactUseCase, GetContactByIdUseCa
         return contactRepository.findByIds(ids);
     }
 }
-
-
-

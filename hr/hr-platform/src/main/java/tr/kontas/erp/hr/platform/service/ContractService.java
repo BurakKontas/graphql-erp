@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tr.kontas.erp.core.domain.company.CompanyId;
-import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.hr.application.contract.*;
 import tr.kontas.erp.hr.application.port.ContractNumberGeneratorPort;
 import tr.kontas.erp.hr.domain.contract.*;
@@ -22,11 +22,12 @@ public class ContractService implements CreateContractUseCase, GetContractByIdUs
 
     private final ContractRepository contractRepository;
     private final ContractNumberGeneratorPort numberGenerator;
-    private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     public ContractId execute(CreateContractCommand cmd) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         ContractId id = ContractId.newId();
         ContractNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
         Contract contract = new Contract(id, tenantId, cmd.companyId(), number, cmd.employeeId(),

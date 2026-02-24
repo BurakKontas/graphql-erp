@@ -7,6 +7,7 @@ import tr.kontas.erp.core.domain.company.CompanyId;
 import tr.kontas.erp.core.kernel.domain.event.DomainEventPublisher;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 import tr.kontas.erp.core.platform.multitenancy.TenantContext;
+import tr.kontas.erp.core.platform.service.CompanyValidator;
 import tr.kontas.erp.purchase.application.goodsreceipt.*;
 import tr.kontas.erp.purchase.application.port.GoodsReceiptNumberGeneratorPort;
 import tr.kontas.erp.purchase.domain.goodsreceipt.*;
@@ -26,11 +27,13 @@ public class GoodsReceiptService implements
     private final GoodsReceiptRepository goodsReceiptRepository;
     private final GoodsReceiptNumberGeneratorPort numberGenerator;
     private final DomainEventPublisher eventPublisher;
+    private final CompanyValidator companyValidator;
 
     @Override
     @Transactional
     public GoodsReceiptId execute(CreateGoodsReceiptCommand command) {
         TenantId tenantId = TenantContext.get();
+        companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
         LocalDate receiptDate = command.receiptDate() != null ? command.receiptDate() : LocalDate.now();
 
@@ -92,4 +95,3 @@ public class GoodsReceiptService implements
         receipt.clearDomainEvents();
     }
 }
-

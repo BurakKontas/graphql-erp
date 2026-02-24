@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "idempotencies", schema = "ERP_USR")
+@Table(name = "idempotencies", schema = "${erp.public.schema}")
 @Getter
 @Setter
 @NoArgsConstructor
