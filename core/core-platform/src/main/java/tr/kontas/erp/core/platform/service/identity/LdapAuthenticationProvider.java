@@ -58,7 +58,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
 
         checkCircuitBreaker(tenantId, config);
 
-        String userDn = findUserDn(config, username);
+        String userDn = findUserDn(config, username, tenantId);
 
         bindAsUser(config, userDn, password);
 
@@ -82,43 +82,61 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         return settings;
     }
 
-    private String findUserDn(LdapSettings config, String username) {
+    private String findUserDn(LdapSettings config, String username, String tenantId) {
+        Exception lastException = null;
 
         for (String url : config.getUrls()) {
-
             for (int retry = 0; retry <= config.getMaxRetry(); retry++) {
-
+                LdapContext ctx = null;
                 try {
-                    LdapContext ctx = createContext(
+                    ctx = createContext(
                             url,
                             config.getBindDn(),
                             config.getBindPassword(),
                             config);
 
                     String safeUsername = escapeLdap(username);
-                    String filter = config.getUserSearchFilter()
-                            .replace("{0}", safeUsername);
+                    String filter = config.getUserSearchFilter().replace("{0}", safeUsername);
 
                     SearchControls controls = new SearchControls();
                     controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                    controls.setReturningAttributes(null);
 
                     NamingEnumeration<SearchResult> results =
                             ctx.search(config.getBaseDn(), filter, controls);
 
-                    if (!results.hasMore()) {
+                    if (results != null && results.hasMore()) {
+                        SearchResult result = results.next();
+                        String userDn = result.getNameInNamespace();
+
+                        results.close();
+                        return userDn;
+                    } else {
+                        log.warn("User not found in LDAP for username: {} on URL: {}", username, url);
                         throw new IllegalArgumentException("LDAP user not found");
                     }
 
-                    SearchResult result = results.next();
-                    return result.getNameInNamespace();
-
                 } catch (Exception e) {
-                    handleFailure(config, e);
+                    lastException = e;
+                    log.error("LDAP search error (Attempt {}/{} on URL {}): {}",
+                            retry + 1, config.getMaxRetry() + 1, url, e.getMessage());
+
+                    handleFailure(tenantId);
+
+                } finally {
+                    if (ctx != null) {
+                        try {
+                            ctx.close();
+                        } catch (Exception closeEx) {
+                            log.error("Failed to close LdapContext: {}", closeEx.getMessage());
+                        }
+                    }
                 }
             }
         }
 
-        throw new IllegalStateException("LDAP search failed after retries");
+        throw new IllegalStateException("LDAP search failed after all retries. Last error: "
+                + (lastException != null ? lastException.getMessage() : "Unknown"));
     }
 
     private void bindAsUser(LdapSettings config, String userDn, String password) {
@@ -180,8 +198,8 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
-    private void handleFailure(LdapSettings config, Exception e) {
-        circuitBreaker.put(config.getBaseDn(), System.currentTimeMillis());
+    private void handleFailure(String tenantId) {
+        circuitBreaker.put(tenantId, System.currentTimeMillis());
     }
 
     private String escapeLdap(String input) {

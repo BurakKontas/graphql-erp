@@ -45,6 +45,21 @@ public class UserAccount extends AggregateRoot<UserId> {
         return user;
     }
 
+    public static UserAccount createExternal(
+            TenantId tenantId,
+            UserName username,
+            ExternalIdentity externalIdentity
+    ) {
+        if (externalIdentity == null) throw new IllegalArgumentException("External identity required");
+        UserAccount user = new UserAccount(UserId.newId(), tenantId, username != null ? username : new UserName(externalIdentity.getExternalId()));
+        user.externalIdentity = externalIdentity;
+        user.active = true;
+        user.locked = false;
+        user.authVersion = 1L;
+        user.registerEvent(new UserCreatedEvent(user.getId()));
+        return user;
+    }
+
     public static UserAccount reconstitute(
             UserId id,
             TenantId tenantId,

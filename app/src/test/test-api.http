@@ -2238,3 +2238,127 @@ Authorization: Bearer {{token}}
 }
 
 
+### ───────────────────────────────────────────────────────────────────────────
+### LDAP TEST: configure tenant LDAP, switch auth mode to LDAP and login via LDAP
+### (run these requests manually after you started the `ldap` container and added test user)
+### Notes / required values you should provide in environment or replace inline:
+### - {{tenantId}}     -> the Tenant UUID (run the "Ensure TenantId" request below if you don't have it)
+### - {{ldapUser}}     -> the LDAP username (uid) of the test user you added
+### - {{ldapPassword}} -> the LDAP user's password
+### - If you used a different base DN or bind admin DN/password than defaults below, update those fields.
+
+# 1) Ensure we have tenantId (if you already have {{tenantId}} defined you can skip this)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+X-API-KEY: {{apiKey}}
+
+{
+  "query": "{ tenants { id name code } }"
+}
+
+> {%
+    var tenants = response.body.data.tenants;
+    if (tenants && tenants.length > 0) {
+        // set tenantId to first tenant if not already set
+        if (!client.global.get('tenantId')) client.global.set('tenantId', tenants[0].id);
+    }
+%}
+
+###
+# 2) Update Tenant LDAP Settings
+# Replace values below if your LDAP container uses different settings. For osixia/openldap with LDAP_DOMAIN=tr.kontas.local
+# a good baseDn is dc=tr,dc=kontas,dc=local and admin bindDn is cn=admin,dc=tr,dc=kontas,dc=local with password 'admin'
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+X-API-KEY: {{apiKey}}
+
+{
+  "query": "mutation { updateTenantLdapSettings(input: { tenantId: \"{{tenantId}}\", urls: [\"ldap://localhost:389\"], baseDn: \"dc=tr,dc=kontas,dc=local\", userSearchFilter: \"(uid={0})\", bindDn: \"cn=admin,dc=tr,dc=kontas,dc=local\", bindPassword: \"admin\", connectTimeoutMs: 5000, readTimeoutMs: 5000, startTls: false, maxRetry: 2, circuitBreakerTimeoutMs: 30000, resolveGroups: false, groupSearchFilter: \"(member={0})\" }) { id name code authMode } }"
+}
+
+###
+# 3) Switch tenant auth mode to LDAP (this makes login attempts use LDAP for authentication)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+X-API-KEY: {{apiKey}}
+
+{
+  "query": "mutation { updateTenantAuthMode(input: { tenantId: \"{{tenantId}}\", authMode: \"LDAP\" }) { id authMode } }"
+}
+
+### PRE-LDAP: Provision external identity using API key (no login required, ADMIN only)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "mutation { provisionExternalIdentity(input: { username: \"test\", provider: \"LDAP\", externalId: \"uid=test,dc=tr,dc=kontas,dc=local\" }) { userId username provider externalId } }"
+}
+
+> {%
+    client.global.set("userId", response.body.data.provisionExternalIdentity.userId);
+%}
+
+### Get Roles (via API key — GENERAL:ADMIN)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "{ roles { id name permissions { id module action key } } }"
+}
+
+> {%
+    var roles = response.body.data.roles;
+    for (var i = 0; i < roles.length; i++) {
+        if (roles[i].name === "ADMIN") {
+            client.global.set("adminRoleId", roles[i].id);
+        }
+    }
+%}
+
+### Assign ADMIN role to user (via API key)
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+X-TENANT: TST
+
+{
+  "query": "mutation { assignRoleToUser(input: { userId: \"{{userId}}\", roleId: \"{{adminRoleId}}\" }) }"
+}
+
+###
+# 4) Try LDAP login (no need to logout first). This performs a normal GraphQL login mutation using LDAP username/password.
+# Set {{ldapUser}} and {{ldapPassword}} in your environment or replace inline.
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+
+{
+  "query": "mutation { login(input: { username: \"test\", password: \"admin\" }) { accessToken refreshToken expiresAt } }"
+}
+
+> {%
+    if (response && response.body && response.body.data && response.body.data.login) {
+        client.global.set('ldapToken', response.body.data.login.accessToken);
+        client.global.set('ldapRefreshToken', response.body.data.login.refreshToken);
+    }
+%}
+
+###
+# 5) Optional: Verify LDAP-authenticated call (example protected query using the LDAP token)
+# This uses the token stored as {{ldapToken}} in the previous step.
+POST http://localhost:8080/graphql
+Content-Type: application/json
+X-TENANT: TST
+Authorization: Bearer {{ldapToken}}
+
+{
+  "query": "{ companies(tenantId: \"{{tenantId}}\") { id name } }"
+}
+

@@ -43,10 +43,17 @@ input RemoveRoleFromUserInput {
     roleId: ID!
 }
 
-enum AuthProviderType {
-    LOCAL
-    LDAP
-    OIDC
+input ProvisionExternalIdentityInput {
+    username: String
+    provider: String!
+    externalId: String!
+}
+
+type ProvisionExternalIdentityPayload {
+    userId: ID!
+    username: String
+    provider: String!
+    externalId: String!
 }
 
 extend type Mutation {
@@ -56,6 +63,7 @@ extend type Mutation {
     logout: Boolean! @audit @auth
     assignRoleToUser(input: AssignRoleToUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"]) @idempotency
     removeRoleFromUser(input: RemoveRoleFromUserInput!): Boolean! @audit @auth(permissions: ["GENERAL:ADMIN"]) @idempotency
+    provisionExternalIdentity(input: ProvisionExternalIdentityInput!): ProvisionExternalIdentityPayload! @audit @auth(permissions: ["GENERAL:ADMIN"]) @idempotency
 }
 
 extend type Query {

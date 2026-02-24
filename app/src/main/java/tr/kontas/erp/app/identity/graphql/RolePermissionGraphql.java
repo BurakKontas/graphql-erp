@@ -28,6 +28,7 @@ public class RolePermissionGraphql {
     private final AssignRoleToUserUseCase assignRoleToUserUseCase;
     private final RemoveRoleFromUserUseCase removeRoleFromUserUseCase;
     private final PermissionRepository permissionRepository;
+    private final ProvisionExternalIdentityUseCase provisionExternalIdentityUseCase;
 
     // ─── Queries ───
 
@@ -96,5 +97,17 @@ public class RolePermissionGraphql {
                 new RemoveRoleFromUserCommand(input.getUserId(), input.getRoleId())
         );
         return true;
+    }
+
+    @DgsMutation
+    public ProvisionExternalIdentityPayload provisionExternalIdentity(@InputArgument("input") ProvisionExternalIdentityInput input, DataFetchingEnvironment env) {
+        Context context = DgsContext.getCustomContext(env);
+        UUID tenantUuid = context.tenantId();
+
+        ProvisionExternalIdentityResult result = provisionExternalIdentityUseCase.execute(new ProvisionExternalIdentityCommand(
+                tenantUuid.toString(), input.getUsername(), input.getProvider(), input.getExternalId()
+        ));
+
+        return new ProvisionExternalIdentityPayload(result.getUserId(), result.getUsername(), result.getProvider(), result.getExternalId());
     }
 }

@@ -11,12 +11,8 @@ import java.util.Optional;
 
 public interface UserRepository extends Repository<UserAccount, UserId> {
     Optional<UserAccount> findById(UserId id);
-
     Optional<UserAccount> findByExternalIdentity(TenantId tenantId, ExternalIdentity externalIdentity);
-
     Optional<UserAccount> findByUsername(TenantId tenantId, UserName username);
-
     Optional<Long> findAuthVersionById(UserId id);
-
     void save(UserAccount user);
 }
