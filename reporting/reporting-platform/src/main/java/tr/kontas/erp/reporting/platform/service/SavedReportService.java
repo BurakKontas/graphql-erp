@@ -29,7 +29,7 @@ public class SavedReportService implements
     @Override
     @Transactional
     public SavedReportId execute(CreateSavedReportCommand command) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         var id = SavedReportId.newId();
         var saved = new SavedReport(
                 id,
@@ -49,7 +49,7 @@ public class SavedReportService implements
     @Override
     @Transactional(readOnly = true)
     public List<SavedReport> execute(String userId) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         List<SavedReport> result = new ArrayList<>(repository.findByCreatedBy(userId, tenantId));
         result.addAll(repository.findShared(tenantId));
         return result.stream().distinct().toList();

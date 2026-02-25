@@ -5,11 +5,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.tenant.validators.UpdateTenantLdapSettingsInputValidator;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateTenantLdapSettingsInput {
+@Validate(validator = UpdateTenantLdapSettingsInputValidator.class)
+public class UpdateTenantLdapSettingsInput implements Validatable {
     private String tenantId;
     private List<String> urls;
     private String baseDn;

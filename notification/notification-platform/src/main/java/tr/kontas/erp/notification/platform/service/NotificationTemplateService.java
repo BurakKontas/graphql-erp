@@ -25,7 +25,7 @@ public class NotificationTemplateService implements
     @Override
     @Transactional
     public NotificationTemplateId execute(CreateNotificationTemplateCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         NotificationTemplateId id = NotificationTemplateId.newId();
         NotificationTemplate template = new NotificationTemplate(
                 id,
@@ -44,21 +44,21 @@ public class NotificationTemplateService implements
 
     @Override
     public NotificationTemplate execute(NotificationTemplateId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Notification template not found: " + id));
     }
 
     @Override
     public List<NotificationTemplate> execute() {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findByTenantId(tenantId);
     }
 
     @Override
     @Transactional
     public void execute(UpdateNotificationTemplateCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         NotificationTemplate template = repository.findById(NotificationTemplateId.of(command.templateId()), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Notification template not found: " + command.templateId()));
         template.updateTemplate(command.subject(), command.bodyTemplate());

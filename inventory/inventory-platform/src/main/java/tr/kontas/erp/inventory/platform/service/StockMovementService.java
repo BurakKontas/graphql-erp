@@ -33,7 +33,7 @@ public class StockMovementService implements
     @Override
     @Transactional
     public StockMovementId execute(RecordStockMovementCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
         ItemId itemId = ItemId.of(command.itemId());
         WarehouseId warehouseId = WarehouseId.of(command.warehouseId());
@@ -92,13 +92,13 @@ public class StockMovementService implements
 
     @Override
     public List<StockMovement> execute(WarehouseId warehouseId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return stockMovementRepository.findByWarehouseId(warehouseId, tenantId);
     }
 
     @Override
     public List<StockMovement> execute(ItemId itemId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return stockMovementRepository.findByItemId(itemId, tenantId);
     }
 }

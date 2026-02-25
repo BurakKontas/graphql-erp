@@ -21,7 +21,7 @@ public class PerformanceCycleService implements CreatePerformanceCycleUseCase, G
 
     @Override
     public PerformanceCycleId execute(CreatePerformanceCycleCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         PerformanceCycleId id = PerformanceCycleId.newId();
         List<PerformanceGoal> goals = cmd.goals() != null ? cmd.goals().stream()
                 .map(g -> new PerformanceGoal(g.description(), g.targetScore())).toList() : List.of();
@@ -34,14 +34,14 @@ public class PerformanceCycleService implements CreatePerformanceCycleUseCase, G
     @Override
     @Transactional(readOnly = true)
     public PerformanceCycle execute(PerformanceCycleId id) {
-        return performanceCycleRepository.findById(id, TenantContext.get())
+        return performanceCycleRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("PerformanceCycle not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PerformanceCycle> execute(CompanyId companyId) {
-        return performanceCycleRepository.findByCompanyId(TenantContext.get(), companyId);
+        return performanceCycleRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

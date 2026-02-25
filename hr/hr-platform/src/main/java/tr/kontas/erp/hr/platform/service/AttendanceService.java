@@ -21,7 +21,7 @@ public class AttendanceService implements CreateAttendanceUseCase, GetAttendance
 
     @Override
     public AttendanceId execute(CreateAttendanceCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         AttendanceId id = AttendanceId.newId();
         Attendance attendance = new Attendance(id, tenantId, cmd.companyId(), cmd.employeeId(),
                 cmd.date(), AttendanceSource.valueOf(cmd.source()), cmd.checkIn(), cmd.checkOut(),
@@ -36,14 +36,14 @@ public class AttendanceService implements CreateAttendanceUseCase, GetAttendance
     @Override
     @Transactional(readOnly = true)
     public Attendance execute(AttendanceId id) {
-        return attendanceRepository.findById(id, TenantContext.get())
+        return attendanceRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Attendance not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Attendance> execute(CompanyId companyId) {
-        return attendanceRepository.findByCompanyId(TenantContext.get(), companyId);
+        return attendanceRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

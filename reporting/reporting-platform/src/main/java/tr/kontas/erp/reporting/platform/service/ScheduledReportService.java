@@ -28,7 +28,7 @@ public class ScheduledReportService implements
     @Override
     @Transactional
     public ScheduledReportId execute(CreateScheduledReportCommand command) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         var id = ScheduledReportId.newId();
         var scheduled = new ScheduledReport(
                 id,
@@ -50,7 +50,7 @@ public class ScheduledReportService implements
     @Override
     @Transactional(readOnly = true)
     public List<ScheduledReport> execute() {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         return repository.findByTenantId(tenantId);
     }
 

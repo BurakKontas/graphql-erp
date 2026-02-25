@@ -28,7 +28,7 @@ public class QuoteService implements CreateQuoteUseCase, GetQuoteByIdUseCase,
     @Override
     @Transactional
     public QuoteId execute(CreateQuoteCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         QuoteNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
@@ -45,14 +45,14 @@ public class QuoteService implements CreateQuoteUseCase, GetQuoteByIdUseCase,
 
     @Override
     public Quote execute(QuoteId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return quoteRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Quote not found: " + id));
     }
 
     @Override
     public List<Quote> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return quoteRepository.findByCompanyId(tenantId, companyId);
     }
 }

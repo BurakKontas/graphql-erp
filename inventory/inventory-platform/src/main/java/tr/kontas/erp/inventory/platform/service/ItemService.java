@@ -35,7 +35,7 @@ public class ItemService implements
     @Override
     @Transactional
     public ItemId execute(CreateItemCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
@@ -66,14 +66,14 @@ public class ItemService implements
 
     @Override
     public Item execute(ItemId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return itemRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found: " + id));
     }
 
     @Override
     public List<Item> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return itemRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -116,7 +116,7 @@ public class ItemService implements
     }
 
     private Item loadItem(String itemId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return itemRepository.findById(ItemId.of(itemId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Item not found: " + itemId));
     }

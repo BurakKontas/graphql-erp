@@ -1,35 +1,40 @@
 package tr.kontas.erp.core.platform.multitenancy;
 
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import tr.kontas.erp.core.domain.tenant.Tenant;
 import tr.kontas.erp.core.kernel.multitenancy.TenantId;
 
 @Component
 public class TenantContext implements CurrentTenantIdentifierResolver<String> {
 
-    private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
+    @Value("${erp.public.schema}")
+    public String publicSchema;
 
-    public static void setTenantIdentifier(String tenantId) {
-        CURRENT_TENANT.set(tenantId);
+    private static final ThreadLocal<Tenant> CURRENT_TENANT = new ThreadLocal<>();
+
+    public static void setTenantIdentifier(Tenant tenant) {
+        CURRENT_TENANT.set(tenant);
     }
 
     public static void clear() {
         CURRENT_TENANT.remove();
     }
 
-    public static TenantId get() {
-        String value = CURRENT_TENANT.get();
+    public static Tenant get() {
+        Tenant value = CURRENT_TENANT.get();
         if (value == null) {
-            throw new IllegalStateException("TenantId not set in current context");
+            throw new IllegalStateException("Tenant not set in current context");
         }
-        return TenantId.of(value);
+        return value;
     }
 
     @Override
     public String resolveCurrentTenantIdentifier() {
-        String tenantId = CURRENT_TENANT.get();
-        if (tenantId == null) return "ERP_USR";
-        int hash = Math.abs(tenantId.replace("-", "").hashCode());
+        Tenant tenant = CURRENT_TENANT.get();
+        if (tenant == null) return publicSchema;
+        int hash = Math.abs(tenant.getId().asUUID().toString().replace("-", "").hashCode());
         return ("tenant_" + hash).toUpperCase();
     }
 

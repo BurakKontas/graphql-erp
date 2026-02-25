@@ -1,11 +1,15 @@
 package tr.kontas.erp.app.finance.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.finance.validators.CreateExpenseInputValidator;
 
 import java.math.BigDecimal;
 
 @Data
-public class CreateExpenseInput {
+@Validate(validator = CreateExpenseInputValidator.class)
+public class CreateExpenseInput implements Validatable {
     private String companyId;
     private String description;
     private String category;
@@ -16,4 +20,3 @@ public class CreateExpenseInput {
     private String receiptReference;
     private String expenseAccountId;
 }
-

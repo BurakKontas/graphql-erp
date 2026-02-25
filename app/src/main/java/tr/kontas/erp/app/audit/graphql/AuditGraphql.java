@@ -23,7 +23,7 @@ public class AuditGraphql {
     public List<AuditEntryPayload> auditByAggregate(
             @InputArgument("aggregateType") String aggregateType,
             @InputArgument("aggregateId") String aggregateId) {
-        return auditQueryService.findByAggregate(aggregateType, aggregateId, TenantContext.get().asUUID())
+        return auditQueryService.findByAggregate(aggregateType, aggregateId, TenantContext.get().getId().asUUID())
                 .stream().map(AuditGraphql::toPayload).toList();
     }
 
@@ -32,7 +32,7 @@ public class AuditGraphql {
             @InputArgument("userId") String userId,
             @InputArgument("from") String from,
             @InputArgument("to") String to) {
-        return auditQueryService.findByUser(userId, TenantContext.get().asUUID(),
+        return auditQueryService.findByUser(userId, TenantContext.get().getId().asUUID(),
                         Instant.parse(from), Instant.parse(to))
                 .stream().map(AuditGraphql::toPayload).toList();
     }
@@ -42,7 +42,7 @@ public class AuditGraphql {
             @InputArgument("moduleName") String moduleName,
             @InputArgument("from") String from,
             @InputArgument("to") String to) {
-        return auditQueryService.findByModule(moduleName, TenantContext.get().asUUID(),
+        return auditQueryService.findByModule(moduleName, TenantContext.get().getId().asUUID(),
                         Instant.parse(from), Instant.parse(to))
                 .stream().map(AuditGraphql::toPayload).toList();
     }
@@ -53,7 +53,7 @@ public class AuditGraphql {
             @InputArgument("to") String to,
             @InputArgument("limit") Integer limit,
             @InputArgument("offset") Integer offset) {
-        return auditQueryService.findAll(TenantContext.get().asUUID(),
+        return auditQueryService.findAll(TenantContext.get().getId().asUUID(),
                         Instant.parse(from), Instant.parse(to),
                         limit != null ? limit : 50,
                         offset != null ? offset : 0)

@@ -31,7 +31,7 @@ public class PurchaseReturnService implements
     @Override
     @Transactional
     public PurchaseReturnId execute(CreatePurchaseReturnCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
         LocalDate returnDate = command.returnDate() != null ? command.returnDate() : LocalDate.now();
 
@@ -62,14 +62,14 @@ public class PurchaseReturnService implements
 
     @Override
     public PurchaseReturn execute(PurchaseReturnId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseReturnRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("PurchaseReturn not found: " + id));
     }
 
     @Override
     public List<PurchaseReturn> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseReturnRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -95,7 +95,7 @@ public class PurchaseReturnService implements
     }
 
     private PurchaseReturn loadReturn(String returnId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseReturnRepository.findById(PurchaseReturnId.of(returnId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("PurchaseReturn not found: " + returnId));
     }

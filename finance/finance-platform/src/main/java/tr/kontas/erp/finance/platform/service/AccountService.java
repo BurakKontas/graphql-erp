@@ -22,7 +22,7 @@ public class AccountService implements CreateAccountUseCase, GetAccountByIdUseCa
     @Override
     @Transactional
     public AccountId execute(CreateAccountCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
 
@@ -43,14 +43,14 @@ public class AccountService implements CreateAccountUseCase, GetAccountByIdUseCa
 
     @Override
     public Account execute(AccountId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return accountRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Account not found: " + id));
     }
 
     @Override
     public List<Account> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return accountRepository.findByCompanyId(tenantId, companyId);
     }
 }

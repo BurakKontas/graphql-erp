@@ -74,7 +74,7 @@ public class TaxGraphql {
                 new UpdateTaxRateCommand(input.getCompanyId(), input.getTaxCode(), input.getNewRate())
         );
 
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = CompanyId.of(input.getCompanyId());
         Tax tax = taxRepository.findByCode(tenantId, companyId, new TaxCode(input.getTaxCode()))
                 .orElseThrow(() -> new IllegalArgumentException("Tax not found after update: " + input.getTaxCode()));

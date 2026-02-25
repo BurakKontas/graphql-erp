@@ -27,7 +27,7 @@ public class LeaveRequestService implements CreateLeaveRequestUseCase, GetLeaveR
 
     @Override
     public LeaveRequestId execute(CreateLeaveRequestCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         LeaveRequestId id = LeaveRequestId.newId();
         LeaveRequestNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
@@ -41,14 +41,14 @@ public class LeaveRequestService implements CreateLeaveRequestUseCase, GetLeaveR
     @Override
     @Transactional(readOnly = true)
     public LeaveRequest execute(LeaveRequestId id) {
-        return leaveRequestRepository.findById(id, TenantContext.get())
+        return leaveRequestRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("LeaveRequest not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<LeaveRequest> execute(CompanyId companyId) {
-        return leaveRequestRepository.findByCompanyId(TenantContext.get(), companyId);
+        return leaveRequestRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

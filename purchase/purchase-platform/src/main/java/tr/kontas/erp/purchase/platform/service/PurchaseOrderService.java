@@ -34,7 +34,7 @@ public class PurchaseOrderService implements
     @Override
     @Transactional
     public PurchaseOrderId execute(CreatePurchaseOrderCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
         LocalDate orderDate = command.orderDate() != null ? command.orderDate() : LocalDate.now();
 
@@ -76,14 +76,14 @@ public class PurchaseOrderService implements
 
     @Override
     public PurchaseOrder execute(PurchaseOrderId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseOrderRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("PurchaseOrder not found: " + id));
     }
 
     @Override
     public List<PurchaseOrder> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseOrderRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -117,7 +117,7 @@ public class PurchaseOrderService implements
     }
 
     private PurchaseOrder loadOrder(String orderId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseOrderRepository.findById(PurchaseOrderId.of(orderId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("PurchaseOrder not found: " + orderId));
     }

@@ -26,7 +26,7 @@ public class ContractService implements CreateContractUseCase, GetContractByIdUs
 
     @Override
     public ContractId execute(CreateContractCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         ContractId id = ContractId.newId();
         ContractNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
@@ -41,14 +41,14 @@ public class ContractService implements CreateContractUseCase, GetContractByIdUs
     @Override
     @Transactional(readOnly = true)
     public Contract execute(ContractId id) {
-        return contractRepository.findById(id, TenantContext.get())
+        return contractRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Contract not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Contract> execute(CompanyId companyId) {
-        return contractRepository.findByCompanyId(TenantContext.get(), companyId);
+        return contractRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

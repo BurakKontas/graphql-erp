@@ -14,7 +14,7 @@ public class CompanyValidator {
     private final CompanyRepository companyRepository;
 
     public void validateExistsForCurrentTenant(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         if (companyId == null) return;
         boolean ok = companyRepository.existsByIdAndTenant(companyId, tenantId);
         if (!ok) {

@@ -22,7 +22,7 @@ public class LeaveBalanceService implements CreateLeaveBalanceUseCase, GetLeaveB
 
     @Override
     public LeaveBalanceId execute(CreateLeaveBalanceCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LeaveBalanceId id = LeaveBalanceId.newId();
         LeaveBalance balance = new LeaveBalance(id, tenantId, cmd.companyId(), cmd.employeeId(),
                 LeaveType.valueOf(cmd.leaveType()), cmd.year(), cmd.entitlementDays(), 0, cmd.carryoverDays(), 0);
@@ -33,14 +33,14 @@ public class LeaveBalanceService implements CreateLeaveBalanceUseCase, GetLeaveB
     @Override
     @Transactional(readOnly = true)
     public LeaveBalance execute(LeaveBalanceId id) {
-        return leaveBalanceRepository.findById(id, TenantContext.get())
+        return leaveBalanceRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("LeaveBalance not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<LeaveBalance> execute(CompanyId companyId) {
-        return leaveBalanceRepository.findByCompanyId(TenantContext.get(), companyId);
+        return leaveBalanceRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

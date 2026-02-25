@@ -28,7 +28,7 @@ public class NotificationPreferenceService implements
     @Override
     @Transactional
     public NotificationPreferenceId execute(CreateNotificationPreferenceCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         NotificationPreferenceId id = NotificationPreferenceId.newId();
 
         Set<NotificationChannel> disabled = command.disabledChannels() != null
@@ -49,14 +49,14 @@ public class NotificationPreferenceService implements
 
     @Override
     public List<NotificationPreference> execute(String userId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findByUserId(userId, tenantId);
     }
 
     @Override
     @Transactional
     public void execute(UpdateNotificationPreferenceCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         NotificationPreference preference = repository.findById(NotificationPreferenceId.of(command.preferenceId()), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Notification preference not found: " + command.preferenceId()));
 

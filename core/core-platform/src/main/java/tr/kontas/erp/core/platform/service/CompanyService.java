@@ -30,7 +30,7 @@ public class CompanyService implements
     public CompanyId execute(CreateCompanyCommand command) {
 
         CompanyId companyId = CompanyId.newId();
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
 
         Company company = new Company(
                 companyId,

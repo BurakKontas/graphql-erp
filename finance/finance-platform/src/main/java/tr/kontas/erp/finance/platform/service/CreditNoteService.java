@@ -28,7 +28,7 @@ public class CreditNoteService implements
     @Override
     @Transactional
     public CreditNoteId execute(CreateCreditNoteCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LocalDate date = cmd.creditNoteDate() != null ? cmd.creditNoteDate() : LocalDate.now();
         String number = numberGenerator.generate(tenantId, cmd.companyId(), date.getYear());
 
@@ -49,14 +49,14 @@ public class CreditNoteService implements
 
     @Override
     public CreditNote execute(CreditNoteId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return creditNoteRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("CreditNote not found: " + id));
     }
 
     @Override
     public List<CreditNote> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return creditNoteRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -77,7 +77,7 @@ public class CreditNoteService implements
     }
 
     private CreditNote loadCreditNote(String creditNoteId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return creditNoteRepository.findById(CreditNoteId.of(creditNoteId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("CreditNote not found: " + creditNoteId));
     }

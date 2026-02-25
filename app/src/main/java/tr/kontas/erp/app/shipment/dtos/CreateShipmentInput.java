@@ -1,12 +1,16 @@
 package tr.kontas.erp.app.shipment.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.shipment.validators.CreateShipmentInputValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class CreateShipmentInput {
+@Validate(validator = CreateShipmentInputValidator.class)
+public class CreateShipmentInput implements Validatable {
     private String companyId;
     private String deliveryOrderId;
     private String salesOrderId;
@@ -28,4 +32,3 @@ public class CreateShipmentInput {
         private BigDecimal quantity;
     }
 }
-

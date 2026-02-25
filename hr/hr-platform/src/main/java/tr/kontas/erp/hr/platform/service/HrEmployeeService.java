@@ -29,7 +29,7 @@ public class HrEmployeeService implements CreateHrEmployeeUseCase, GetHrEmployee
 
     @Override
     public EmployeeId execute(CreateEmployeeCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         EmployeeId id = EmployeeId.newId();
         EmployeeNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
@@ -53,14 +53,14 @@ public class HrEmployeeService implements CreateHrEmployeeUseCase, GetHrEmployee
     @Override
     @Transactional(readOnly = true)
     public Employee execute(EmployeeId id) {
-        return employeeRepository.findById(id, TenantContext.get())
+        return employeeRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Employee> execute(CompanyId companyId) {
-        return employeeRepository.findByCompanyId(TenantContext.get(), companyId);
+        return employeeRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

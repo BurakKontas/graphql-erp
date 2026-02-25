@@ -32,7 +32,7 @@ public class CategoryService implements
     @Override
     @Transactional
     public CategoryId execute(CreateCategoryCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
@@ -55,14 +55,14 @@ public class CategoryService implements
 
     @Override
     public Category execute(CategoryId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return categoryRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found: " + id));
     }
 
     @Override
     public List<Category> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return categoryRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -73,7 +73,7 @@ public class CategoryService implements
 
     @Override
     public List<Category> getSubCategories(CategoryId parentId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return categoryRepository.findByParentCategoryId(parentId, tenantId);
     }
 
@@ -102,7 +102,7 @@ public class CategoryService implements
     }
 
     private Category loadCategory(String categoryId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return categoryRepository.findById(CategoryId.of(categoryId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found: " + categoryId));
     }

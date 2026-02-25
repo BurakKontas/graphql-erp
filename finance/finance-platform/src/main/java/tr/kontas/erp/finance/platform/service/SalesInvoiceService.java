@@ -28,7 +28,7 @@ public class SalesInvoiceService implements
     @Override
     @Transactional
     public SalesInvoiceId execute(CreateSalesInvoiceCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LocalDate invoiceDate = cmd.invoiceDate() != null ? cmd.invoiceDate() : LocalDate.now();
         String number = invoiceNumberGenerator.generate(tenantId, cmd.companyId(), invoiceDate.getYear());
 
@@ -54,14 +54,14 @@ public class SalesInvoiceService implements
 
     @Override
     public SalesInvoice execute(SalesInvoiceId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return salesInvoiceRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("SalesInvoice not found: " + id));
     }
 
     @Override
     public List<SalesInvoice> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return salesInvoiceRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -82,7 +82,7 @@ public class SalesInvoiceService implements
     }
 
     private SalesInvoice loadInvoice(String invoiceId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return salesInvoiceRepository.findById(SalesInvoiceId.of(invoiceId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("SalesInvoice not found: " + invoiceId));
     }

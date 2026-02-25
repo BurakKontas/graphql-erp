@@ -21,7 +21,7 @@ public class PayrollConfigService implements CreatePayrollConfigUseCase, GetPayr
 
     @Override
     public PayrollConfigId execute(CreatePayrollConfigCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         PayrollConfigId id = PayrollConfigId.newId();
         PayrollConfig config = new PayrollConfig(id, tenantId, cmd.companyId(), cmd.countryCode(),
                 cmd.name(), cmd.validYear(), cmd.minimumWage(), cmd.currencyCode(),
@@ -33,14 +33,14 @@ public class PayrollConfigService implements CreatePayrollConfigUseCase, GetPayr
     @Override
     @Transactional(readOnly = true)
     public PayrollConfig execute(PayrollConfigId id) {
-        return payrollConfigRepository.findById(id, TenantContext.get())
+        return payrollConfigRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("PayrollConfig not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PayrollConfig> execute(CompanyId companyId) {
-        return payrollConfigRepository.findByCompanyId(TenantContext.get(), companyId);
+        return payrollConfigRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

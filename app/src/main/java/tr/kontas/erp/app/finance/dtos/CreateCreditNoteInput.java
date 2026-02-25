@@ -1,12 +1,16 @@
 package tr.kontas.erp.app.finance.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.finance.validators.CreateCreditNoteInputValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class CreateCreditNoteInput {
+@Validate(validator = CreateCreditNoteInputValidator.class)
+public class CreateCreditNoteInput implements Validatable {
     private String companyId;
     private String invoiceId;
     private String customerId;
@@ -26,4 +30,3 @@ public class CreateCreditNoteInput {
         private BigDecimal taxRate;
     }
 }
-

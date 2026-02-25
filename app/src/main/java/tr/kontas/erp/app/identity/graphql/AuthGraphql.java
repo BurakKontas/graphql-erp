@@ -115,14 +115,6 @@ public class AuthGraphql {
             throw new IllegalArgumentException("Tenant context required. Provide X-TENANT header.");
         }
 
-        if (input.getUsername() == null || input.getUsername().isBlank()) {
-            throw new IllegalArgumentException("Username is required");
-        }
-
-        if (input.getPassword() == null || input.getPassword().length() < 6) {
-            throw new IllegalArgumentException("Password must be at least 6 characters");
-        }
-
         RegisterCommand command = new RegisterCommand(
                 context.tenantId().toString(),
                 input.getUsername(),

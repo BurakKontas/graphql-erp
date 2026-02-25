@@ -24,7 +24,7 @@ public class ExpenseService implements
     @Override
     @Transactional
     public ExpenseId execute(CreateExpenseCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LocalDate date = cmd.expenseDate() != null ? cmd.expenseDate() : LocalDate.now();
         String number = numberGenerator.generate(tenantId, cmd.companyId(), date.getYear());
 
@@ -42,14 +42,14 @@ public class ExpenseService implements
 
     @Override
     public Expense execute(ExpenseId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return expenseRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Expense not found: " + id));
     }
 
     @Override
     public List<Expense> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return expenseRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -82,7 +82,7 @@ public class ExpenseService implements
     }
 
     private Expense loadExpense(String expenseId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return expenseRepository.findById(ExpenseId.of(expenseId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Expense not found: " + expenseId));
     }

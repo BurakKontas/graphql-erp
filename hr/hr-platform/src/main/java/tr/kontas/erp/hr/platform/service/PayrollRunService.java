@@ -25,7 +25,7 @@ public class PayrollRunService implements CreatePayrollRunUseCase, GetPayrollRun
 
     @Override
     public PayrollRunId execute(CreatePayrollRunCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         PayrollRunId id = PayrollRunId.newId();
         PayrollRunNumber number = numberGenerator.generate(tenantId, cmd.companyId(), cmd.year());
         PayrollRun run = new PayrollRun(id, tenantId, cmd.companyId(), number, cmd.year(), cmd.month(),
@@ -37,14 +37,14 @@ public class PayrollRunService implements CreatePayrollRunUseCase, GetPayrollRun
     @Override
     @Transactional(readOnly = true)
     public PayrollRun execute(PayrollRunId id) {
-        return payrollRunRepository.findById(id, TenantContext.get())
+        return payrollRunRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("PayrollRun not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PayrollRun> execute(CompanyId companyId) {
-        return payrollRunRepository.findByCompanyId(TenantContext.get(), companyId);
+        return payrollRunRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

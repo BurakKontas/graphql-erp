@@ -27,7 +27,7 @@ public class ReportRunService implements RunReportUseCase {
     @Override
     @Transactional(readOnly = true)
     public RunReportResult execute(RunReportCommand command) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         var definition = definitionRepository.findById(ReportDefinitionId.of(command.reportDefinitionId()), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Report definition not found: " + command.reportDefinitionId()));
 

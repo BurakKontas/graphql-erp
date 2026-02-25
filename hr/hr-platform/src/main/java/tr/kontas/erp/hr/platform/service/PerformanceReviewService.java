@@ -21,7 +21,7 @@ public class PerformanceReviewService implements CreatePerformanceReviewUseCase,
 
     @Override
     public PerformanceReviewId execute(CreatePerformanceReviewCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         PerformanceReviewId id = PerformanceReviewId.newId();
         PerformanceReview review = new PerformanceReview(id, tenantId, cmd.companyId(), cmd.cycleId(),
                 cmd.employeeId(), cmd.reviewerId(), ReviewStatus.PENDING, 0, null, null, null, List.of());
@@ -32,14 +32,14 @@ public class PerformanceReviewService implements CreatePerformanceReviewUseCase,
     @Override
     @Transactional(readOnly = true)
     public PerformanceReview execute(PerformanceReviewId id) {
-        return performanceReviewRepository.findById(id, TenantContext.get())
+        return performanceReviewRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("PerformanceReview not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<PerformanceReview> execute(CompanyId companyId) {
-        return performanceReviewRepository.findByCompanyId(TenantContext.get(), companyId);
+        return performanceReviewRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

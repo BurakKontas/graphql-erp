@@ -28,7 +28,7 @@ public class OpportunityService implements CreateOpportunityUseCase, GetOpportun
     @Override
     @Transactional
     public OpportunityId execute(CreateOpportunityCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         OpportunityNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
@@ -45,14 +45,14 @@ public class OpportunityService implements CreateOpportunityUseCase, GetOpportun
 
     @Override
     public Opportunity execute(OpportunityId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return opportunityRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Opportunity not found: " + id));
     }
 
     @Override
     public List<Opportunity> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return opportunityRepository.findByCompanyId(tenantId, companyId);
     }
 

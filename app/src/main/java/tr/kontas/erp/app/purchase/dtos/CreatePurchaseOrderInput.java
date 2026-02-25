@@ -1,12 +1,16 @@
 package tr.kontas.erp.app.purchase.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.purchase.validators.CreatePurchaseOrderInputValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class CreatePurchaseOrderInput {
+@Validate(validator = CreatePurchaseOrderInputValidator.class)
+public class CreatePurchaseOrderInput implements Validatable {
     private String companyId;
     private String requestId;
     private String vendorId;
@@ -36,4 +40,3 @@ public class CreatePurchaseOrderInput {
         private String expenseAccountId;
     }
 }
-

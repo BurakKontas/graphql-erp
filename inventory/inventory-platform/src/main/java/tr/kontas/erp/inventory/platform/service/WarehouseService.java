@@ -29,7 +29,7 @@ public class WarehouseService implements
     @Override
     @Transactional
     public WarehouseId execute(CreateWarehouseCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
 
         WarehouseId id = WarehouseId.newId();
@@ -47,14 +47,14 @@ public class WarehouseService implements
 
     @Override
     public Warehouse execute(WarehouseId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return warehouseRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Warehouse not found: " + id));
     }
 
     @Override
     public List<Warehouse> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return warehouseRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -88,7 +88,7 @@ public class WarehouseService implements
     }
 
     private Warehouse loadWarehouse(String warehouseId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return warehouseRepository.findById(WarehouseId.of(warehouseId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Warehouse not found: " + warehouseId));
     }

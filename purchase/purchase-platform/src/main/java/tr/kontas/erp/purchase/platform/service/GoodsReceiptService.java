@@ -32,7 +32,7 @@ public class GoodsReceiptService implements
     @Override
     @Transactional
     public GoodsReceiptId execute(CreateGoodsReceiptCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
         LocalDate receiptDate = command.receiptDate() != null ? command.receiptDate() : LocalDate.now();
@@ -63,14 +63,14 @@ public class GoodsReceiptService implements
 
     @Override
     public GoodsReceipt execute(GoodsReceiptId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return goodsReceiptRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("GoodsReceipt not found: " + id));
     }
 
     @Override
     public List<GoodsReceipt> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return goodsReceiptRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -82,7 +82,7 @@ public class GoodsReceiptService implements
     @Override
     @Transactional
     public void post(String receiptId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         GoodsReceipt receipt = goodsReceiptRepository.findById(GoodsReceiptId.of(receiptId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("GoodsReceipt not found: " + receiptId));
         receipt.post();

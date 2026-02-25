@@ -32,7 +32,7 @@ public class VendorInvoiceService implements
     @Override
     @Transactional
     public VendorInvoiceId execute(CreateVendorInvoiceCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
         LocalDate invoiceDate = command.invoiceDate() != null ? command.invoiceDate() : LocalDate.now();
 
@@ -65,14 +65,14 @@ public class VendorInvoiceService implements
 
     @Override
     public VendorInvoice execute(VendorInvoiceId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return vendorInvoiceRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("VendorInvoice not found: " + id));
     }
 
     @Override
     public List<VendorInvoice> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return vendorInvoiceRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -84,7 +84,7 @@ public class VendorInvoiceService implements
     @Override
     @Transactional
     public void post(String invoiceId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         VendorInvoice invoice = vendorInvoiceRepository.findById(VendorInvoiceId.of(invoiceId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("VendorInvoice not found: " + invoiceId));
         invoice.post();
@@ -94,7 +94,7 @@ public class VendorInvoiceService implements
     @Override
     @Transactional
     public void cancel(String invoiceId, String reason) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         VendorInvoice invoice = vendorInvoiceRepository.findById(VendorInvoiceId.of(invoiceId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("VendorInvoice not found: " + invoiceId));
         invoice.cancel(reason);

@@ -1,12 +1,16 @@
 package tr.kontas.erp.app.finance.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.finance.validators.CreateJournalEntryInputValidator;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class CreateJournalEntryInput {
+@Validate(validator = CreateJournalEntryInputValidator.class)
+public class CreateJournalEntryInput implements Validatable {
     private String companyId;
     private String type;
     private String periodId;
@@ -28,4 +32,3 @@ public class CreateJournalEntryInput {
         private String description;
     }
 }
-

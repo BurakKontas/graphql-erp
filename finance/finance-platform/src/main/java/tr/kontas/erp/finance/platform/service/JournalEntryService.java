@@ -29,7 +29,7 @@ public class JournalEntryService implements
     @Override
     @Transactional
     public JournalEntryId execute(CreateJournalEntryCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LocalDate entryDate = cmd.entryDate() != null ? cmd.entryDate() : LocalDate.now();
         String number = numberGenerator.generate(tenantId, cmd.companyId(), entryDate.getYear());
 
@@ -54,14 +54,14 @@ public class JournalEntryService implements
 
     @Override
     public JournalEntry execute(JournalEntryId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return journalEntryRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("JournalEntry not found: " + id));
     }
 
     @Override
     public List<JournalEntry> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return journalEntryRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -76,7 +76,7 @@ public class JournalEntryService implements
     @Override
     @Transactional
     public JournalEntryId execute(String entryId, String reason) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         JournalEntry original = loadEntry(entryId);
         original.markReversed();
         saveAndPublish(original);
@@ -105,7 +105,7 @@ public class JournalEntryService implements
     }
 
     private JournalEntry loadEntry(String entryId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return journalEntryRepository.findById(JournalEntryId.of(entryId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("JournalEntry not found: " + entryId));
     }

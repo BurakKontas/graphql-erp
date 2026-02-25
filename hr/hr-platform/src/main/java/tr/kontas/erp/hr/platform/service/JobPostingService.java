@@ -27,7 +27,7 @@ public class JobPostingService implements CreateJobPostingUseCase, GetJobPosting
 
     @Override
     public JobPostingId execute(CreateJobPostingCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         JobPostingId id = JobPostingId.newId();
         JobPostingNumber number = numberGenerator.generate(tenantId, cmd.companyId(), LocalDate.now().getYear());
@@ -44,14 +44,14 @@ public class JobPostingService implements CreateJobPostingUseCase, GetJobPosting
     @Override
     @Transactional(readOnly = true)
     public JobPosting execute(JobPostingId id) {
-        return jobPostingRepository.findById(id, TenantContext.get())
+        return jobPostingRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("JobPosting not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<JobPosting> execute(CompanyId companyId) {
-        return jobPostingRepository.findByCompanyId(TenantContext.get(), companyId);
+        return jobPostingRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

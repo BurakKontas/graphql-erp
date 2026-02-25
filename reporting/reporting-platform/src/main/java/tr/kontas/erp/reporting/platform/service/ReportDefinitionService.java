@@ -31,7 +31,7 @@ public class ReportDefinitionService implements
     @Override
     @Transactional
     public ReportDefinitionId execute(CreateReportDefinitionCommand command) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         var id = ReportDefinitionId.newId();
         var definition = new ReportDefinition(
                 id,
@@ -56,7 +56,7 @@ public class ReportDefinitionService implements
     @Override
     @Transactional(readOnly = true)
     public ReportDefinition execute(ReportDefinitionId id) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         return repository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Report definition not found: " + id));
     }
@@ -64,14 +64,14 @@ public class ReportDefinitionService implements
     @Override
     @Transactional(readOnly = true)
     public List<ReportDefinition> execute() {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         return repository.findByTenantId(tenantId);
     }
 
     @Override
     @Transactional
     public void execute(UpdateReportDefinitionCommand command) {
-        var tenantId = TenantContext.get();
+        var tenantId = TenantContext.get().getId();
         var definition = repository.findById(ReportDefinitionId.of(command.definitionId()), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Report definition not found: " + command.definitionId()));
         definition.update(command.name(), command.description(), command.columnsJson(), command.filtersJson(), command.sqlQuery());

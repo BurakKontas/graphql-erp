@@ -11,7 +11,7 @@ public interface TenantRepository extends Repository<Tenant, TenantId> {
     Optional<Tenant> findById(TenantId id);
     void save(Tenant tenant);
     Optional<TenantId> findIdByCode(TenantCode code);
+    Optional<Tenant> findByCode(TenantCode code);
     List<Tenant> findAll();
-
     Optional<AuthProviderType> findAuthModeById(TenantId id);
 }

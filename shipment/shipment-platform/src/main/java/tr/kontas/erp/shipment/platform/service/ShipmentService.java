@@ -37,7 +37,7 @@ public class ShipmentService implements
     @Override
     @Transactional
     public ShipmentId execute(CreateShipmentCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
@@ -76,14 +76,14 @@ public class ShipmentService implements
 
     @Override
     public Shipment execute(ShipmentId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return shipmentRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Shipment not found: " + id));
     }
 
     @Override
     public List<Shipment> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return shipmentRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -111,7 +111,7 @@ public class ShipmentService implements
     @Override
     @Transactional
     public void deliver(String shipmentId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         Shipment shipment = loadShipment(shipmentId);
         shipment.deliver();
 
@@ -140,7 +140,7 @@ public class ShipmentService implements
     }
 
     private Shipment loadShipment(String shipmentId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return shipmentRepository.findById(ShipmentId.of(shipmentId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Shipment not found: " + shipmentId));
     }

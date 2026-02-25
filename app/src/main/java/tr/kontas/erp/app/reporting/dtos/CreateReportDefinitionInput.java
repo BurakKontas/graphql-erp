@@ -3,11 +3,15 @@ package tr.kontas.erp.app.reporting.dtos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.reporting.validators.CreateReportDefinitionInputValidator;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateReportDefinitionInput {
+@Validate(validator = CreateReportDefinitionInputValidator.class)
+public class CreateReportDefinitionInput implements Validatable {
     private String name;
     private String description;
     private String module;
@@ -18,4 +22,3 @@ public class CreateReportDefinitionInput {
     private String requiredPermission;
     private Boolean systemReport;
 }
-

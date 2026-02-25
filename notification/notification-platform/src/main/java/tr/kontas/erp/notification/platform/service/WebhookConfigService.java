@@ -26,7 +26,7 @@ public class WebhookConfigService implements
     @Override
     @Transactional
     public WebhookConfigId execute(CreateWebhookConfigCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         WebhookConfigId id = WebhookConfigId.newId();
         WebhookConfig config = new WebhookConfig(
                 id,
@@ -45,14 +45,14 @@ public class WebhookConfigService implements
 
     @Override
     public WebhookConfig execute(WebhookConfigId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Webhook config not found: " + id));
     }
 
     @Override
     public List<WebhookConfig> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findByCompanyId(tenantId, companyId);
     }
 }

@@ -33,20 +33,20 @@ public class StockLevelService implements
 
     @Override
     public StockLevel execute(StockLevelId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return stockLevelRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("StockLevel not found: " + id));
     }
 
     @Override
     public List<StockLevel> execute(WarehouseId warehouseId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return stockLevelRepository.findByWarehouseId(warehouseId, tenantId);
     }
 
     @Override
     public List<StockLevel> execute(ItemId itemId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return stockLevelRepository.findByItemId(itemId, tenantId);
     }
 
@@ -64,7 +64,7 @@ public class StockLevelService implements
     @Override
     @Transactional
     public void execute(ReleaseReservationCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         StockLevel stockLevel = stockLevelRepository
                 .findByItemAndWarehouse(ItemId.of(command.itemId()), WarehouseId.of(command.warehouseId()), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("StockLevel not found for item: " + command.itemId() + " warehouse: " + command.warehouseId()));
@@ -86,7 +86,7 @@ public class StockLevelService implements
     @Override
     @Transactional
     public void execute(String stockLevelId, BigDecimal reorderPoint) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         StockLevel stockLevel = stockLevelRepository.findById(StockLevelId.of(stockLevelId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("StockLevel not found: " + stockLevelId));
         stockLevel.setReorderPoint(reorderPoint);
@@ -94,7 +94,7 @@ public class StockLevelService implements
     }
 
     private StockLevel loadOrCreateStockLevel(ItemId itemId, WarehouseId warehouseId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return stockLevelRepository.findByItemAndWarehouse(itemId, warehouseId, tenantId)
                 .orElseGet(() -> {
                     Item item = itemRepository.findById(itemId, tenantId)

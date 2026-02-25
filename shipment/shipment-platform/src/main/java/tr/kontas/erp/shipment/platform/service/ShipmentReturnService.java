@@ -32,7 +32,7 @@ public class ShipmentReturnService implements
     @Override
     @Transactional
     public ShipmentReturnId execute(CreateShipmentReturnCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
 
         ShipmentReturnNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
@@ -63,14 +63,14 @@ public class ShipmentReturnService implements
 
     @Override
     public ShipmentReturn execute(ShipmentReturnId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return shipmentReturnRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("ShipmentReturn not found: " + id));
     }
 
     @Override
     public List<ShipmentReturn> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return shipmentReturnRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -104,7 +104,7 @@ public class ShipmentReturnService implements
     }
 
     private ShipmentReturn loadReturn(String id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return shipmentReturnRepository.findById(ShipmentReturnId.of(id), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("ShipmentReturn not found: " + id));
     }

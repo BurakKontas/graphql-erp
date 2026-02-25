@@ -21,7 +21,7 @@ public class LeavePolicyService implements CreateLeavePolicyUseCase, GetLeavePol
 
     @Override
     public LeavePolicyId execute(CreateLeavePolicyCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LeavePolicyId id = LeavePolicyId.newId();
         List<LeaveTypeDef> types = cmd.leaveTypes() != null ? cmd.leaveTypes().stream()
                 .map(lt -> new LeaveTypeDef(LeaveType.valueOf(lt.leaveType()), lt.annualEntitlementDays(),
@@ -35,14 +35,14 @@ public class LeavePolicyService implements CreateLeavePolicyUseCase, GetLeavePol
     @Override
     @Transactional(readOnly = true)
     public LeavePolicy execute(LeavePolicyId id) {
-        return leavePolicyRepository.findById(id, TenantContext.get())
+        return leavePolicyRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("LeavePolicy not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<LeavePolicy> execute(CompanyId companyId) {
-        return leavePolicyRepository.findByCompanyId(TenantContext.get(), companyId);
+        return leavePolicyRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

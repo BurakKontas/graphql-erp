@@ -27,7 +27,7 @@ public class PaymentService implements
     @Override
     @Transactional
     public PaymentId execute(CreatePaymentCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         LocalDate paymentDate = cmd.paymentDate() != null ? cmd.paymentDate() : LocalDate.now();
         String number = numberGenerator.generate(tenantId, cmd.companyId(), paymentDate.getYear());
 
@@ -44,14 +44,14 @@ public class PaymentService implements
 
     @Override
     public Payment execute(PaymentId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return paymentRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found: " + id));
     }
 
     @Override
     public List<Payment> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return paymentRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -72,7 +72,7 @@ public class PaymentService implements
     }
 
     private Payment loadPayment(String paymentId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return paymentRepository.findById(PaymentId.of(paymentId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found: " + paymentId));
     }

@@ -46,11 +46,11 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
             if (tenantCode != null) {
                 String finalIdempotencyKey1 = idempotencyKey;
                 return Mono.fromCallable(() ->
-                        tenantRepository.findIdByCode(new TenantCode(tenantCode))
+                        tenantRepository.findByCode(new TenantCode(tenantCode))
                                 .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
-                ).map(tenantId -> {
-                    TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
-                    return new Context("bootstrap-admin", tenantId.asUUID(), Set.of("GENERAL:ADMIN"), finalIdempotencyKey1);
+                ).map(tenant -> {
+                    TenantContext.setTenantIdentifier(tenant);
+                    return new Context("bootstrap-admin", tenant.getId().asUUID(), Set.of("GENERAL:ADMIN"), finalIdempotencyKey1);
                 }).doFinally(_ -> TenantContext.clear());
             }
             return Mono.just(new Context("bootstrap-admin", null, Set.of("GENERAL:ADMIN"), idempotencyKey));
@@ -64,18 +64,18 @@ public class ReactiveContextBuilder implements DgsReactiveCustomContextBuilderWi
 
         String finalIdempotencyKey = idempotencyKey;
         return Mono.fromCallable(() ->
-                tenantRepository.findIdByCode(new TenantCode(tenantCode))
+                tenantRepository.findByCode(new TenantCode(tenantCode))
                         .orElseThrow(() -> new IllegalArgumentException("Tenant not found: " + tenantCode))
-        ).flatMap(tenantId -> {
-            TenantContext.setTenantIdentifier(tenantId.asUUID().toString());
+        ).flatMap(tenant -> {
+            TenantContext.setTenantIdentifier(tenant);
 
             String bearer = extractHeader(headers, "Authorization");
 
             if (bearer != null && bearer.startsWith("Bearer ")) {
-                return handleJwtAuth(bearer.substring(7), tenantId.asUUID(), finalIdempotencyKey);
+                return handleJwtAuth(bearer.substring(7), tenant.getId().asUUID(), finalIdempotencyKey);
             }
 
-            return Mono.just(new Context("anonymous", tenantId.asUUID(), Set.of(), finalIdempotencyKey));
+            return Mono.just(new Context("anonymous", tenant.getId().asUUID(), Set.of(), finalIdempotencyKey));
         }).doFinally(_ -> TenantContext.clear());
     }
 

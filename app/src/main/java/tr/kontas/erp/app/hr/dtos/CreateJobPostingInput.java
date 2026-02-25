@@ -1,9 +1,13 @@
 package tr.kontas.erp.app.hr.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.hr.validators.CreateJobPostingInputValidator;
 
 @Data
-public class CreateJobPostingInput {
+@Validate(validator = CreateJobPostingInputValidator.class)
+public class CreateJobPostingInput implements Validatable {
     private String companyId;
     private String positionId;
     private String title;

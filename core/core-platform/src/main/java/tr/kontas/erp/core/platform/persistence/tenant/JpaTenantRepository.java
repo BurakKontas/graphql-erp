@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import tr.kontas.erp.core.domain.identity.enums.AuthProviderType;
+import tr.kontas.erp.core.domain.tenant.Tenant;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -19,4 +20,5 @@ public interface JpaTenantRepository extends JpaRepository<TenantJpaEntity, UUID
     Optional<AuthProviderType> findAuthModeById(@Param("id") UUID id);
 
     boolean existsByCode(String code);
+    Optional<TenantJpaEntity> findByCode(String code);
 }

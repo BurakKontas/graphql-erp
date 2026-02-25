@@ -1,9 +1,13 @@
 package tr.kontas.erp.app.hr.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.hr.validators.CreateHrEmployeeInputValidator;
 
 @Data
-public class CreateHrEmployeeInput {
+@Validate(validator = CreateHrEmployeeInputValidator.class)
+public class CreateHrEmployeeInput implements Validatable {
     private String companyId;
     private String userId;
     private String firstName;

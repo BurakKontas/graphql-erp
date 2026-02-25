@@ -1,9 +1,13 @@
 package tr.kontas.erp.app.salesorder.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.salesorder.validators.UpdateSalesOrderHeaderInputValidator;
 
 @Data
-public class UpdateSalesOrderHeaderInput {
+@Validate(validator = UpdateSalesOrderHeaderInputValidator.class)
+public class UpdateSalesOrderHeaderInput implements Validatable {
     private String orderId;
     private String orderDate;
     private String expiryDate;

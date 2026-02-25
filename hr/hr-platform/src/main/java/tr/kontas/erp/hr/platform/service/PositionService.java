@@ -23,7 +23,7 @@ public class PositionService implements CreatePositionUseCase, GetPositionByIdUs
 
     @Override
     public PositionId execute(CreatePositionCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         PositionId id = PositionId.newId();
         Position position = new Position(
@@ -39,7 +39,7 @@ public class PositionService implements CreatePositionUseCase, GetPositionByIdUs
     @Override
     @Transactional(readOnly = true)
     public Position execute(PositionId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return positionRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Position not found: " + id));
     }
@@ -47,7 +47,7 @@ public class PositionService implements CreatePositionUseCase, GetPositionByIdUs
     @Override
     @Transactional(readOnly = true)
     public List<Position> execute(CompanyId companyId) {
-        return positionRepository.findByCompanyId(TenantContext.get(), companyId);
+        return positionRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

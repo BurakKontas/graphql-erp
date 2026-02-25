@@ -31,7 +31,7 @@ public class NotificationConfigService implements
     @Override
     @Transactional
     public NotificationConfigId execute(CreateNotificationConfigCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         NotificationConfigId id = NotificationConfigId.newId();
 
         Set<NotificationChannel> channels = command.enabledChannels() != null
@@ -59,14 +59,14 @@ public class NotificationConfigService implements
 
     @Override
     public NotificationConfig execute(NotificationConfigId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Notification config not found: " + id));
     }
 
     @Override
     public List<NotificationConfig> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findByCompanyId(tenantId, companyId);
     }
 

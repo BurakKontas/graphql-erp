@@ -33,7 +33,7 @@ public class PurchaseRequestService implements
     @Override
     @Transactional
     public PurchaseRequestId execute(CreatePurchaseRequestCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
         LocalDate requestDate = command.requestDate() != null ? command.requestDate() : LocalDate.now();
 
@@ -69,14 +69,14 @@ public class PurchaseRequestService implements
 
     @Override
     public PurchaseRequest execute(PurchaseRequestId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseRequestRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("PurchaseRequest not found: " + id));
     }
 
     @Override
     public List<PurchaseRequest> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseRequestRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -118,7 +118,7 @@ public class PurchaseRequestService implements
     }
 
     private PurchaseRequest loadRequest(String requestId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return purchaseRequestRepository.findById(PurchaseRequestId.of(requestId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("PurchaseRequest not found: " + requestId));
     }

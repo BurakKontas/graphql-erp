@@ -22,7 +22,7 @@ public class AccountingPeriodService implements
     @Override
     @Transactional
     public AccountingPeriodId execute(CreateAccountingPeriodCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         AccountingPeriodId id = AccountingPeriodId.newId();
         AccountingPeriod period = AccountingPeriod.create(id, tenantId, cmd.companyId(),
                 PeriodType.valueOf(cmd.periodType()), cmd.startDate(), cmd.endDate());
@@ -32,14 +32,14 @@ public class AccountingPeriodService implements
 
     @Override
     public AccountingPeriod execute(AccountingPeriodId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return periodRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("AccountingPeriod not found: " + id));
     }
 
     @Override
     public List<AccountingPeriod> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return periodRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -65,7 +65,7 @@ public class AccountingPeriodService implements
     }
 
     private AccountingPeriod loadPeriod(String periodId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return periodRepository.findById(AccountingPeriodId.of(periodId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("AccountingPeriod not found: " + periodId));
     }

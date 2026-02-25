@@ -24,7 +24,7 @@ public class InAppNotificationService implements
 
     @Override
     public List<InAppNotificationResult> executeGet(String userId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findByUserIdAndTenantIdOrderByCreatedAtDesc(userId, tenantId.asUUID())
                 .stream()
                 .map(this::toResult)
@@ -44,7 +44,7 @@ public class InAppNotificationService implements
     @Override
     @Transactional
     public void markAllRead(String userId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         repository.markAllAsRead(userId, tenantId.asUUID(), Instant.now());
     }
 

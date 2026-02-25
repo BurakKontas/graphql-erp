@@ -29,6 +29,12 @@ public class TenantRepositoryImpl implements TenantRepository {
     }
 
     @Override
+    public Optional<Tenant> findByCode(TenantCode code) {
+        return jpaRepository.findByCode(code.getValue())
+                .map(TenantMapper::toDomain);
+    }
+
+    @Override
     public List<Tenant> findAll() {
         return jpaRepository.findAll()
                 .stream()

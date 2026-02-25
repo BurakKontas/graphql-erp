@@ -26,7 +26,7 @@ public class InAppDispatcher implements ChannelDispatcher {
 
     @Override
     public void dispatch(String recipientUserId, String subject, String body) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         InAppNotificationJpaEntity entity = new InAppNotificationJpaEntity();
         entity.setId(UUID.randomUUID());
         entity.setTenantId(tenantId.asUUID());

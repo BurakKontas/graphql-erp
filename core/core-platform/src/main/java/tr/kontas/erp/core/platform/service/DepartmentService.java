@@ -30,7 +30,7 @@ public class DepartmentService implements
     @Override
     @Transactional
     public DepartmentId execute(CreateDepartmentCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
 
         Department parent = null;
         if (command.parentId() != null) {

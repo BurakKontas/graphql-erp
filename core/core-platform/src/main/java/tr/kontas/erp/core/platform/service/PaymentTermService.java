@@ -31,7 +31,7 @@ public class PaymentTermService implements
     @Override
     @Transactional
     public PaymentTermCode execute(CreatePaymentTermCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         PaymentTermCode code = new PaymentTermCode(command.code());
 
         if (paymentTermRepository.findByCode(tenantId, command.companyId(), code).isPresent()) {
@@ -53,14 +53,14 @@ public class PaymentTermService implements
 
     @Override
     public List<PaymentTerm> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return paymentTermRepository.findByCompany(tenantId, companyId);
     }
 
     @Override
     @Transactional
     public Map<CompanyId, List<PaymentTerm>> executeByCompanyIds(List<CompanyId> companyIds) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         Map<CompanyId, List<PaymentTerm>> resultMap = new HashMap<>();
 
         List<PaymentTerm> paymentTerms = paymentTermRepository.findByCompanyIds(tenantId, companyIds);

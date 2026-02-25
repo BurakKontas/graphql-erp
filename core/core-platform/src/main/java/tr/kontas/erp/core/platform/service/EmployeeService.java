@@ -33,7 +33,7 @@ public class EmployeeService implements
     @Override
     @Transactional
     public EmployeeId execute(CreateEmployeeCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
 
         var departmentExists = departmentRepository.existsById(command.departmentId());
 

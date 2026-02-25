@@ -28,7 +28,7 @@ public class ContactService implements CreateContactUseCase, GetContactByIdUseCa
     @Override
     @Transactional
     public ContactId execute(CreateContactCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         ContactNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
@@ -48,14 +48,14 @@ public class ContactService implements CreateContactUseCase, GetContactByIdUseCa
 
     @Override
     public Contact execute(ContactId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return contactRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Contact not found: " + id));
     }
 
     @Override
     public List<Contact> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return contactRepository.findByCompanyId(tenantId, companyId);
     }
 

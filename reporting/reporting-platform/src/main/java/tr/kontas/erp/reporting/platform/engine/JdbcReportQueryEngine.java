@@ -45,7 +45,7 @@ public class JdbcReportQueryEngine implements ReportQueryEngine {
 
         String tenantId;
         try {
-            tenantId = TenantContext.get().getValue().toString();
+            tenantId = TenantContext.get().getId().getValue().toString();
         } catch (Exception e) {
             throw new SecurityException("Tenant context required for report execution");
         }

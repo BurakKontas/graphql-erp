@@ -109,7 +109,7 @@ public class AuditEntityListener {
             log.debug("Could not extract tenantId from {}: {}", entity.getClass().getSimpleName(), e.getMessage());
         }
         try {
-            return TenantContext.get().asUUID();
+            return TenantContext.get().getId().asUUID();
         } catch (Exception e) {
             log.debug("Could not get tenantId from TenantContext: {}", e.getMessage());
         }

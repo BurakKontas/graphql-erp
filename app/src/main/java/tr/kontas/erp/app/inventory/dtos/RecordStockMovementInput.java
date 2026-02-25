@@ -1,11 +1,15 @@
 package tr.kontas.erp.app.inventory.dtos;
 
 import lombok.Data;
+import tr.kontas.fluentvalidation.annotations.Validate;
+import tr.kontas.fluentvalidation.interfaces.Validatable;
+import tr.kontas.erp.app.inventory.validators.RecordStockMovementInputValidator;
 
 import java.math.BigDecimal;
 
 @Data
-public class RecordStockMovementInput {
+@Validate(validator = RecordStockMovementInputValidator.class)
+public class RecordStockMovementInput implements Validatable {
     private String companyId;
     private String itemId;
     private String warehouseId;

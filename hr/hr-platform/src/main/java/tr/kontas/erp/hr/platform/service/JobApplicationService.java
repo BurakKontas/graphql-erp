@@ -24,7 +24,7 @@ public class JobApplicationService implements CreateJobApplicationUseCase, GetJo
 
     @Override
     public JobApplicationId execute(CreateJobApplicationCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         JobApplicationId id = JobApplicationId.newId();
         ApplicantInfo ai = new ApplicantInfo(cmd.firstName(), cmd.lastName(), cmd.email(), cmd.phone(), cmd.cvRef());
@@ -37,14 +37,14 @@ public class JobApplicationService implements CreateJobApplicationUseCase, GetJo
     @Override
     @Transactional(readOnly = true)
     public JobApplication execute(JobApplicationId id) {
-        return jobApplicationRepository.findById(id, TenantContext.get())
+        return jobApplicationRepository.findById(id, TenantContext.get().getId())
                 .orElseThrow(() -> new IllegalArgumentException("JobApplication not found: " + id));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<JobApplication> execute(CompanyId companyId) {
-        return jobApplicationRepository.findByCompanyId(TenantContext.get(), companyId);
+        return jobApplicationRepository.findByCompanyId(TenantContext.get().getId(), companyId);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class LeadService implements CreateLeadUseCase, GetLeadByIdUseCase,
     @Override
     @Transactional
     public LeadId execute(CreateLeadCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         CompanyId companyId = cmd.companyId();
         LeadNumber number = numberGenerator.generate(tenantId, companyId, LocalDate.now().getYear());
@@ -45,14 +45,14 @@ public class LeadService implements CreateLeadUseCase, GetLeadByIdUseCase,
 
     @Override
     public Lead execute(LeadId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return leadRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Lead not found: " + id));
     }
 
     @Override
     public List<Lead> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return leadRepository.findByCompanyId(tenantId, companyId);
     }
 }

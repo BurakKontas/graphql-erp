@@ -22,7 +22,7 @@ public class TenantNotificationConfigService implements
     @Override
     @Transactional
     public TenantNotificationConfigId execute(CreateTenantNotificationConfigCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         TenantNotificationConfigId id = TenantNotificationConfigId.newId();
         TenantNotificationConfig config = TenantNotificationConfig.create(id, tenantId);
         repository.save(config);
@@ -31,7 +31,7 @@ public class TenantNotificationConfigService implements
 
     @Override
     public TenantNotificationConfig execute() {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return repository.findByTenantId(tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tenant notification config not found"));
     }
@@ -39,7 +39,7 @@ public class TenantNotificationConfigService implements
     @Override
     @Transactional
     public void execute(UpdateTenantNotificationConfigCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         TenantNotificationConfig config = repository.findByTenantId(tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tenant notification config not found"));
         if (command.allNotificationsEnabled()) {

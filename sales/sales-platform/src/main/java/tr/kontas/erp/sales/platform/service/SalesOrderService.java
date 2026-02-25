@@ -51,7 +51,7 @@ public class SalesOrderService implements
     @Override
     @Transactional
     public SalesOrderId execute(CreateSalesOrderCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
         LocalDate orderDate = command.orderDate() != null ? command.orderDate() : LocalDate.now();
 
@@ -91,14 +91,14 @@ public class SalesOrderService implements
 
     @Override
     public SalesOrder execute(SalesOrderId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return salesOrderRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("SalesOrder not found: " + id));
     }
 
     @Override
     public List<SalesOrder> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return salesOrderRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -112,7 +112,7 @@ public class SalesOrderService implements
     @Override
     @Transactional
     public SalesOrderLineId execute(AddSalesOrderLineCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         SalesOrder order = loadOrder(command.orderId());
 
         if (command.itemId() != null) {
@@ -165,7 +165,7 @@ public class SalesOrderService implements
     @Override
     @Transactional
     public void execute(UpdateSalesOrderHeaderCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         SalesOrder order = loadOrder(command.orderId());
 
         PaymentTerm paymentTerm = command.paymentTermCode() != null
@@ -232,7 +232,7 @@ public class SalesOrderService implements
     // ─── Helpers ───
 
     private SalesOrder loadOrder(String orderId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return salesOrderRepository.findById(SalesOrderId.of(orderId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("SalesOrder not found: " + orderId));
     }

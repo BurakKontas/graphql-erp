@@ -25,7 +25,7 @@ public class ActivityService implements CreateActivityUseCase, GetActivityByIdUs
     @Override
     @Transactional
     public ActivityId execute(CreateActivityCommand cmd) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(cmd.companyId());
         ActivityId id = ActivityId.newId();
         Activity activity = Activity.create(id, tenantId, cmd.companyId(),
@@ -41,14 +41,14 @@ public class ActivityService implements CreateActivityUseCase, GetActivityByIdUs
 
     @Override
     public Activity execute(ActivityId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return activityRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Activity not found: " + id));
     }
 
     @Override
     public List<Activity> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return activityRepository.findByCompanyId(tenantId, companyId);
     }
 }

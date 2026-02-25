@@ -25,7 +25,7 @@ public class VendorCatalogService implements
     @Override
     @Transactional
     public VendorCatalogId execute(CreateVendorCatalogCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = command.companyId();
 
         List<VendorCatalogEntry> entries = command.entries() != null
@@ -52,14 +52,14 @@ public class VendorCatalogService implements
 
     @Override
     public VendorCatalog execute(VendorCatalogId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return vendorCatalogRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("VendorCatalog not found: " + id));
     }
 
     @Override
     public List<VendorCatalog> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return vendorCatalogRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -71,11 +71,10 @@ public class VendorCatalogService implements
     @Override
     @Transactional
     public void deactivate(String catalogId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         VendorCatalog catalog = vendorCatalogRepository.findById(VendorCatalogId.of(catalogId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("VendorCatalog not found: " + catalogId));
         catalog.deactivate();
         vendorCatalogRepository.save(catalog);
     }
 }
-

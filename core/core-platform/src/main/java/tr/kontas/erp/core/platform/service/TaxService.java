@@ -31,7 +31,7 @@ public class TaxService implements
     @Override
     @Transactional
     public TaxCode execute(CreateTaxCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         TaxCode code = new TaxCode(command.code());
 
         if (taxRepository.findByCode(tenantId, command.companyId(), code).isPresent()) {
@@ -58,7 +58,7 @@ public class TaxService implements
     @Override
     @Transactional
     public void execute(UpdateTaxRateCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         CompanyId companyId = CompanyId.of(command.companyId());
         TaxCode taxCode = new TaxCode(command.taxCode());
 
@@ -81,14 +81,14 @@ public class TaxService implements
 
     @Override
     public List<Tax> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return taxRepository.findByCompany(tenantId, companyId);
     }
 
     @Override
     @Transactional
     public Map<CompanyId, List<Tax>> executeByCompanyIds(List<CompanyId> companyIds) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         Map<CompanyId, List<Tax>> resultMap = new HashMap<>();
 
         List<Tax> taxes = taxRepository.findByCompanyIds(tenantId, companyIds);

@@ -32,7 +32,7 @@ public class BusinessPartnerService implements
     @Override
     @Transactional
     public BusinessPartnerId execute(CreateBusinessPartnerCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
 
         boolean companyOk = companyRepository.existsByIdAndTenant(command.companyId(), tenantId);
         if (!companyOk) {
@@ -75,14 +75,14 @@ public class BusinessPartnerService implements
 
     @Override
     public List<BusinessPartner> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return businessPartnerRepository.findByCompany(tenantId, companyId);
     }
 
     @Override
     @Transactional
     public Map<CompanyId, List<BusinessPartner>> executeByCompanyIds(List<CompanyId> ids) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         Map<CompanyId, List<BusinessPartner>> resultMap = new HashMap<>();
 
         List<BusinessPartner> businessPartners = businessPartnerRepository.findByCompanyIds(tenantId, ids);

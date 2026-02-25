@@ -33,7 +33,7 @@ public class DeliveryOrderService implements
     @Override
     @Transactional
     public DeliveryOrderId execute(CreateDeliveryOrderCommand command) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         companyValidator.validateExistsForCurrentTenant(command.companyId());
         CompanyId companyId = command.companyId();
 
@@ -72,14 +72,14 @@ public class DeliveryOrderService implements
 
     @Override
     public DeliveryOrder execute(DeliveryOrderId id) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return deliveryOrderRepository.findById(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryOrder not found: " + id));
     }
 
     @Override
     public List<DeliveryOrder> execute(CompanyId companyId) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         return deliveryOrderRepository.findByCompanyId(tenantId, companyId);
     }
 
@@ -91,7 +91,7 @@ public class DeliveryOrderService implements
     @Override
     @Transactional
     public void cancel(String deliveryOrderId, String reason) {
-        TenantId tenantId = TenantContext.get();
+        TenantId tenantId = TenantContext.get().getId();
         DeliveryOrder order = deliveryOrderRepository.findById(DeliveryOrderId.of(deliveryOrderId), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("DeliveryOrder not found: " + deliveryOrderId));
         order.cancel(new CancellationReason(reason));
